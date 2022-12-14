@@ -8,16 +8,22 @@ import makeStyles from '@mui/styles/makeStyles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import GitHubIcon from '@mui/icons-material/GitHub';
 // import IconButton from '@mui/material/IconButton';
 // import MenuIcon from '@mui/icons-material/Menu';
 // import DarkModeIcon from '@mui/icons-material/NightsStay';
 // import LightModeIcon from '@mui/icons-material/WbSunny';
+
+import DiscordLogo from '../assets/svg/discord.svg';
 
 import LogoDarkMode from '../assets/png/logo.png'
 import LogoLightMode from '../assets/png/logo.png'
 
 // import { Web3ModalButton } from './Web3ModalButton';
 import { PropsFromRedux } from '../containers/NavigationTopBarContainer';
+import { ExternalLink } from '../components/ExternalLink';
+
+import GithubRepoNavigatorDialog from './GithubRepoNavigatorDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,6 +45,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     logoSpacer: {
       marginRight: theme.spacing(2),
+    },
+    socialIcon: {
+      maxWidth: 35,
+      width: '100%',
+      maxHeight: 35,
+      height: '100%',
+      marginLeft: theme.spacing(2)
     }
   }),
 );
@@ -48,6 +61,7 @@ const NavigationTopBar = (props: PropsFromRedux & RouteComponentProps) => {
 
   // const [localShowLeftMenu, setLocalShowLeftMenu] = useState(props.showLeftMenu)
   const [localDarkMode, setLocalDarkMode] = useState(props.darkMode)
+  const [showGithubNavigation, setShowGithubNavigation] = useState(false);
 
   useEffect(() => {
     // setLocalShowLeftMenu(props.showLeftMenu)
@@ -78,6 +92,12 @@ const NavigationTopBar = (props: PropsFromRedux & RouteComponentProps) => {
             silo.observer
           </Typography>
           <div className={classes.flexer}/>
+          <div className={"flex-center-all"}>
+            <ExternalLink className={"hover-opacity-button flex-center-all"} href={"https://discord.gg/txcZWpmrj7"}>
+              <img alt="Discord Server Link" className={classes.socialIcon} style={{width: 40}} src={DiscordLogo} />
+            </ExternalLink>
+            <GitHubIcon onClick={() => setShowGithubNavigation(true)} style={{width: 40}} className={[classes.socialIcon, "hover-opacity-button"].join(' ')}/>
+          </div>
           {/* <Web3ModalButton/>
           <IconButton
             color="inherit"
@@ -89,6 +109,7 @@ const NavigationTopBar = (props: PropsFromRedux & RouteComponentProps) => {
           </IconButton> */}
         </Toolbar>
       </AppBar>
+      <GithubRepoNavigatorDialog open={showGithubNavigation} onClose={() => setShowGithubNavigation(false)}/>
     </div>
   );
 }

@@ -8,13 +8,8 @@ const StyledLink = styled.a`
 
   color: inherit;
 
-  :hover {
-    text-decoration: underline;
-  }
-
   :focus {
     outline: none;
-    text-decoration: underline;
   }
 
   :active {

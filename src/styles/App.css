@@ -1,3 +1,9 @@
+body {
+  background-position: 0 -30vh;
+  background-repeat: no-repeat;
+  background-image: radial-gradient(50% 50% at 50% 50%,rgb(170 33 229 / 10%) 0,rgba(33,36,41,0) 100%);
+}
+
 .App {
   text-align: center;
 }
@@ -32,6 +38,32 @@
   animation-duration: 0.2s; 
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+}
+
+.hover-opacity-button {
+  transition: all 0.2s linear;
+  cursor: pointer;
+  opacity: 0.6
+}
+
+.hover-opacity-button:hover {
+  opacity: 1;
+}
+
+.hover-opacity-button-subtle {
+  transition: all 0.2s linear;
+  cursor: pointer;
+  opacity: 0.8
+}
+
+.hover-opacity-button-subtle:hover {
+  opacity: 1;
+}
+
+.flex-center-all {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @keyframes rotate {
