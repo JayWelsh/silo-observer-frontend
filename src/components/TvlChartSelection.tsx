@@ -21,7 +21,7 @@ interface ITokenRate {
 }
 
 interface IDateToValue {
-    [key: string]: BigNumber;
+  [key: string]: BigNumber;
 }
 
 interface ITvlChartSelectionProps {
