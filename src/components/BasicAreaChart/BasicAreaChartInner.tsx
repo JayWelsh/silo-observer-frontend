@@ -1,7 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { AreaClosed, Line, Bar, LinePath } from '@visx/shape';
 import { curveStep } from '@visx/curve';
-import { GridRows, GridColumns } from '@visx/grid';
 import { scaleTime, scaleLinear } from '@visx/scale';
 import { PatternLines } from '@visx/pattern';
 import { withTooltip, Tooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip';
@@ -10,7 +9,7 @@ import { localPoint } from '@visx/event';
 import { LinearGradient } from '@visx/gradient';
 import { AxisBottom } from '@visx/axis';
 import { min, max, extent, bisector } from 'd3-array';
-import { timeFormat, timeParse } from 'd3-time-format';
+import { timeFormat } from 'd3-time-format';
 
 import { ITimeseries } from '.';
 
@@ -137,11 +136,6 @@ export default withTooltip<AreaProps, ITimeseries>(
       },
       [showTooltip, stockValueScale, dateScale, timeseries],
     );
-
-    //@ts-ignore
-    const xAxisTickFunction = (val, i) => ({ fontSize: 14, fill: 'white' })
-    //@ts-ignore
-    const xAxisTickFormat = (val, i) => timeFormat("%d/%m/%y");
 
     return (
       <div>

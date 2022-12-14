@@ -1,17 +1,9 @@
 import React, {useEffect, useState} from 'react';
 
-import makeStyles from '@mui/styles/makeStyles';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-
-import { useEtherBalance, useEthers } from '@usedapp/core'
-import { formatEther } from '@ethersproject/units'
 
 import BigNumber from 'bignumber.js';
 
@@ -21,19 +13,7 @@ import { API_ENDPOINT } from '../constants';
 
 import BasicAreaChartContainer from '../components/BasicAreaChart';
 
-import { ITimeseries } from '../components/BasicAreaChart/index';
-
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
-
-const useStyles = makeStyles({
-    root: {
-        minWidth: 275,
-        marginBottom: 15
-    },
-    title: {
-        fontSize: 14,
-    },
-});
 
 interface ITokenRate {
     date: string;

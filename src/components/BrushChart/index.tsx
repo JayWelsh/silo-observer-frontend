@@ -1,11 +1,10 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useMemo } from 'react';
 import { scaleTime, scaleLinear } from '@visx/scale';
 import { Brush } from '@visx/brush';
 import { Bounds } from '@visx/brush/lib/types';
-import BaseBrush, { BaseBrushState, UpdateBrush } from '@visx/brush/lib/BaseBrush';
+import BaseBrush from '@visx/brush/lib/BaseBrush';
 import { PatternLines } from '@visx/pattern';
 import { Group } from '@visx/group';
-import { LinearGradient } from '@visx/gradient';
 import { min, max, extent } from 'd3-array';
 
 import AreaChart from './AreaChart';
@@ -26,7 +25,6 @@ export type BrushHandleRenderProps = HandleProps & {
 
 // Initialize some variables
 const brushMargin = { top: 0, bottom: 0, left: 5, right: 5 };
-const chartSeparation = 30;
 const PATTERN_ID = 'brush_pattern';
 const GRADIENT_ID = 'brush_gradient';
 export const selectionColor = '#6f6f6f';
@@ -66,7 +64,6 @@ function BrushChart({
   },
 }: BrushProps) {
   const brushRef = useRef<BaseBrush | null>(null);
-  const [filteredStock, setFilteredStock] = useState(timeseries);
 
   const onBrushChange = (domain: Bounds | null) => {
     if (!domain) return;
@@ -76,20 +73,15 @@ function BrushChart({
       const y = getStockValue(s);
       return x > x0 && x < x1 && y > y0 && y < y1;
     });
-    setFilteredStock(stockCopy);
     if(setFilteredChartData && (stockCopy.length >= 1)) {
       setFilteredChartData(stockCopy);
     }
   };
 
   const innerHeight = height - margin.top - margin.bottom;
-  const topChartBottomMargin = 0;
-  const topChartHeight = 0;
   const bottomChartHeight = innerHeight;
 
   // bounds
-  const xMax = Math.max(width - margin.left - margin.right, 0);
-  const yMax = Math.max(topChartHeight, 0);
   const xBrushMax = Math.max(width - brushMargin.left - brushMargin.right, 0);
   const yBrushMax = Math.max(bottomChartHeight - brushMargin.top - brushMargin.bottom, 0);
 
@@ -117,37 +109,8 @@ function BrushChart({
       start: { x: brushDateScale(getDate(timeseries[0])) },
       end: { x: brushDateScale(getDate(timeseries[timeseries.length - 1])) },
     }),
-    [brushDateScale],
+    [brushDateScale, timeseries],
   );
-
-  // event handlers
-  const handleClearClick = () => {
-    if (brushRef?.current) {
-      setFilteredStock(timeseries);
-      brushRef.current.reset();
-    }
-  };
-
-  const handleResetClick = () => {
-    if (brushRef?.current) {
-      const updater: UpdateBrush = (prevBrush) => {
-        const newExtent = brushRef.current!.getExtent(
-          initialBrushPosition.start,
-          initialBrushPosition.end,
-        );
-
-        const newState: BaseBrushState = {
-          ...prevBrush,
-          start: { y: newExtent.y0, x: newExtent.x0 },
-          end: { y: newExtent.y1, x: newExtent.x1 },
-          extent: newExtent,
-        };
-
-        return newState;
-      };
-      brushRef.current.updateBrush(updater);
-    }
-  };
 
   return (
     <div>
@@ -186,7 +149,6 @@ function BrushChart({
             brushDirection="horizontal"
             initialBrushPosition={initialBrushPosition}
             onChange={onBrushChange}
-            onClick={() => setFilteredStock(timeseries)}
             selectedBoxStyle={selectedBrushStyle}
             useWindowMoveEvents
             renderBrushHandle={(props) => <BrushHandle {...props} />}

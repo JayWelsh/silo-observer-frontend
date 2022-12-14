@@ -8,15 +8,15 @@ import makeStyles from '@mui/styles/makeStyles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import DarkModeIcon from '@mui/icons-material/NightsStay';
-import LightModeIcon from '@mui/icons-material/WbSunny';
+// import IconButton from '@mui/material/IconButton';
+// import MenuIcon from '@mui/icons-material/Menu';
+// import DarkModeIcon from '@mui/icons-material/NightsStay';
+// import LightModeIcon from '@mui/icons-material/WbSunny';
 
 import LogoDarkMode from '../assets/png/logo.png'
 import LogoLightMode from '../assets/png/logo.png'
 
-import { Web3ModalButton } from './Web3ModalButton';
+// import { Web3ModalButton } from './Web3ModalButton';
 import { PropsFromRedux } from '../containers/NavigationTopBarContainer';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -46,11 +46,11 @@ const useStyles = makeStyles((theme: Theme) =>
 const NavigationTopBar = (props: PropsFromRedux & RouteComponentProps) => {
   const classes = useStyles()
 
-  const [localShowLeftMenu, setLocalShowLeftMenu] = useState(props.showLeftMenu)
+  // const [localShowLeftMenu, setLocalShowLeftMenu] = useState(props.showLeftMenu)
   const [localDarkMode, setLocalDarkMode] = useState(props.darkMode)
 
   useEffect(() => {
-    setLocalShowLeftMenu(props.showLeftMenu)
+    // setLocalShowLeftMenu(props.showLeftMenu)
   }, [props.showLeftMenu])
 
   useEffect(() => {

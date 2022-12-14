@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 
 import BigNumber from 'bignumber.js';
 
-import makeStyles from '@mui/styles/makeStyles';
 import Typography from '@mui/material/Typography';
 
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
@@ -18,16 +17,6 @@ export interface ITimeseries {
   date: string;
   value: number;
 }
-
-const useStyles = makeStyles({
-    root: {
-        minWidth: 275,
-        marginBottom: 15
-    },
-    title: {
-        fontSize: 14,
-    },
-});
 
 interface IBasicAreaChartContainerProps {
   chartData: ITimeseries[]
@@ -46,7 +35,6 @@ const goodColor = "limegreen";
 const badColor = "orange";
 
 const BasicAreaChartContainer = (props: IBasicAreaChartContainerProps) => {
-    const classes = useStyles();
 
     const {
       chartData,

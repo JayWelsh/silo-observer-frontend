@@ -1,21 +1,10 @@
 import React, {useEffect, useState} from 'react';
 
-import makeStyles from '@mui/styles/makeStyles';
 import Container from '@mui/material/Container';
 
 import { API_ENDPOINT } from '../constants';
 
 import BasicAreaChartContainer from '../components/BasicAreaChart';
-
-const useStyles = makeStyles({
-    root: {
-        minWidth: 275,
-        marginBottom: 15
-    },
-    title: {
-        fontSize: 14,
-    },
-});
 
 interface ISiloPageProps {
     tokenSymbol: string;
@@ -42,12 +31,9 @@ const SiloPage = (props: ISiloPageProps) => {
 
     const { tokenSymbol } = props;
 
-    const classes = useStyles();
-
     const [borrowerRates, setBorrowerRates] = useState<ITokenRates>({});
     const [lenderRates, setLenderRates] = useState<ITokenRates>({});
     const [tokenAddressToSymbolMapping, setTokenAddressToSymbolMapping] = useState<ISymbolAddressMapping>({});
-    const [tokenSymbolToAddressMapping, setTokenSymbolToAddressMapping] = useState<ISymbolAddressMapping>({});
     const [tokenAddressHasNonZeroRate, setTokenAddressHasNonZeroRate] = useState<IAddressBooleanMapping>({});
 
     useEffect(() => {
@@ -110,7 +96,6 @@ const SiloPage = (props: ISiloPageProps) => {
             setBorrowerRates(tokenRatesBorrower);
             setLenderRates(tokenRatesLender);
             setTokenAddressToSymbolMapping(tokenAddressToSymbol);
-            setTokenSymbolToAddressMapping(tokenSymbolToAddress);
         });
         
     }, [tokenSymbol])
