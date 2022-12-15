@@ -12,7 +12,7 @@ import { priceFormat } from '../utils';
 
 import { API_ENDPOINT } from '../constants';
 
-import BasicAreaChartContainer from '../components/BasicAreaChart';
+import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 

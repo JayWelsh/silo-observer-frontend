@@ -8,7 +8,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 import { API_ENDPOINT } from '../constants';
 
-import BasicAreaChartContainer from '../components/BasicAreaChart';
+import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
 
 interface IRateChartSelection {
   tokenSymbol: string;

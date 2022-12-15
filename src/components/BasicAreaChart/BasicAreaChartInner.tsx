@@ -337,7 +337,7 @@ export default withTooltip<AreaProps, ITimeseries>(
                 textAlign: 'center',
                 transform: 'translateX(-50%)',
                 whiteSpace: 'nowrap',
-                ...(tooltipDateTranslateLeft && {transform: 'translateX(-100%)'}),
+                ...(tooltipDateTranslateLeft && {transform: 'translateX(-105%)'}),
                 ...(tooltipDateTranslateRight && {transform: 'translateX(0%)'}),
                 ...(!tooltipDateTranslateLeft && !tooltipDateTranslateRight && {transform: 'translateX(-50%)'})
               }}

@@ -18,7 +18,7 @@ export interface ITimeseries {
   value: number;
 }
 
-interface IBasicAreaChartContainerProps {
+interface IBasicAreaChartProps {
   chartData: ITimeseries[]
   height: number
   leftTextTitle?: string
@@ -28,13 +28,14 @@ interface IBasicAreaChartContainerProps {
   changeType?: "neutral" | "up-good" | "down-good",
   isPercentage?: boolean,
   formatValueFn: (arg1: string | number) => string,
+  isConsideredMobile: boolean
 }
 
 const neutralColor = "#ff14fc";
 const goodColor = "limegreen";
 const badColor = "orange";
 
-const BasicAreaChartContainer = (props: IBasicAreaChartContainerProps) => {
+const BasicAreaChart = (props: IBasicAreaChartProps) => {
 
     const {
       chartData,
@@ -46,6 +47,7 @@ const BasicAreaChartContainer = (props: IBasicAreaChartContainerProps) => {
       changeType,
       isPercentage,
       formatValueFn,
+      isConsideredMobile,
     } = props;
 
     const [filteredChartData, setFilteredChartData] = useState(chartData);
@@ -155,29 +157,30 @@ const BasicAreaChartContainer = (props: IBasicAreaChartContainerProps) => {
                     )
                 }}
             </ParentSize>
-            <div style={{padding: 10}}>
-              <ParentSize className="graph-container" debounceTime={10}>
-                {({ width: w }) => {
-                    return (
-                      <>
-                        {chartData && chartData.length > 0 && 
-                          <BrushChart 
-                            timeseries={chartData}
-                            setFilteredChartData={setFilteredChartData}
-                            height={100}
-                            width={w}
-                          />
-                        }
-                      </>
-                    )
-                }}
-            </ParentSize>
-          </div>
-        </>
-            
-          }
+            {!isConsideredMobile &&
+              <div style={{padding: 10}}>
+                <ParentSize className="graph-container" debounceTime={10}>
+                  {({ width: w }) => {
+                      return (
+                        <>
+                          {chartData && chartData.length > 0 && 
+                            <BrushChart 
+                              timeseries={chartData}
+                              setFilteredChartData={setFilteredChartData}
+                              height={100}
+                              width={w}
+                            />
+                          }
+                        </>
+                      )
+                  }}
+                </ParentSize>
+              </div>
+            }
+          </>    
+        }
       </div>
     )
 };
 
-export default BasicAreaChartContainer;
+export default BasicAreaChart;
