@@ -1,5 +1,5 @@
 import React from 'react';
-import {Route, withRouter, Switch, RouteComponentProps} from 'react-router-dom';
+import {Routes, Route} from 'react-router-dom';
 
 import { Theme } from '@mui/material/styles';
 
@@ -14,8 +14,8 @@ import SiloTvlPage from '../pages/SiloTvlPage';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      paddingLeft: theme.spacing(3),
-      paddingRight: theme.spacing(3),
+      paddingLeft: 0,
+      paddingRight: 0,
     },
   }),
 );
@@ -27,43 +27,15 @@ const PageContainer = () => {
     return (
         <Navigation>
             <div className={classes.root}>
-                <Switch>
-                    <Route path="/" exact render={(props) => homeRoute(props)} />
-                    <Route path="/silo/:tokenSymbol/rates" exact render={(props) => ratesRoute(props)} />
-                    <Route path="/silo/:tokenSymbol/tvl" exact render={(props) => siloTvlRoute(props)} />
-                    <Route path="/silo/tvl" exact render={(props) => siloTvlRoute(props)} />
-                </Switch>
+                <Routes>
+                    <Route path="/" element={<HomePage/>} />
+                    <Route path="/silo/:tokenSymbol/rates" element={<SiloRatesPage />} />
+                    <Route path="/silo/:tokenSymbol/tvl" element={<SiloTvlPage />} />
+                    <Route path="/silo/tvl" element={<SiloTvlPage />} />
+                </Routes>
             </div>
         </Navigation>
     )
 }
 
-const homeRoute = (props: RouteComponentProps) => {
-    return (
-        <HomePage/>
-    )
-}
-
-const ratesRoute = (props: RouteComponentProps<{ tokenSymbol: string }>) => {
-    const {
-        match: {
-            params: { tokenSymbol }
-        }
-    } = props
-    return (
-        <SiloRatesPage tokenSymbol={tokenSymbol}/>
-    )
-}
-
-const siloTvlRoute = (props: RouteComponentProps<{ tokenSymbol: string }>) => {
-    const {
-        match: {
-            params: { tokenSymbol }
-        }
-    } = props
-    return (
-        <SiloTvlPage tokenSymbol={tokenSymbol}/>
-    )
-}
-
-export default withRouter(PageContainer);
+export default PageContainer;

@@ -84,6 +84,15 @@ body {
   height: 100%;
 }
 
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
 @keyframes rotate {
   0% {transform: rotate(0deg);}
   /* 25% {transform: rotate(10deg);}

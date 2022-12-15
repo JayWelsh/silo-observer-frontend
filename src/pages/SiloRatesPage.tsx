@@ -1,25 +1,28 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import Container from '@mui/material/Container';
 
-import RateChartSelection from '../components/RateChartSelection';
+import SiloSearch from '../components/SiloSearch';
 
-interface ISiloRatesPageProps {
-    tokenSymbol: string;
-}
+import RateChartSelectionContainer from '../containers/RateChartSelectionContainer';
 
-const SiloPage = (props: ISiloRatesPageProps) => {
+const SiloRatesPage = () => {
 
-    const { tokenSymbol } = props;
+    let { tokenSymbol } = useParams();
 
     return (
         <Container maxWidth="lg">
-            <div style={{marginTop: 50}}/>
-            <RateChartSelection
-                tokenSymbol={tokenSymbol}
-            />
+            <div style={{marginTop: 20}}/>
+            <SiloSearch />
+            <div style={{marginTop: 24}}/>
+            {tokenSymbol && 
+                <RateChartSelectionContainer
+                    tokenSymbol={tokenSymbol}
+                />
+            }
         </Container>
     )
 };
 
-export default SiloPage;
+export default SiloRatesPage;

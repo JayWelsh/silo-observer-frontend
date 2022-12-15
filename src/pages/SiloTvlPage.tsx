@@ -1,29 +1,28 @@
 import React from 'react';
-
+import { useParams } from 'react-router-dom';
 import Container from '@mui/material/Container';
-
 import BigNumber from 'bignumber.js';
 
-import TvlChartSelection from '../components/TvlChartSelection';
+import SiloSearch from '../components/SiloSearch';
+
+import TvlChartSelectionContainer from '../containers/TvlChartSelectionContainer';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
-interface ISiloPageProps {
-  tokenSymbol?: string;
-}
+const SiloTvlPage = () => {
 
-const SiloTvlPage = (props: ISiloPageProps) => {
+  let { tokenSymbol } = useParams();
 
-    const { tokenSymbol } = props;
-
-    return (
-        <Container maxWidth="lg">
-            <div style={{marginTop: 50}}/>
-            <TvlChartSelection
-              tokenSymbol={tokenSymbol}
-            />
-        </Container>
-    )
+  return (
+      <Container maxWidth="lg">
+          <div style={{marginTop: 20}}/>
+          <SiloSearch />
+          <div style={{marginTop: 24}}/>
+          <TvlChartSelectionContainer
+            tokenSymbol={tokenSymbol}
+          />
+      </Container>
+  )
 };
 
 export default SiloTvlPage;

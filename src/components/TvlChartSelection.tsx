@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { useNavigate } from "react-router-dom";
 
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -26,20 +27,32 @@ interface IDateToValue {
 
 interface ITvlChartSelectionProps {
   tokenSymbol?: string;
+  isConsideredMobile: boolean;
 }
 
 const TvlChartSelection = (props: ITvlChartSelectionProps) => {
 
-  const { tokenSymbol } = props;
+  const { tokenSymbol, isConsideredMobile } = props;
+
+  let navigate = useNavigate();
 
   const [tvlTotalsTimeseries, setTvlTotalsTimeseries] = useState<ITokenRate[]>([]);
   const [borrowedTotalsTimeseries, setBorrowedTotalsTimeseries] = useState<ITokenRate[]>([]);
   const [combinedTotalsTimeseries, setCombinedTotalsTimeseries] = useState<ITokenRate[]>([]);
 
   const [chartSelection, setChartSelection] = useState<string>('tvl+borrowed');
+  const [siloZoneSelection, setSiloZoneSelection] = useState<string>('tvl+borrowed');
 
   const handleChange = (event: SelectChangeEvent) => {
-      setChartSelection(event.target.value as string);
+    setChartSelection(event.target.value as string);
+  };
+
+  const handleSiloZoneChange = (event: SelectChangeEvent) => {
+    let value = event.target.value as string;
+    setSiloZoneSelection(value)
+    if(value === 'rates') {
+      navigate(`/silo/${tokenSymbol}/rates`);
+    }
   };
 
   useEffect(() => {
@@ -52,7 +65,6 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
         fetch(`${API_ENDPOINT}/borrowed-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=minutely`).then(resp => resp.json()),
         fetch(`${API_ENDPOINT}/borrowed-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=hourly`).then(resp => resp.json()),
     ]).then((data) => {
-      console.log({data});
 
       let tvlTotalsDataMinutely = data[0].data.reverse();
       let tvlTotalsDataHourly = data[1].data.reverse();
@@ -122,8 +134,6 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
           } else {
               dateToCombinedValue[entry.timestamp] = dateToCombinedValue[entry.timestamp].plus(entry.borrowed);
           }
-        } else {
-          console.log(`dateToBorrowTotalValue already contains a record for ${entry.timestamp}`)
         }
       }
 
@@ -152,20 +162,47 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
 
   return (
     <>
-      <FormControl fullWidth style={{marginBottom: 25, maxWidth: 180}}>
-          <InputLabel id="demo-simple-select-label">Chart Selection</InputLabel>
-          <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={chartSelection}
-              label="Chart Selection"
-              onChange={handleChange}
-          >
-              <MenuItem value={'tvl+borrowed'}>TVL + Borrowed</MenuItem>
-              <MenuItem value={'tvl'}>TVL</MenuItem>
-              <MenuItem value={'borrowed'}>Borrowed</MenuItem>
-          </Select>
-      </FormControl>
+      <div className={isConsideredMobile ? "flex-col flex-center-all" : "flex"}>
+        <img
+          src={tokenSymbol ? `https://app.silo.finance/images/logos/${tokenSymbol}.png` : "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/silo-circle.png"}
+          style={{
+            width: 56,
+            height: 56,
+            marginRight: isConsideredMobile ? 0 : 24,
+            marginBottom: isConsideredMobile ? 24 : 0,
+          }}
+          alt="selected silo logo"
+        />
+        {tokenSymbol &&
+          <FormControl fullWidth style={{marginBottom: 24, marginRight: isConsideredMobile ? 0 : 24, maxWidth: isConsideredMobile ? '100%' : 180}}>
+              <InputLabel id="select-label-silo-zone">Zone</InputLabel>
+              <Select
+                  labelId="select-label-silo-zone"
+                  id="select-label-silo-zone"
+                  value={siloZoneSelection}
+                  label="Zone"
+                  onChange={handleSiloZoneChange}
+              >
+                  <MenuItem value={'tvl+borrowed'}>TVL & Borrowed</MenuItem>
+                  <MenuItem value={'rates'}>Rates</MenuItem>
+              </Select>
+          </FormControl>
+        }
+        <FormControl fullWidth style={{marginBottom: 24, marginRight: 0, maxWidth: isConsideredMobile ? '100%' : 180}}>
+            <InputLabel id="demo-simple-select-label">Chart Selection</InputLabel>
+            <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={chartSelection}
+                label="Chart Selection"
+                onChange={handleChange}
+            >
+                <MenuItem value={'tvl+borrowed'}>TVL + Borrowed</MenuItem>
+                <MenuItem value={'tvl'}>TVL</MenuItem>
+                <MenuItem value={'borrowed'}>Borrowed</MenuItem>
+            </Select>
+        </FormControl>
+      </div>
       {chartSelection === "tvl" && tvlTotalsTimeseries && tvlTotalsTimeseries.length > 0 &&
           <>
               <div style={{marginBottom: 50}}>

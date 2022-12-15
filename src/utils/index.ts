@@ -1,15 +1,8 @@
-import { createBrowserHistory, createHashHistory } from 'history';
 import { ChainId, shortenAddress } from '@usedapp/core'
 import numeral from "numeral";
 import BigNumber from 'bignumber.js';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
-
-export function configureHistory() {
-	return window.matchMedia('(display-mode: standalone)').matches
-		? createHashHistory()
-		: createBrowserHistory()
-}
 
 export const centerShortenLongString = (string: string, maxLength: number) => {
 	if(typeof string === 'string') {

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { useNavigate } from "react-router-dom";
 
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -10,7 +11,8 @@ import { API_ENDPOINT } from '../constants';
 import BasicAreaChartContainer from '../components/BasicAreaChart';
 
 interface IRateChartSelection {
-    tokenSymbol: string;
+  tokenSymbol: string;
+  isConsideredMobile: boolean;
 }
 
 interface ITokenRate {
@@ -40,7 +42,9 @@ interface IAssetToDateToRate {
 
 const RateChartSelection = (props: IRateChartSelection) => {
 
-  const { tokenSymbol } = props;
+  const { tokenSymbol, isConsideredMobile } = props;
+
+  let navigate = useNavigate();
 
   const [borrowerRates, setBorrowerRates] = useState<ITokenRates>({});
   const [lenderRates, setLenderRates] = useState<ITokenRates>({});
@@ -51,6 +55,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
 
   const [siloInputTokenAddress, setSiloInputTokenAddress] = useState<string | undefined>();
   const [chartTypeSelection, setChartTypeSelection] = useState<string>('borrower');
+  const [siloZoneSelection, setSiloZoneSelection] = useState<string>('rates');
   const [chartAssetSelection, setChartAssetSelection] = useState<string | undefined>();
 
   const handleChartTypeChange = (event: SelectChangeEvent) => {
@@ -59,9 +64,21 @@ const RateChartSelection = (props: IRateChartSelection) => {
 
   const handleChartAssetChange = (event: SelectChangeEvent) => {
     setChartAssetSelection(event.target.value as string);
-};
+  };
+
+  const handleSiloZoneChange = (event: SelectChangeEvent) => {
+    let value = event.target.value as string;
+    setSiloZoneSelection(value)
+    if(value === 'tvl+borrowed') {
+      navigate(`/silo/${tokenSymbol}/tvl`);
+    }
+  };
 
   useEffect(() => {
+    setSiloInputTokenAddress(undefined);
+    setBorrowerRates({});
+    setLenderRates({});
+    setTokenAddressToSymbolMapping({});
     Promise.all([
       fetch(`${API_ENDPOINT}/rates/silo/${tokenSymbol}?perPage=8640`).then(resp => resp.json()),
       fetch(`${API_ENDPOINT}/rates/silo/${tokenSymbol}?perPage=8640&resolution=hourly`).then(resp => resp.json()),
@@ -236,38 +253,81 @@ const RateChartSelection = (props: IRateChartSelection) => {
 
   return (
     <>
-      <div style={{marginTop: 50}}/>
-      {siloInputTokenAddress && chartAssetSelection && tokenAddressToSymbolMapping[siloInputTokenAddress] &&
-        <FormControl fullWidth style={{marginBottom: 25, marginRight: 25, maxWidth: 150}}>
-          <InputLabel id="rate-chart-asset-selection">Silo Asset Selection</InputLabel>
+      <div className={isConsideredMobile ? "flex-col flex-center-all" : "flex"}>
+        <img
+          src={tokenSymbol ? `https://app.silo.finance/images/logos/${tokenSymbol}.png` : "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/silo-circle.png"}
+          style={{
+            width: 56,
+            height: 56,
+            marginRight: isConsideredMobile ? 0 : 24,
+            marginBottom: isConsideredMobile ? 24 : 0,
+          }}
+          alt="selected silo logo"
+        />
+        {tokenSymbol &&
+          <FormControl fullWidth style={{marginBottom: 24, marginRight: isConsideredMobile ? 0 : 24, maxWidth: isConsideredMobile ? '100%' : 180}}>
+              <InputLabel id="select-label-silo-zone">Zone</InputLabel>
+              <Select
+                  labelId="select-label-silo-zone"
+                  id="select-label-silo-zone"
+                  value={siloZoneSelection}
+                  label="Zone"
+                  onChange={handleSiloZoneChange}
+                  disabled={(!siloInputTokenAddress || !chartAssetSelection || !tokenAddressToSymbolMapping[siloInputTokenAddress])}
+              >
+                  <MenuItem value={'tvl+borrowed'}>TVL & Borrowed</MenuItem>
+                  <MenuItem value={'rates'}>Rates</MenuItem>
+              </Select>
+          </FormControl>
+        }
+        {siloInputTokenAddress && chartAssetSelection && tokenAddressToSymbolMapping[siloInputTokenAddress] &&
+          <FormControl fullWidth style={{marginBottom: 24, marginRight: isConsideredMobile ? 0 : 24, maxWidth: isConsideredMobile ? '100%' : 150}}>
+            <InputLabel id="rate-chart-asset-selection">Silo Asset Selection</InputLabel>
+            <Select
+                labelId="rate-chart-asset-selection"
+                id="rate-chart-asset-selection"
+                value={chartAssetSelection}
+                label="Silo Asset Selection"
+                onChange={handleChartAssetChange}
+                disabled={(!siloInputTokenAddress || !chartAssetSelection || !tokenAddressToSymbolMapping[siloInputTokenAddress])}
+            >
+              {Object.entries(tokenAddressToSymbolMapping).map(([address, symbol]) => {
+                return (
+                  <MenuItem key={`asset-selection-${address}`} value={address}>{symbol}</MenuItem>
+                )
+              })}
+            </Select>
+          </FormControl>
+        }
+        {(!siloInputTokenAddress || !chartAssetSelection || !tokenAddressToSymbolMapping[siloInputTokenAddress]) &&
+          <FormControl fullWidth style={{marginBottom: 24, marginRight: isConsideredMobile ? 0 : 24, maxWidth: isConsideredMobile ? '100%' : 150}}>
+            <InputLabel id="rate-chart-asset-selection">Silo Asset Selection</InputLabel>
+            <Select
+                labelId="rate-chart-asset-selection"
+                id="rate-chart-asset-selection"
+                value={"loading"}
+                disabled={true}
+                label="Silo Asset Selection"
+            >
+              <MenuItem key={`asset-selection-loading`} value={"loading"}>Loading...</MenuItem>
+            </Select>
+          </FormControl>
+        }
+        <FormControl fullWidth style={{marginBottom: 25, marginRight: 0, maxWidth: isConsideredMobile ? '100%' : 180}}>
+          <InputLabel id="rate-chart-type-selection">Chart Selection</InputLabel>
           <Select
-              labelId="rate-chart-asset-selection"
-              id="rate-chart-asset-selection"
-              value={chartAssetSelection}
-              label="Silo Asset Selection"
-              onChange={handleChartAssetChange}
+              labelId="rate-chart-type-selection"
+              id="rate-chart-type-selection"
+              value={chartTypeSelection}
+              label="Chart Selection"
+              onChange={handleChartTypeChange}
+              disabled={(!siloInputTokenAddress || !chartAssetSelection || !tokenAddressToSymbolMapping[siloInputTokenAddress])}
           >
-            {Object.entries(tokenAddressToSymbolMapping).map(([address, symbol]) => {
-              return (
-                <MenuItem key={`asset-selection-${address}`} value={address}>{symbol}</MenuItem>
-              )
-            })}
+              <MenuItem value={'borrower'}>Borrower APY</MenuItem>
+              <MenuItem value={'lender'}>Lender APY</MenuItem>
           </Select>
         </FormControl>
-      }
-      <FormControl fullWidth style={{marginBottom: 25, maxWidth: 180}}>
-        <InputLabel id="rate-chart-type-selection">Chart Selection</InputLabel>
-        <Select
-            labelId="rate-chart-type-selection"
-            id="rate-chart-type-selection"
-            value={chartTypeSelection}
-            label="Chart Selection"
-            onChange={handleChartTypeChange}
-        >
-            <MenuItem value={'borrower'}>Borrower APY</MenuItem>
-            <MenuItem value={'lender'}>Lender APY</MenuItem>
-        </Select>
-      </FormControl>
+      </div>
       {chartTypeSelection === "borrower" && Object.entries(borrowerRates).map((value, index) => 
           <div key={`borrower-chart-${value[0]}`}>
             {value[0] === chartAssetSelection &&

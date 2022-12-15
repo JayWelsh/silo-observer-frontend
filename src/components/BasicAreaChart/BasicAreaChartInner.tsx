@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { AreaClosed, Line, Bar, LinePath } from '@visx/shape';
 import { curveStep } from '@visx/curve';
 import { scaleTime, scaleLinear } from '@visx/scale';
@@ -69,6 +69,9 @@ export default withTooltip<AreaProps, ITimeseries>(
   }: AreaProps & WithTooltipProvidedProps<ITimeseries>) => {
     if (width < 10) return null;
 
+    const [tooltipDateTranslateLeft, setTooltipDateTranslateLeft] = useState(false);
+    const [tooltipDateTranslateRight, setTooltipDateTranslateRight] = useState(false);
+
     const firstPointX = timeseries[0];
     const currentPointX = timeseries[timeseries.length - 1];
 
@@ -128,6 +131,18 @@ export default withTooltip<AreaProps, ITimeseries>(
         if (d1 && getDate(d1)) {
           d = x0.valueOf() - getDate(d0).valueOf() > getDate(d1).valueOf() - x0.valueOf() ? d1 : d0;
         }
+        const totalGraphWidth = dateScale(getDate(timeseries[timeseries.length - 1]));
+        let tooltipLeft = dateScale(getDate(d));
+        if((totalGraphWidth - tooltipLeft) < 100){
+          setTooltipDateTranslateLeft(true);
+        }else{
+          setTooltipDateTranslateLeft(false);
+        }
+        if(tooltipLeft < 100){
+          setTooltipDateTranslateRight(true);
+        }else{
+          setTooltipDateTranslateRight(false);;
+        }
         showTooltip({
           tooltipData: d,
           tooltipLeft: x,
@@ -136,7 +151,7 @@ export default withTooltip<AreaProps, ITimeseries>(
       },
       [showTooltip, stockValueScale, dateScale, timeseries],
     );
-
+    
     return (
       <div>
         <svg width={width} height={height} style={{borderBottomLeftRadius: 10, borderBottomRightRadius: 10}}>
@@ -306,7 +321,9 @@ export default withTooltip<AreaProps, ITimeseries>(
               key={Math.random()}
               top={((innerHeight - tooltipTop) < 30) ? (innerHeight - 40) : tooltipTop - 12}
               left={tooltipLeft + 12}
-              style={tooltipStyles}
+              style={{
+                ...tooltipStyles,
+              }}
             >
               {`${formatValue(getStockValue(tooltipData))}`}
             </TooltipWithBounds>
@@ -320,6 +337,9 @@ export default withTooltip<AreaProps, ITimeseries>(
                 textAlign: 'center',
                 transform: 'translateX(-50%)',
                 whiteSpace: 'nowrap',
+                ...(tooltipDateTranslateLeft && {transform: 'translateX(-100%)'}),
+                ...(tooltipDateTranslateRight && {transform: 'translateX(0%)'}),
+                ...(!tooltipDateTranslateLeft && !tooltipDateTranslateRight && {transform: 'translateX(-50%)'})
               }}
             >
               {formatDate(getDate(tooltipData))}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { withRouter, RouteComponentProps } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
     title: {
       cursor: 'pointer',
       fontFamily: 'monospace',
+      marginRight: theme.spacing(2),
     },
     flexer: {
       flexGrow: 1,
@@ -56,8 +57,10 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const NavigationTopBar = (props: PropsFromRedux & RouteComponentProps) => {
+const NavigationTopBar = (props: PropsFromRedux) => {
   const classes = useStyles()
+
+  let navigate = useNavigate();
 
   // const [localShowLeftMenu, setLocalShowLeftMenu] = useState(props.showLeftMenu)
   const [localDarkMode, setLocalDarkMode] = useState(props.darkMode)
@@ -87,8 +90,8 @@ const NavigationTopBar = (props: PropsFromRedux & RouteComponentProps) => {
           {/* <div style={{width: '115px', position: 'relative', marginRight: '15px', alignSelf: 'start'}}>
             <img onClick={() => props.history.push('/')} height={'115px'} style={{cursor: 'pointer', position: 'absolute', top: 10}} src={localDarkMode ? LogoDarkMode : LogoLightMode} alt="logo" />
           </div> */}
-          <img onClick={() => props.history.push('/')} height={'40px'} style={{cursor: 'pointer'}} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
-          <Typography onClick={() => props.history.push('/')} variant="h6" className={classes.title}>
+          <img onClick={() => navigate('/')} height={'40px'} style={{cursor: 'pointer'}} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
+          <Typography onClick={() => navigate('/')} variant="h6" className={classes.title}>
             silo.observer
           </Typography>
           <div className={classes.flexer}/>
@@ -114,4 +117,4 @@ const NavigationTopBar = (props: PropsFromRedux & RouteComponentProps) => {
   );
 }
 
-export default withRouter(NavigationTopBar)
+export default NavigationTopBar
