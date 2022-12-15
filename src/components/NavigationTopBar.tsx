@@ -57,8 +57,16 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const NavigationTopBar = (props: PropsFromRedux) => {
-  const classes = useStyles()
+interface INavigationTopBarProps {
+  isConsideredMobile: boolean;
+}
+
+const NavigationTopBar = (props: PropsFromRedux & INavigationTopBarProps) => {
+  const classes = useStyles();
+
+  let {
+    isConsideredMobile,
+  } = props;
 
   let navigate = useNavigate();
 
@@ -91,9 +99,11 @@ const NavigationTopBar = (props: PropsFromRedux) => {
             <img onClick={() => props.history.push('/')} height={'115px'} style={{cursor: 'pointer', position: 'absolute', top: 10}} src={localDarkMode ? LogoDarkMode : LogoLightMode} alt="logo" />
           </div> */}
           <img onClick={() => navigate('/')} height={'40px'} style={{cursor: 'pointer'}} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
-          <Typography onClick={() => navigate('/')} variant="h6" className={classes.title}>
-            silo.observer
-          </Typography>
+          {!isConsideredMobile &&
+            <Typography onClick={() => navigate('/')} variant="h6" className={classes.title}>
+              silo.observer
+            </Typography>
+          }
           <div className={classes.flexer}/>
           <div className={"flex-center-all"}>
             <ExternalLink className={"hover-opacity-button flex-center-all"} href={"https://discord.gg/txcZWpmrj7"}>
