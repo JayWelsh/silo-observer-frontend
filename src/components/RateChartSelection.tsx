@@ -262,6 +262,10 @@ const RateChartSelection = (props: IRateChartSelection) => {
             marginRight: isConsideredMobile ? 0 : 24,
             marginBottom: isConsideredMobile ? 24 : 0,
           }}
+          onError={({ currentTarget }) => {
+            currentTarget.onerror = null; // prevents looping
+            currentTarget.src="https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/question-mark-white.svg";
+          }}
           alt="selected silo logo"
         />
         {tokenSymbol &&
