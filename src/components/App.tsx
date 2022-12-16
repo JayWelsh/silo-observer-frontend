@@ -8,7 +8,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import '../styles/App.css';
 import { PropsFromRedux } from '../containers/AppContainer';
-import BlockNumberIndicator from './BlockNumberIndicator';
 
 import PageContainer from './PageContainer';
 
@@ -56,7 +55,6 @@ const App = (props: PropsFromRedux) => {
           <ThemeProvider theme={theme}>
             <CssBaseline/>
             <PageContainer/>
-            <BlockNumberIndicator/>
           </ThemeProvider>
         </StyledEngineProvider>
     </BrowserRouter>

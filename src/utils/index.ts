@@ -1,4 +1,3 @@
-import { ChainId, shortenAddress } from '@usedapp/core'
 import numeral from "numeral";
 import BigNumber from 'bignumber.js';
 
@@ -105,63 +104,30 @@ export const percToColor = (perc: number) => {
 	let h = r * 0x10000 + g * 0x100 + b * 0x1;
 	return '#' + ('000000' + h.toString(16)).slice(-6);
 }
-
-const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
-	1: '',
-	3: 'ropsten.',
-	4: 'rinkeby.',
-	5: 'goerli.',
-	42: 'kovan.',
-	100: '',
-	1337: '',
-	56: '',
-	97: '',
-	137: '',
-	361: '',
-	365: '',
-	1285: '',
-	80001: '',
-	1666600000: '',
-	11297108109: '',
-	31337: '',
-	250: '',
-	43114: '',
-	19: '',
-	1287: '',
-	25: '',
-	338: '',
-	1284: '',
-	42262: '',
-	588: '',
-	69: '',
-	10: '',
-	42161: '',
-	421611: '',
-}
   
-export function getEtherscanLink(
-	chainId: ChainId,
-	data: string,
-	type: 'transaction' | 'token' | 'address' | 'block'
-): string {
-	const prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
+// export function getEtherscanLink(
+// 	chainId: string,
+// 	data: string,
+// 	type: 'transaction' | 'token' | 'address' | 'block'
+// ): string {
+// 	const prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
 
-	switch (type) {
-		case 'transaction': {
-		return `${prefix}/tx/${data}`
-		}
-		case 'token': {
-		return `${prefix}/token/${data}`
-		}
-		case 'block': {
-		return `${prefix}/block/${data}`
-		}
-		case 'address':
-		default: {
-		return `${prefix}/address/${data}`
-		}
-	}
-}
+// 	switch (type) {
+// 		case 'transaction': {
+// 		return `${prefix}/tx/${data}`
+// 		}
+// 		case 'token': {
+// 		return `${prefix}/token/${data}`
+// 		}
+// 		case 'block': {
+// 		return `${prefix}/block/${data}`
+// 		}
+// 		case 'address':
+// 		default: {
+// 		return `${prefix}/address/${data}`
+// 		}
+// 	}
+// }
 
 export const subtractNumbers = (value1: number, value2: number) => BigNumber(value1).minus(BigNumber(value2)).toString();
 
@@ -226,12 +192,3 @@ export const debounce = (
 // 	const parseDate = timeParse('%Y-%m-%dT%H:%M:%S.%LZ');
 // 	return 
 // }
-
-export function isAddress(address: string | undefined): boolean { 
-	try {
-		shortenAddress(address ? address : '')
-		return true
-	}catch{
-		return false
-	}
-}

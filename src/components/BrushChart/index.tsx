@@ -1,5 +1,5 @@
 import React, { useRef, useMemo } from 'react';
-import { scaleTime, scaleLinear } from '@visx/scale';
+import { scaleLinear, scaleTime } from "d3-scale";
 import { Brush } from '@visx/brush';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush from '@visx/brush/lib/BaseBrush';
@@ -88,19 +88,12 @@ function BrushChart({
   // scales
   const brushDateScale = useMemo(
     () =>
-      scaleTime<number>({
-        range: [0, xBrushMax],
-        domain: extent(timeseries, getDate) as [Date, Date],
-      }),
+      scaleTime().domain(extent(timeseries, getDate) as [Date, Date]).range([0, xBrushMax]),
     [xBrushMax, timeseries],
   );
   const brushStockScale = useMemo(
     () =>
-      scaleLinear({
-        range: [yBrushMax, 0],
-        domain: [min(timeseries, getStockValue) || 0, max(timeseries, getStockValue) || 0],
-        nice: true,
-      }),
+      scaleLinear().domain([min(timeseries, getStockValue) || 0, max(timeseries, getStockValue) || 0]).range([yBrushMax, 0]),
     [yBrushMax, timeseries],
   );
 

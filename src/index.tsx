@@ -1,37 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
-import { ChainId, DAppProvider } from '@usedapp/core'
 
 import './styles/index.css';
 import AppContainer from './containers/AppContainer';
 // import reportWebVitals from './reportWebVitals';
 import store from './state';
 
-const mainnetReadOnlyUrl = () => {
-  if(process.env.REACT_APP_INFURA_RPC_URL) {
-    return `${process.env.REACT_APP_INFURA_RPC_URL}`;
-  } else if(process.env.REACT_APP_ALCHEMY_RPC_URL) {
-    return `${process.env.REACT_APP_ALCHEMY_RPC_URL}`;
-  }
-  return '';
-}
-
-const config = {
-  readOnlyChainId: ChainId.Mainnet,
-  readOnlyUrls: {
-    [ChainId.Mainnet]: mainnetReadOnlyUrl(),
-  },
-  autoConnect: false,
-}
-
 ReactDOM.render(
   <React.StrictMode>
     {/* @ts-ignore */}
     <Provider store={store}>
-      <DAppProvider config={config}>
-        <AppContainer />
-      </DAppProvider>
+      <AppContainer />
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

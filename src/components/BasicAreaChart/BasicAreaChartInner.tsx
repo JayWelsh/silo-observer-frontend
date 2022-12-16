@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { AreaClosed, Line, Bar, LinePath } from '@visx/shape';
 import { curveStep } from '@visx/curve';
-import { scaleTime, scaleLinear } from '@visx/scale';
+import { scaleLinear, scaleTime } from "d3-scale";
 import { PatternLines } from '@visx/pattern';
 import { withTooltip, Tooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip';
 import { WithTooltipProvidedProps } from '@visx/tooltip/lib/enhancers/withTooltip';
@@ -103,19 +103,12 @@ export default withTooltip<AreaProps, ITimeseries>(
     // scales
     const dateScale = useMemo(
       () =>
-        scaleTime({
-          range: [margin.left, innerWidth + margin.left],
-          domain: extent(timeseries, getDate) as [Date, Date],
-        }),
+        scaleTime().domain(extent(timeseries, getDate) as [Date, Date]).range([margin.left, innerWidth + margin.left]),
       [innerWidth, margin.left, timeseries],
     );
     const stockValueScale = useMemo(
       () =>
-        scaleLinear({
-          range: [innerHeight + margin.top, margin.top],
-          domain: [(min(timeseries, getStockValue) || 0), (max(timeseries, getStockValue) || 0)],
-          // nice: true,
-        }),
+        scaleLinear().domain([(min(timeseries, getStockValue) || 0), (max(timeseries, getStockValue) || 0)]).range([innerHeight + margin.top, margin.top]),
       [margin.top, innerHeight, timeseries],
     );
 
