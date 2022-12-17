@@ -41,6 +41,7 @@ export default function SiloSearch() {
       setSearchableSilos(silos);
     })
   }, [])
+
   return (
     <Autocomplete
       // freeSolo
