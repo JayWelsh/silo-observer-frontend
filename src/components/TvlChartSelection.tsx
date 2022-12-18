@@ -209,7 +209,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       </div>
       {chartSelection === "tvl" && tvlTotalsTimeseries && tvlTotalsTimeseries.length > 0 &&
           <>
-              <div style={{marginBottom: 50}}>
+              <div>
                   <div style={{width: '100%'}}>
                       <BasicAreaChartContainer
                           chartData={tvlTotalsTimeseries}
@@ -227,7 +227,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       }
       {chartSelection === "borrowed" && borrowedTotalsTimeseries && borrowedTotalsTimeseries.length > 0 &&
           <>
-              <div style={{marginBottom: 50}}>
+              <div>
                   <div style={{width: '100%'}}>
                       <BasicAreaChartContainer
                           chartData={borrowedTotalsTimeseries}
@@ -245,7 +245,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       }
       {chartSelection === "tvl+borrowed" && combinedTotalsTimeseries && combinedTotalsTimeseries.length > 0 &&
           <>
-              <div style={{marginBottom: 50}}>
+              <div>
                   <div style={{width: '100%'}}>
                       <BasicAreaChartContainer
                           chartData={combinedTotalsTimeseries}

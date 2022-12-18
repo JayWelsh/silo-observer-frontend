@@ -1,3 +1,7 @@
+import {
+    ISilo
+} from '../../interfaces'
+
 export const setShowLeftMenu = (visible: boolean) => ({
     type: "SHOW_LEFT_MENU",
     visible
@@ -16,4 +20,9 @@ export const setDarkMode = (active: boolean) => ({
 export const setConsideredMobile = (mobile: boolean) => ({
     type: "IS_CONSIDERED_MOBILE",
     mobile
+})
+
+export const setSiloOverviews = (siloOverviews: ISilo[]) => ({
+    type: "SET_SILO_OVERVIEWS",
+    siloOverviews
 })

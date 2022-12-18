@@ -335,7 +335,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
       {chartTypeSelection === "borrower" && Object.entries(borrowerRates).map((value, index) => 
           <div key={`borrower-chart-${value[0]}`}>
             {value[0] === chartAssetSelection &&
-              <div style={{marginBottom: 50}}>
+              <div>
                   <div style={{width: '100%'}}>
                       <BasicAreaChartContainer
                           chartData={value[1]}
@@ -356,7 +356,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
       {chartTypeSelection === "lender" && Object.entries(lenderRates).map((value, index) => 
         <div key={`lender-chart-${value[0]}`}>
           {value[0] === chartAssetSelection &&
-            <div style={{marginBottom: 50}}>
+            <div>
                 <div style={{width: '100%'}}>
                     <BasicAreaChartContainer
                         chartData={value[1]}

@@ -80,10 +80,14 @@ export const priceFormat = (number: number, decimals = 2, currency = "$", prefix
 	if(number < 10) {
 			format = getDynamicFormat(format, number);
 	}
+	let result = numeral(number).format(format);
+	if(result === 'NaN') {
+		result = '0.00';
+	}
 	if (prefix) {
-			return `${currency}${'\u00A0'}`+ numeral(number).format(format);
+			return `${currency}${'\u00A0'}`+ result;
 	} else {
-			return numeral(number).format(format) + `${'\u00A0'}${currency}`
+			return result + `${'\u00A0'}${currency}`
 	}
 }
 

@@ -7,6 +7,9 @@ import Autocomplete from '@mui/material/Autocomplete';
 
 import { useCurrentPath } from '../hooks';
 import { API_ENDPOINT } from '../constants';
+import { ISilo } from '../interfaces';
+
+import { PropsFromRedux } from '../containers/SiloSearchContainer';
 
 interface ISearchableSilo {
   name: string
@@ -14,8 +17,17 @@ interface ISearchableSilo {
   address: string
 }
 
-export default function SiloSearch() {
+interface ISiloSearchProps {
+  siloOverviews: ISilo[]
+}
+
+export default function SiloSearch(props: PropsFromRedux & ISiloSearchProps) {
   const [searchableSilos, setSearchableSilos] = useState<ISearchableSilo[]>([]);
+
+  let {
+    siloOverviews,
+    setSiloOverviews,
+  } = props;
 
   let navigate = useNavigate();
   const pathMatch = useCurrentPath();
@@ -23,24 +35,25 @@ export default function SiloSearch() {
   useEffect(() => {
     fetch(`${API_ENDPOINT}/silos?perPage=1440`).then(resp => resp.json())
     .then(response => {
-      let silos = [];
       if(response?.data?.length > 0) {
-        // silos.push({
-        //   name: 'WHOLE SILO PLATFORM',
-        //   symbol: 'SILO',
-        //   address: '',
-        // })
-        for(let silo of response?.data) {
-          silos.push({
-            name: silo.name,
-            symbol: silo.name,
-            address: silo.address,
-          })
-        }
+        setSiloOverviews(response?.data);
+      } else {
+        setSiloOverviews([]);
       }
-      setSearchableSilos(silos);
     })
-  }, [])
+  }, [setSiloOverviews])
+
+  useEffect(() => {
+    let searchableSilos = [];
+    for(let silo of siloOverviews) {
+      searchableSilos.push({
+        name: silo.name,
+        symbol: silo.name,
+        address: silo.address,
+      })
+    }
+    setSearchableSilos(searchableSilos);
+  }, [siloOverviews])
 
   return (
     <Autocomplete
