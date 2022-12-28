@@ -12,6 +12,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
+import { Link } from "react-router-dom";
 
 type Order = 'asc' | 'desc';
 
@@ -36,6 +37,7 @@ interface IColumnConfigEntry {
   valueFormatter?: (arg0: any) => any
   imageGetter?: (arg0: any) => any
   fallbackImage?: string
+  internalLinkGetter?: (arg0: any) => string
 }
 
 interface EnhancedTableProps {
@@ -214,7 +216,20 @@ export default function SortableTable(props: ISortableTableProps) {
                                   alt=""
                                 />
                               }
-                              {columnConfigEntry.valueFormatter ? columnConfigEntry.valueFormatter(row[columnConfigEntry.valueKey]) : row[columnConfigEntry.valueKey]}
+                              {
+                                columnConfigEntry?.internalLinkGetter &&
+                                <Link style={{color: 'white'}} to={columnConfigEntry.internalLinkGetter(row[columnConfigEntry.valueKey])}>
+                                  {row[columnConfigEntry.valueKey]}
+                                </Link>
+                              }
+                              {!columnConfigEntry?.internalLinkGetter &&
+                                <>
+                                  {columnConfigEntry.valueFormatter
+                                    ? columnConfigEntry.valueFormatter(row[columnConfigEntry.valueKey]) 
+                                    : row[columnConfigEntry.valueKey]
+                                  }
+                                </>
+                              }
                             </div>
                           </TableCell>
                         )

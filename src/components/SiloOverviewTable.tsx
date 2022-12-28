@@ -30,6 +30,8 @@ interface ISiloOverviewData {
 
 const imageGetter = ((symbol: string) => `https://app.silo.finance/images/logos/${symbol}.png`)
 
+const internalLinkGetter = ((symbol: string) => `/silo/${symbol}/tvl`)
+
 export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchProps) {
   const [siloOverviewData, setSiloOverviewData] = useState<ISiloOverviewData[]>([]);
 
@@ -111,7 +113,8 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             numeric: false,
             disablePadding: false,
             imageGetter: imageGetter,
-            fallbackImage: 'https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/question-mark-white.svg'
+            fallbackImage: 'https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/question-mark-white.svg',
+            internalLinkGetter: internalLinkGetter,
           },
           {
             id: 'silo-overview-table-tvl-col',
