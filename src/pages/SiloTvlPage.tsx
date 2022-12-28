@@ -6,6 +6,8 @@ import BigNumber from 'bignumber.js';
 import SiloSearchContainer from '../containers/SiloSearchContainer';
 import TvlChartSelectionContainer from '../containers/TvlChartSelectionContainer';
 
+import ReturnHomeLink from '../components/ReturnHomeLink';
+
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
 const SiloTvlPage = () => {
@@ -14,7 +16,9 @@ const SiloTvlPage = () => {
 
   return (
       <Container maxWidth="lg">
-          <div style={{marginTop: 24}}/>
+          <div style={{marginTop: 12}}/>
+          <ReturnHomeLink/>
+          <div style={{marginTop: 12}}/>
           <SiloSearchContainer />
           <div style={{marginTop: 24}}/>
           <TvlChartSelectionContainer

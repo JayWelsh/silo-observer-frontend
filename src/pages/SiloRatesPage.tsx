@@ -7,13 +7,17 @@ import SiloSearchContainer from '../containers/SiloSearchContainer';
 
 import RateChartSelectionContainer from '../containers/RateChartSelectionContainer';
 
+import ReturnHomeLink from '../components/ReturnHomeLink';
+
 const SiloRatesPage = () => {
 
     let { tokenSymbol } = useParams();
 
     return (
         <Container maxWidth="lg">
-            <div style={{marginTop: 24}}/>
+            <div style={{marginTop: 12}}/>
+            <ReturnHomeLink/>
+            <div style={{marginTop: 12}}/>
             <SiloSearchContainer />
             <div style={{marginTop: 24}}/>
             {tokenSymbol && 
