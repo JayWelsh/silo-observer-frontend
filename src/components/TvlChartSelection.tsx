@@ -28,11 +28,16 @@ interface IDateToValue {
 interface ITvlChartSelectionProps {
   tokenSymbol?: string;
   isConsideredMobile: boolean;
+  overrideHandleSiloZoneChange?: (arg0: SelectChangeEvent<string>) => void;
 }
 
 const TvlChartSelection = (props: ITvlChartSelectionProps) => {
 
-  const { tokenSymbol, isConsideredMobile } = props;
+  const {
+    tokenSymbol,
+    isConsideredMobile,
+    overrideHandleSiloZoneChange,
+  } = props;
 
   let navigate = useNavigate();
 
@@ -50,8 +55,12 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
   const handleSiloZoneChange = (event: SelectChangeEvent) => {
     let value = event.target.value as string;
     setSiloZoneSelection(value)
-    if(value === 'rates') {
-      navigate(`/silo/${tokenSymbol}/rates`);
+    if(overrideHandleSiloZoneChange) {
+      overrideHandleSiloZoneChange(event);
+    } else {
+      if(value === 'rates') {
+        navigate(`/silo/${tokenSymbol}/rates`);
+      }
     }
   };
 
@@ -177,21 +186,20 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
           }}
           alt="selected silo logo"
         />
-        {tokenSymbol &&
-          <FormControl fullWidth style={{marginBottom: 24, marginRight: isConsideredMobile ? 0 : 24, maxWidth: isConsideredMobile ? '100%' : 180}}>
-              <InputLabel id="select-label-silo-zone">Zone</InputLabel>
-              <Select
-                  labelId="select-label-silo-zone"
-                  id="select-label-silo-zone"
-                  value={siloZoneSelection}
-                  label="Zone"
-                  onChange={handleSiloZoneChange}
-              >
-                  <MenuItem value={'tvl+borrowed'}>TVL & Borrowed</MenuItem>
-                  <MenuItem value={'rates'}>Rates</MenuItem>
-              </Select>
-          </FormControl>
-        }
+        <FormControl fullWidth style={{marginBottom: 24, marginRight: isConsideredMobile ? 0 : 24, maxWidth: isConsideredMobile ? '100%' : 180}}>
+            <InputLabel id="select-label-silo-zone">Zone</InputLabel>
+            <Select
+                labelId="select-label-silo-zone"
+                id="select-label-silo-zone"
+                value={siloZoneSelection}
+                label="Zone"
+                onChange={handleSiloZoneChange}
+            >
+                <MenuItem value={'tvl+borrowed'}>TVL & Borrowed</MenuItem>
+                {tokenSymbol && <MenuItem value={'rates'}>Rates</MenuItem>}
+                {!tokenSymbol && <MenuItem value={'user-metrics'}>User Metrics</MenuItem>}
+            </Select>
+        </FormControl>
         <FormControl fullWidth style={{marginBottom: 24, marginRight: 0, maxWidth: isConsideredMobile ? '100%' : 180}}>
             <InputLabel id="demo-simple-select-label">Chart Selection</InputLabel>
             <Select

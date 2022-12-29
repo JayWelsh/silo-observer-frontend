@@ -28,6 +28,7 @@ interface IBasicAreaChartProps {
   changeType?: "neutral" | "up-good" | "down-good",
   isPercentage?: boolean,
   formatValueFn: (arg1: string | number) => string,
+  hideTime?: boolean,
   isConsideredMobile: boolean
 }
 
@@ -48,6 +49,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
       isPercentage,
       formatValueFn,
       isConsideredMobile,
+      hideTime,
     } = props;
 
     const [filteredChartData, setFilteredChartData] = useState(chartData);
@@ -68,7 +70,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
         if(isPercentage) {
           returnString = `- ${priceFormat(Number(Math.abs(lastValue - firstValue).toFixed(2)), 2, '%', false)} %`
         } else {
-          returnString = `- ${priceFormat(Math.abs(new BigNumber(lastValue).multipliedBy(100).dividedBy(firstValue).minus(100).decimalPlaces(2).toNumber()), 2, '%', false)} %`
+          returnString = `- ${priceFormat(Math.abs(new BigNumber(lastValue).multipliedBy(100).dividedBy(firstValue).minus(100).decimalPlaces(2).toNumber()), 2, '%', false)}`
         }
       }
       return returnString;
@@ -104,44 +106,44 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
 
     return (
       <div style={{minHeight: height, width: '100%', position: 'relative', borderRadius: 10, backgroundColor: 'black'}}>
-          <div
-            style={{
-              height: 76,
-              width: '100%',
-              backgroundColor: 'black',
-              borderTopRightRadius: 10,
-              borderTopLeftRadius: 10,
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              paddingLeft: 15,
-              paddingRight: 15,
-            }}
-          >
-            <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
-              {leftTextTitle &&
-                <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10}}>
-                  {leftTextTitle}
-                </Typography>
-              }
-              {leftTextSubtitle &&
-                <Typography variant="subtitle1" style={{lineHeight: 1, alignSelf: 'start', fontWeight: 'bold'}}>
-                  {leftTextSubtitle}
-                </Typography>
-              }
-            </div>
-            <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+        <div
+          style={{
+            height: 76,
+            width: '100%',
+            backgroundColor: 'black',
+            borderTopRightRadius: 10,
+            borderTopLeftRadius: 10,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingLeft: 15,
+            paddingRight: 15,
+          }}
+        >
+          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+            {leftTextTitle &&
               <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10}}>
-                {rightText}
+                {leftTextTitle}
               </Typography>
-              {showChange &&
-                <Typography variant="subtitle1" style={{lineHeight: 1, alignSelf: 'end', color: getChangeColor(filteredChartData[0].value, filteredChartData[filteredChartData.length - 1].value)}}>
-                  {getChange(filteredChartData[0].value, filteredChartData[filteredChartData.length - 1].value)}
-                </Typography>
-              }
-            </div>
+            }
+            {leftTextSubtitle &&
+              <Typography variant="subtitle1" style={{lineHeight: 1, alignSelf: 'start', fontWeight: 'bold'}}>
+                {leftTextSubtitle}
+              </Typography>
+            }
           </div>
-          {chartData && (chartData.length > 0) &&
+          <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+            <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10, alignSelf: 'end'}}>
+              {rightText}
+            </Typography>
+            {showChange &&
+              <Typography variant="subtitle1" style={{lineHeight: 1, alignSelf: 'end', color: getChangeColor(filteredChartData[0].value, filteredChartData[filteredChartData.length - 1].value)}}>
+                {getChange(filteredChartData[0].value, filteredChartData[filteredChartData.length - 1].value)}
+              </Typography>
+            }
+          </div>
+        </div>
+        {chartData && (chartData.length > 0) &&
           <>
             <ParentSize className="graph-container" debounceTime={10}>
                 {({ width: w }) => {
@@ -152,6 +154,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
                               height={height}
                               timeseries={filteredChartData}
                               formatValue={formatValueFn}
+                              hideTime={hideTime}
                           />
                         </>
                     )

@@ -13,6 +13,7 @@ import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
 interface IRateChartSelection {
   tokenSymbol: string;
   isConsideredMobile: boolean;
+  overrideHandleSiloZoneChange?: (arg0: SelectChangeEvent<string>) => void;
 }
 
 interface ITokenRate {
@@ -42,7 +43,11 @@ interface IAssetToDateToRate {
 
 const RateChartSelection = (props: IRateChartSelection) => {
 
-  const { tokenSymbol, isConsideredMobile } = props;
+  const {
+    tokenSymbol,
+    isConsideredMobile,
+    overrideHandleSiloZoneChange,
+  } = props;
 
   let navigate = useNavigate();
 
@@ -276,7 +281,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
                   id="select-label-silo-zone"
                   value={siloZoneSelection}
                   label="Zone"
-                  onChange={handleSiloZoneChange}
+                  onChange={overrideHandleSiloZoneChange ? overrideHandleSiloZoneChange : handleSiloZoneChange}
                   disabled={(!siloInputTokenAddress || !chartAssetSelection || !tokenAddressToSymbolMapping[siloInputTokenAddress])}
               >
                   <MenuItem value={'tvl+borrowed'}>TVL & Borrowed</MenuItem>
