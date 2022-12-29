@@ -175,7 +175,7 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
             </Select>
         </FormControl>
       </div>
-      {chartSelection === "daily-active-users" && dailyActiveUsersTimeseries && dailyActiveUsersTimeseries.length > 0 &&
+      {chartSelection === "daily-active-users" && dailyActiveUsersTimeseries &&
           <>
               <div>
                   <div style={{width: '100%'}}>
@@ -183,7 +183,7 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
                           chartData={dailyActiveUsersTimeseries}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`Unique Daily Users`}
-                          rightText={priceFormat(dailyActiveUsersTimeseries[dailyActiveUsersTimeseries.length - 1].value, 0, 'Users', false)}
+                          rightText={(dailyActiveUsersTimeseries.length > 0) ? priceFormat(dailyActiveUsersTimeseries[dailyActiveUsersTimeseries.length - 1].value, 0, 'Users', false) : 'Loading...'}
                           showChange={true}
                           changeType={"up-good"}
                           height={500}
