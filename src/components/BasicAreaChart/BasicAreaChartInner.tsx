@@ -29,6 +29,7 @@ const tooltipStyles = {
 
 // util
 const formatDate = timeFormat("%I:%M %p | %b %d %Y");
+const formatDateHideTime = timeFormat("%b %d %Y");
 
 const tickDateFormat = timeFormat('%b %d');
 const formatTickDate = (date: any) => {
@@ -51,6 +52,7 @@ export type AreaProps = {
   height: number;
   margin?: { top: number; right: number; bottom: number; left: number };
   timeseries: ITimeseries[],
+  hideTime?: boolean,
   formatValue: (arg0: string | number) => string
 };
 
@@ -66,6 +68,7 @@ export default withTooltip<AreaProps, ITimeseries>(
     tooltipLeft = 0,
     timeseries,
     formatValue,
+    hideTime,
   }: AreaProps & WithTooltipProvidedProps<ITimeseries>) => {
     if (width < 10) return null;
 
@@ -335,7 +338,7 @@ export default withTooltip<AreaProps, ITimeseries>(
                 ...(!tooltipDateTranslateLeft && !tooltipDateTranslateRight && {transform: 'translateX(-50%)'})
               }}
             >
-              {formatDate(getDate(tooltipData))}
+              {hideTime ? formatDateHideTime(getDate(tooltipData)) : formatDate(getDate(tooltipData))}
             </Tooltip>
           </div>
         )}
