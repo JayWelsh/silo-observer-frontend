@@ -215,7 +215,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
             </Select>
         </FormControl>
       </div>
-      {chartSelection === "tvl" && tvlTotalsTimeseries && tvlTotalsTimeseries.length > 0 &&
+      {chartSelection === "tvl" && tvlTotalsTimeseries &&
           <>
               <div>
                   <div style={{width: '100%'}}>
@@ -223,7 +223,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
                           chartData={tvlTotalsTimeseries}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`TVL`}
-                          rightText={priceFormat(tvlTotalsTimeseries[tvlTotalsTimeseries.length - 1].value, 2, '$')}
+                          rightText={tvlTotalsTimeseries.length > 0 ? priceFormat(tvlTotalsTimeseries[tvlTotalsTimeseries.length - 1].value, 2, '$') : 'Loading...'}
                           showChange={true}
                           changeType={"up-good"}
                           height={500}
@@ -233,7 +233,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
               </div>
           </>
       }
-      {chartSelection === "borrowed" && borrowedTotalsTimeseries && borrowedTotalsTimeseries.length > 0 &&
+      {chartSelection === "borrowed" && borrowedTotalsTimeseries &&
           <>
               <div>
                   <div style={{width: '100%'}}>
@@ -241,7 +241,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
                           chartData={borrowedTotalsTimeseries}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`Borrowed`}
-                          rightText={priceFormat(borrowedTotalsTimeseries[borrowedTotalsTimeseries.length - 1].value, 2, '$')}
+                          rightText={borrowedTotalsTimeseries.length > 0 ? priceFormat(borrowedTotalsTimeseries[borrowedTotalsTimeseries.length - 1].value, 2, '$') : 'Loading...'}
                           showChange={true}
                           changeType={"up-good"}
                           height={500}
@@ -251,7 +251,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
               </div>
           </>
       }
-      {chartSelection === "tvl+borrowed" && combinedTotalsTimeseries && combinedTotalsTimeseries.length > 0 &&
+      {chartSelection === "tvl+borrowed" && combinedTotalsTimeseries &&
           <>
               <div>
                   <div style={{width: '100%'}}>
@@ -259,7 +259,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
                           chartData={combinedTotalsTimeseries}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`TVL + Borrows`}
-                          rightText={priceFormat(combinedTotalsTimeseries[combinedTotalsTimeseries.length - 1].value, 2, '$')}
+                          rightText={combinedTotalsTimeseries.length > 0 ? priceFormat(combinedTotalsTimeseries[combinedTotalsTimeseries.length - 1].value, 2, '$') : 'Loading...'}
                           showChange={true}
                           changeType={"up-good"}
                           height={500}

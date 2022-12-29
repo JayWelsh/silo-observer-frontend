@@ -123,22 +123,27 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
           <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
             {leftTextTitle &&
               <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10}}>
-                {leftTextTitle}
+                {leftTextTitle || 'Loading...'}
               </Typography>
             }
             {leftTextSubtitle &&
               <Typography variant="subtitle1" style={{lineHeight: 1, alignSelf: 'start', fontWeight: 'bold'}}>
-                {leftTextSubtitle}
+                {leftTextSubtitle || 'Loading...'}
               </Typography>
             }
           </div>
           <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
             <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10, alignSelf: 'end'}}>
-              {rightText}
+              {rightText || 'Loading...'}
             </Typography>
-            {showChange &&
-              <Typography variant="subtitle1" style={{lineHeight: 1, alignSelf: 'end', color: getChangeColor(filteredChartData[0].value, filteredChartData[filteredChartData.length - 1].value)}}>
-                {getChange(filteredChartData[0].value, filteredChartData[filteredChartData.length - 1].value)}
+            {(showChange && filteredChartData?.length > 0) 
+              ?
+                <Typography variant="subtitle1" style={{lineHeight: 1, alignSelf: 'end', color: getChangeColor(filteredChartData[0].value, filteredChartData[filteredChartData.length - 1].value)}}>
+                  {getChange(filteredChartData[0].value, filteredChartData[filteredChartData.length - 1].value)}
+                </Typography>
+              :
+              <Typography variant="subtitle1" style={{lineHeight: 1, alignSelf: 'end'}}>
+                Loading...
               </Typography>
             }
           </div>
@@ -180,7 +185,30 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
                 </ParentSize>
               </div>
             }
-          </>    
+          </>
+        }
+        {
+          (!chartData || chartData.length) === 0 &&
+          <>
+            <ParentSize className="graph-container" debounceTime={10}>
+                {({ width: w }) => {
+                    return (
+                      <div style={{width: w, height: height}} />
+                    )
+                }}
+            </ParentSize>
+            {!isConsideredMobile &&
+              <div style={{padding: 10}}>
+                <ParentSize className="graph-container" debounceTime={10}>
+                  {({ width: w }) => {
+                      return (
+                        <div style={{width: w, height: 112}} />
+                      )
+                  }}
+                </ParentSize>
+              </div>
+            }
+          </>
         }
       </div>
     )

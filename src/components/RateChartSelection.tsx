@@ -337,6 +337,25 @@ const RateChartSelection = (props: IRateChartSelection) => {
           </Select>
         </FormControl>
       </div>
+      {((chartTypeSelection === "borrower" && Object.entries(borrowerRates)?.length === 0) || (chartTypeSelection === "lender" && Object.entries(lenderRates)?.length === 0)) &&
+          <div key={`borrower-lender-chart-placeholder`}>
+              <div>
+                  <div style={{width: '100%'}}>
+                      <BasicAreaChartContainer
+                          chartData={[]}
+                          leftTextTitle={`Loading...`}
+                          leftTextSubtitle={`Loading...`}
+                          rightText={`Loading...`}
+                          showChange={true}
+                          changeType={"neutral"}
+                          height={500}
+                          isPercentage={true}
+                          formatValueFn={(value: any) => `${value}`}
+                      />
+                  </div>
+              </div>
+          </div>
+      }
       {chartTypeSelection === "borrower" && Object.entries(borrowerRates).map((value, index) => 
           <div key={`borrower-chart-${value[0]}`}>
             {value[0] === chartAssetSelection &&
