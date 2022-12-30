@@ -78,7 +78,13 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
 
       let dateToUniqueAddresses : IDateToValue = {};
 
+      let coveredDates : number[] = [];
+
       for(let entry of borrowEventsDistinctDailyUsers) {
+        let coveredDate = new Date(entry.block_day_timestamp).getTime();
+        if(coveredDates.indexOf(coveredDate) === -1) {
+          coveredDates.push(coveredDate);
+        }
         if(!dateToUniqueAddresses[entry.block_day_timestamp]) {
           dateToUniqueAddresses[entry.block_day_timestamp] = [entry.user_address]
         } else if (dateToUniqueAddresses[entry.block_day_timestamp].indexOf(entry.user_address) === -1) {
@@ -87,6 +93,10 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
       }
 
       for(let entry of depositEventsDistinctDailyUsers) {
+        let coveredDate = new Date(entry.block_day_timestamp).getTime();
+        if(coveredDates.indexOf(coveredDate) === -1) {
+          coveredDates.push(coveredDate);
+        }
         if(!dateToUniqueAddresses[entry.block_day_timestamp]) {
           dateToUniqueAddresses[entry.block_day_timestamp] = [entry.user_address]
         } else if (dateToUniqueAddresses[entry.block_day_timestamp].indexOf(entry.user_address) === -1) {
@@ -95,6 +105,10 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
       }
 
       for(let entry of repayEventsDistinctDailyUsers) {
+        let coveredDate = new Date(entry.block_day_timestamp).getTime();
+        if(coveredDates.indexOf(coveredDate) === -1) {
+          coveredDates.push(coveredDate);
+        }
         if(!dateToUniqueAddresses[entry.block_day_timestamp]) {
           dateToUniqueAddresses[entry.block_day_timestamp] = [entry.user_address]
         } else if (dateToUniqueAddresses[entry.block_day_timestamp].indexOf(entry.user_address) === -1) {
@@ -103,6 +117,10 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
       }
 
       for(let entry of withdrawEventsDistinctDailyUsers) {
+        let coveredDate = new Date(entry.block_day_timestamp).getTime();
+        if(coveredDates.indexOf(coveredDate) === -1) {
+          coveredDates.push(coveredDate);
+        }
         if(!dateToUniqueAddresses[entry.block_day_timestamp]) {
           dateToUniqueAddresses[entry.block_day_timestamp] = [entry.user_address]
         } else if (dateToUniqueAddresses[entry.block_day_timestamp].indexOf(entry.user_address) === -1) {
@@ -112,16 +130,32 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
 
       let dailyActiveUsersTimeseries : ITimeseries[] = [];
 
-      dailyActiveUsersTimeseries.push({
-        date: "2022-08-18T00:00:00.000Z",
-        value: 0,
-      })
 
       for(let [key, value] of Object.entries(dateToUniqueAddresses)) {
         dailyActiveUsersTimeseries.push({
           date: key,
           value: value.length,
         })
+      }
+
+      // find any dates missing values and fill them in with 0 values
+      coveredDates = coveredDates.sort((a, b) => a - b);
+      let earliestDate = coveredDates?.length > 0 ? coveredDates[0] : 0;
+      let latestDate = coveredDates?.length > 0 ? coveredDates[coveredDates.length - 1] : 0;
+      if(earliestDate && latestDate) {
+
+        let daysInDateRange = (latestDate - earliestDate) / (86400 * 1000);
+
+        // create missing record entries
+        for(let i = 0; i < daysInDateRange; i++) {
+          let checkDate = (earliestDate + (i * 86400 * 1000));
+          if(coveredDates.indexOf(checkDate) === -1) {
+            dailyActiveUsersTimeseries.push({
+              value: 0,
+              date: new Date(checkDate).toISOString(),
+            })
+          }
+        }
       }
 
       dailyActiveUsersTimeseries = dailyActiveUsersTimeseries.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
