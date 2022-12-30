@@ -6,6 +6,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
+import { priceFormat } from '../utils';
+
 import { API_ENDPOINT } from '../constants';
 
 import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
@@ -365,7 +367,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
                           chartData={value[1]}
                           leftTextTitle={`${tokenAddressToSymbolMapping[value[0]]} APY`}
                           leftTextSubtitle={`Borrower`}
-                          rightText={`${value[1][value[1].length - 1].value.toFixed(2)} % APY`}
+                          rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '% APY', false)}
                           showChange={true}
                           changeType={"neutral"}
                           height={500}
@@ -386,7 +388,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
                         chartData={value[1]}
                         leftTextTitle={`${tokenAddressToSymbolMapping[value[0]]} APY`}
                         leftTextSubtitle={`Lender`}
-                        rightText={`${value[1][value[1].length - 1].value.toFixed(2)} % APY`}
+                        rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '% APY', false)}
                         showChange={true}
                         changeType={"neutral"}
                         height={500}
