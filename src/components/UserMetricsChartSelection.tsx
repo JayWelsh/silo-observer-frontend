@@ -141,13 +141,13 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
       // find any dates missing values and fill them in with 0 values
       coveredDates = coveredDates.sort((a, b) => a - b);
       let earliestDate = coveredDates?.length > 0 ? coveredDates[0] : 0;
-      let latestDate = coveredDates?.length > 0 ? coveredDates[coveredDates.length - 1] : 0;
+      let latestDate = coveredDates?.length > 0 ? new Date(new Date().setUTCHours(0, 0, 0, 0)).getTime() : 0; // use current date
       if(earliestDate && latestDate) {
 
         let daysInDateRange = (latestDate - earliestDate) / (86400 * 1000);
 
         // create missing record entries
-        for(let i = 0; i < daysInDateRange; i++) {
+        for(let i = 0; i <= daysInDateRange; i++) {
           let checkDate = (earliestDate + (i * 86400 * 1000));
           if(coveredDates.indexOf(checkDate) === -1) {
             dailyActiveUsersTimeseries.push({
