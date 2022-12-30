@@ -217,11 +217,11 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
                           chartData={dailyActiveUsersTimeseries}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`Unique Daily Users`}
-                          rightText={(dailyActiveUsersTimeseries.length > 0) ? priceFormat(dailyActiveUsersTimeseries[dailyActiveUsersTimeseries.length - 1].value, 0, 'Users', false) : 'Loading...'}
+                          rightTextFormatValueFn={(value: any) => priceFormat(value, 0, 'User(s)', false)}
                           showChange={true}
                           changeType={"up-good"}
                           height={500}
-                          formatValueFn={(value: any) => priceFormat(value, 0, "Users")}
+                          formatValueFn={(value: any) => priceFormat(value, 0, "User(s)")}
                           hideTime={true}
                       />
                   </div>

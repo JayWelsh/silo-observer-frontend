@@ -223,7 +223,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
                           chartData={tvlTotalsTimeseries}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`TVL`}
-                          rightText={tvlTotalsTimeseries.length > 0 ? priceFormat(tvlTotalsTimeseries[tvlTotalsTimeseries.length - 1].value, 2, '$') : 'Loading...'}
+                          rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
                           showChange={true}
                           changeType={"up-good"}
                           height={500}
@@ -241,7 +241,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
                           chartData={borrowedTotalsTimeseries}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`Borrowed`}
-                          rightText={borrowedTotalsTimeseries.length > 0 ? priceFormat(borrowedTotalsTimeseries[borrowedTotalsTimeseries.length - 1].value, 2, '$') : 'Loading...'}
+                          rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
                           showChange={true}
                           changeType={"up-good"}
                           height={500}
@@ -259,7 +259,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
                           chartData={combinedTotalsTimeseries}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`TVL + Borrows`}
-                          rightText={combinedTotalsTimeseries.length > 0 ? priceFormat(combinedTotalsTimeseries[combinedTotalsTimeseries.length - 1].value, 2, '$') : 'Loading...'}
+                          rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
                           showChange={true}
                           changeType={"up-good"}
                           height={500}

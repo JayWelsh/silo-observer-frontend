@@ -28,6 +28,7 @@ interface IBasicAreaChartProps {
   changeType?: "neutral" | "up-good" | "down-good",
   isPercentage?: boolean,
   formatValueFn: (arg1: string | number) => string,
+  rightTextFormatValueFn?: (arg1: string | number) => string,
   hideTime?: boolean,
   isConsideredMobile: boolean
 }
@@ -44,6 +45,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
       leftTextTitle,
       leftTextSubtitle,
       rightText,
+      rightTextFormatValueFn,
       showChange,
       changeType,
       isPercentage,
@@ -68,7 +70,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
         }
       } else if (firstValue > lastValue) {
         if(isPercentage) {
-          returnString = `- ${priceFormat(Number(Math.abs(lastValue - firstValue).toFixed(2)), 2, '%', false)} %`
+          returnString = `- ${priceFormat(Number(Math.abs(lastValue - firstValue).toFixed(2)), 2, '%', false)}`
         } else {
           returnString = `- ${priceFormat(Math.abs(new BigNumber(lastValue).multipliedBy(100).dividedBy(firstValue).minus(100).decimalPlaces(2).toNumber()), 2, '%', false)}`
         }
@@ -134,7 +136,8 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
           </div>
           <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
             <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10, alignSelf: 'end'}}>
-              {rightText || 'Loading...'}
+              {!rightText && ((rightTextFormatValueFn && (filteredChartData.length > 0)) ? rightTextFormatValueFn(filteredChartData[filteredChartData.length - 1].value) : 'Loading...')}
+              {(!rightTextFormatValueFn && (rightText || 'Loading...'))}
             </Typography>
             {(showChange && filteredChartData?.length > 0) 
               ?
