@@ -47,7 +47,8 @@ export type BrushProps = {
   margin?: { top: number; right: number; bottom: number; left: number }
   compact?: boolean
   timeseries: ITimeseries[]
-  setFilteredChartData?: (arg0: ITimeseries[]) => void 
+  setFilteredChartData?: (arg0: ITimeseries[]) => void
+  isLoadingPlaceholder?: boolean
 };
 
 function BrushChart({
@@ -62,6 +63,7 @@ function BrushChart({
     bottom: 0,
     right: 0,
   },
+  isLoadingPlaceholder,
 }: BrushProps) {
   const brushRef = useRef<BaseBrush | null>(null);
 
@@ -113,7 +115,7 @@ function BrushChart({
         <AreaChart
           hideBottomAxis
           hideLeftAxis
-          data={timeseries}
+          data={isLoadingPlaceholder ? [] : timeseries}
           width={width}
           yMax={yBrushMax}
           xScale={brushDateScale}

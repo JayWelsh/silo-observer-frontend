@@ -54,6 +54,7 @@ export type AreaProps = {
   timeseries: ITimeseries[],
   hideTime?: boolean,
   formatValue: (arg0: string | number) => string
+  isLoadingPlaceholder?: boolean
 };
 
 export default withTooltip<AreaProps, ITimeseries>(
@@ -69,6 +70,7 @@ export default withTooltip<AreaProps, ITimeseries>(
     timeseries,
     formatValue,
     hideTime,
+    isLoadingPlaceholder = false,
   }: AreaProps & WithTooltipProvidedProps<ITimeseries>) => {
     if (width < 10) return null;
 
@@ -169,77 +171,89 @@ export default withTooltip<AreaProps, ITimeseries>(
             fill="url(#area-background-gradient)"
             rx={0}
           />
-          <AxisBottom
-            tickLabelProps={() => ({
-              fill: '#fff',
-              fontSize: 11,
-              textAnchor: 'middle',
-            })}
-            tickStroke={"#6f6f6f"}
-            tickFormat={formatTickDate}
-            top={innerHeight}
-            //@ts-ignore
-            data={timeseries}
-            scale={dateScale}
-            x={(d: ITimeseries) => dateScale(getDate(d)) ?? 0}
-            hideAxisLine
-            numTicks={5}
-            className={"monospace"}
-          />
-          <AxisBottom
-            tickLabelProps={() => ({
-              fill: '#fff',
-              fontSize: 11,
-              textAnchor: 'middle',
-            })}
-            tickStroke={"#6f6f6f"}
-            tickFormat={formatTickTime}
-            top={innerHeight + 15}
-            //@ts-ignore
-            data={timeseries}
-            scale={dateScale}
-            x={(d: ITimeseries) => dateScale(getDate(d)) ?? 0}
-            hideAxisLine
-            hideTicks
-            numTicks={5}
-            className={"monospace"}
-          />
+          {!isLoadingPlaceholder && 
+            <AxisBottom
+              tickLabelProps={() => ({
+                fill: '#fff',
+                fontSize: 11,
+                textAnchor: 'middle',
+              })}
+              tickStroke={"#6f6f6f"}
+              tickFormat={formatTickDate}
+              top={innerHeight}
+              //@ts-ignore
+              data={timeseries}
+              scale={dateScale}
+              x={(d: ITimeseries) => dateScale(getDate(d)) ?? 0}
+              hideAxisLine
+              numTicks={5}
+              className={"monospace"}
+            />
+          }
+          {!isLoadingPlaceholder && 
+            <AxisBottom
+              tickLabelProps={() => ({
+                fill: '#fff',
+                fontSize: 11,
+                textAnchor: 'middle',
+              })}
+              tickStroke={"#6f6f6f"}
+              tickFormat={formatTickTime}
+              top={innerHeight + 15}
+              //@ts-ignore
+              data={timeseries}
+              scale={dateScale}
+              x={(d: ITimeseries) => dateScale(getDate(d)) ?? 0}
+              hideAxisLine
+              hideTicks
+              numTicks={5}
+              className={"monospace"}
+            />
+          }
           <LinearGradient id="area-background-gradient" from={background} to={background2} />
           <LinearGradient id="area-gradient" from={accentColor} to={accentColor} fromOpacity={0.4} toOpacity={0} />
-          <PatternLines
-            id="dLines"
-            height={6}
-            width={6}
-            stroke="#010a28"
-            strokeWidth={1}
-            orientation={['diagonal']}
-        />
-          <AreaClosed<ITimeseries>
-            data={timeseries}
-            x={(d) => dateScale(getDate(d)) ?? 0}
-            y={(d) => stockValueScale(getStockValue(d)) ?? 0}
-            yScale={stockValueScale}
-            strokeWidth={0}
-            stroke="url(#area-gradient)"
-            fill="url(#area-gradient)"
-            curve={curveStep}
-          />
-          <AreaClosed<ITimeseries>
-            data={timeseries}
-            x={(d) => dateScale(getDate(d)) ?? 0}
-            y={(d) => stockValueScale(getStockValue(d)) ?? 0}
-            yScale={stockValueScale}
-            fill="url(#dLines)"
-            curve={curveStep}
-          />
-          <LinePath
-            curve={curveStep}
-            stroke={"#FFF"}
-            strokeWidth={1}
-            data={timeseries}
-            x={(d) => dateScale(getDate(d)) ?? 0}
-            y={(d) => stockValueScale(getStockValue(d)) ?? 0}
-          />
+          {!isLoadingPlaceholder && 
+            <PatternLines
+              id="dLines"
+              height={6}
+              width={6}
+              stroke="#010a28"
+              strokeWidth={1}
+              orientation={['diagonal']}
+            />
+          }
+          {!isLoadingPlaceholder && 
+            <AreaClosed<ITimeseries>
+              data={timeseries}
+              x={(d) => dateScale(getDate(d)) ?? 0}
+              y={(d) => stockValueScale(getStockValue(d)) ?? 0}
+              yScale={stockValueScale}
+              strokeWidth={0}
+              stroke="url(#area-gradient)"
+              fill="url(#area-gradient)"
+              curve={curveStep}
+            />
+          }
+          {!isLoadingPlaceholder && 
+            <AreaClosed<ITimeseries>
+              data={timeseries}
+              x={(d) => dateScale(getDate(d)) ?? 0}
+              y={(d) => stockValueScale(getStockValue(d)) ?? 0}
+              yScale={stockValueScale}
+              fill="url(#dLines)"
+              curve={curveStep}
+            />
+          }
+          {!isLoadingPlaceholder && 
+            <LinePath
+              curve={curveStep}
+              stroke={"#FFF"}
+              strokeWidth={1}
+              data={timeseries}
+              x={(d) => dateScale(getDate(d)) ?? 0}
+              y={(d) => stockValueScale(getStockValue(d)) ?? 0}
+            />
+          }
           <Bar
             x={margin.left}
             y={margin.top}
@@ -261,9 +275,11 @@ export default withTooltip<AreaProps, ITimeseries>(
                   strokeDasharray="4,4"
                   stroke={"#6f6f6f"}
               />
-              <text filter="url(#drop-shadow)" className={"monospace"} y={stockValueScale(max(timeseries, getStockValue) || 0)} fill="white" dy="1.3em" dx="1em" fontSize="14">
-                  {formatValue((max(timeseries, getStockValue) || 0).toString())}
-              </text>
+              {!isLoadingPlaceholder && 
+                <text filter="url(#drop-shadow)" className={"monospace"} y={stockValueScale(max(timeseries, getStockValue) || 0)} fill="white" dy="1.3em" dx="1em" fontSize="14">
+                    {formatValue((max(timeseries, getStockValue) || 0).toString())}
+                </text>
+              }
           </g>
           <g>
               <LinePath
@@ -274,9 +290,11 @@ export default withTooltip<AreaProps, ITimeseries>(
                   strokeDasharray="4,4"
                   stroke={"#6f6f6f"}
               />
-              <text filter="url(#drop-shadow)"className={"monospace"} y={stockValueScale(min(timeseries, getStockValue) || 0) - 25} fill="white" dy="1.3em" dx="1em" fontSize="14">
-                  {formatValue((min(timeseries, getStockValue) || 0).toString())}
-              </text>
+              {!isLoadingPlaceholder && 
+                <text filter="url(#drop-shadow)"className={"monospace"} y={stockValueScale(min(timeseries, getStockValue) || 0) - 25} fill="white" dy="1.3em" dx="1em" fontSize="14">
+                    {formatValue((min(timeseries, getStockValue) || 0).toString())}
+                </text>
+              }
           </g>
           {tooltipData && (
             <g>

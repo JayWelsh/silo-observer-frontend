@@ -18,6 +18,17 @@ export interface ITimeseries {
   value: number;
 }
 
+const placeholderData = [
+  {
+    value: 0,
+    date: "2022-12-01T00:00:00.000Z",
+  },
+  {
+    value: 1,
+    date: "2022-12-30T00:00:00.000Z",
+  }
+]
+
 interface IBasicAreaChartProps {
   chartData: ITimeseries[]
   height: number
@@ -151,67 +162,40 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
             }
           </div>
         </div>
-        {chartData && (chartData.length > 0) &&
-          <>
+        <ParentSize className="graph-container" debounceTime={10}>
+          {({ width: w }) => {
+            return (
+              <>
+                <BasicAreaChartInner
+                    width={w}
+                    height={height}
+                    timeseries={(filteredChartData && filteredChartData.length > 0) ? filteredChartData : placeholderData}
+                    isLoadingPlaceholder={(filteredChartData && filteredChartData.length > 0) ? false : true}
+                    formatValue={formatValueFn}
+                    hideTime={hideTime}
+                />
+              </>
+            )
+          }}
+        </ParentSize>
+        {!isConsideredMobile &&
+          <div style={{padding: 10}}>
             <ParentSize className="graph-container" debounceTime={10}>
-                {({ width: w }) => {
-                    return (
-                        <>
-                          <BasicAreaChartInner
-                              width={w}
-                              height={height}
-                              timeseries={filteredChartData}
-                              formatValue={formatValueFn}
-                              hideTime={hideTime}
-                          />
-                        </>
-                    )
-                }}
+              {({ width: w }) => {
+                  return (
+                    <>
+                      <BrushChart 
+                        timeseries={(chartData && chartData.length > 0) ? chartData : placeholderData}
+                        isLoadingPlaceholder={(chartData && chartData.length > 0) ? false : true}
+                        setFilteredChartData={setFilteredChartData}
+                        height={100}
+                        width={w}
+                      />
+                    </>
+                  )
+              }}
             </ParentSize>
-            {!isConsideredMobile &&
-              <div style={{padding: 10}}>
-                <ParentSize className="graph-container" debounceTime={10}>
-                  {({ width: w }) => {
-                      return (
-                        <>
-                          {chartData && chartData.length > 0 && 
-                            <BrushChart 
-                              timeseries={chartData}
-                              setFilteredChartData={setFilteredChartData}
-                              height={100}
-                              width={w}
-                            />
-                          }
-                        </>
-                      )
-                  }}
-                </ParentSize>
-              </div>
-            }
-          </>
-        }
-        {
-          (!chartData || chartData.length) === 0 &&
-          <>
-            <ParentSize className="graph-container" debounceTime={10}>
-                {({ width: w }) => {
-                    return (
-                      <div style={{width: w, height: height}} />
-                    )
-                }}
-            </ParentSize>
-            {!isConsideredMobile &&
-              <div style={{padding: 10}}>
-                <ParentSize className="graph-container" debounceTime={10}>
-                  {({ width: w }) => {
-                      return (
-                        <div style={{width: w, height: 112}} />
-                      )
-                  }}
-                </ParentSize>
-              </div>
-            }
-          </>
+          </div>
         }
       </div>
     )
