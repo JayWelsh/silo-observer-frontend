@@ -17,22 +17,24 @@ const HomePage = () => {
             <div style={{marginTop: 24}}/>
             <SiloSearchContainer />
             <div style={{marginTop: 24}}/>
-            {selectedChartZone === 'tvl+borrowed' &&
-                <TvlChartSelectionContainer 
-                    overrideHandleSiloZoneChange={(event: SelectChangeEvent<string>) => {
-                        let value = event.target.value as string;
-                        setSelectedChartZone(value)
-                    }}
-                />
-            }
-            {selectedChartZone === 'user-metrics' &&
-                <UserMetricsChartSelectionContainer 
-                    overrideHandleSiloZoneChange={(event: SelectChangeEvent<string>) => {
-                        let value = event.target.value as string;
-                        setSelectedChartZone(value)
-                    }}
-                />
-            }
+            <div style={{minHeight: 789}}>
+                {selectedChartZone === 'tvl+borrowed' &&
+                    <TvlChartSelectionContainer 
+                        overrideHandleSiloZoneChange={(event: SelectChangeEvent<string>) => {
+                            let value = event.target.value as string;
+                            setSelectedChartZone(value)
+                        }}
+                    />
+                }
+                {selectedChartZone === 'user-metrics' &&
+                    <UserMetricsChartSelectionContainer 
+                        overrideHandleSiloZoneChange={(event: SelectChangeEvent<string>) => {
+                            let value = event.target.value as string;
+                            setSelectedChartZone(value)
+                        }}
+                    />
+                }
+            </div>
             <div style={{marginTop: 24}}/>
             <SiloOverviewTableContainer/>
             <div style={{marginBottom: 50}}/>
