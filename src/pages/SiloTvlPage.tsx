@@ -6,6 +6,8 @@ import BigNumber from 'bignumber.js';
 import SiloSearchContainer from '../containers/SiloSearchContainer';
 import TvlChartSelectionContainer from '../containers/TvlChartSelectionContainer';
 
+import SiloStatsContainer from '../containers/SiloStatsContainer';
+
 import ReturnHomeLink from '../components/ReturnHomeLink';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
@@ -24,6 +26,8 @@ const SiloTvlPage = () => {
           <TvlChartSelectionContainer
             tokenSymbol={tokenSymbol}
           />
+          <div style={{marginTop: 24}}/>
+          <SiloStatsContainer tokenSymbol={tokenSymbol} />
           <div style={{marginBottom: 50}}/>
       </Container>
   )

@@ -44,6 +44,15 @@ const App = (props: PropsFromRedux) => {
             }
           })
         },
+        components: {
+          MuiCard :{
+            styleOverrides: {
+              root:{
+                border: "1px solid #ffffff3b"
+              }
+            }
+          },
+        }
       }),
     [props.darkMode],
   );

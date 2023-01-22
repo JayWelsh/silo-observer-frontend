@@ -118,7 +118,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
     }
 
     return (
-      <div style={{minHeight: height, width: '100%', position: 'relative', borderRadius: 10, backgroundColor: 'black'}}>
+      <div className="graph-zone-container" style={{minHeight: height, width: '100%', position: 'relative', borderRadius: 10, backgroundColor: 'black'}}>
         <div
           style={{
             height: 76,
@@ -162,7 +162,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
             }
           </div>
         </div>
-        <ParentSize className="graph-container" debounceTime={10}>
+        <ParentSize debounceTime={10}>
           {({ width: w }) => {
             return (
               <>
@@ -180,7 +180,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
         </ParentSize>
         {!isConsideredMobile &&
           <div style={{padding: 10}}>
-            <ParentSize className="graph-container" debounceTime={10}>
+            <ParentSize debounceTime={10}>
               {({ width: w }) => {
                   return (
                     <>

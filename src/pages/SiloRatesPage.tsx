@@ -5,6 +5,8 @@ import Container from '@mui/material/Container';
 
 import SiloSearchContainer from '../containers/SiloSearchContainer';
 
+import SiloStatsContainer from '../containers/SiloStatsContainer';
+
 import RateChartSelectionContainer from '../containers/RateChartSelectionContainer';
 
 import ReturnHomeLink from '../components/ReturnHomeLink';
@@ -25,6 +27,8 @@ const SiloRatesPage = () => {
                     tokenSymbol={tokenSymbol}
                 />
             }
+            <div style={{marginTop: 24}}/>
+            <SiloStatsContainer tokenSymbol={tokenSymbol} />
             <div style={{marginBottom: 50}}/>
         </Container>
     )

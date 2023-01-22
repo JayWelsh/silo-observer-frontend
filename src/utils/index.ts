@@ -133,13 +133,13 @@ export const percToColor = (perc: number) => {
 // 	}
 // }
 
-export const subtractNumbers = (value1: number, value2: number) => BigNumber(value1).minus(BigNumber(value2)).toString();
+export const subtractNumbers = (value1: number | string, value2: number | string) => BigNumber(value1).minus(BigNumber(value2)).toString();
 
-export const addNumbers = (value1: number, value2: number) => BigNumber(value1).plus(BigNumber(value2)).toString();
+export const addNumbers = (value1: number | string, value2: number | string) => BigNumber(value1).plus(BigNumber(value2)).toString();
 
-export const multiplyNumbers = (value1: number, value2: number) => BigNumber(value1).multipliedBy(BigNumber(value2)).toString();
+export const multiplyNumbers = (value1: number | string, value2: number | string) => BigNumber(value1).multipliedBy(BigNumber(value2)).toString();
 
-export const divideNumbers = (value1: number, value2: number) => BigNumber(value1).dividedBy(BigNumber(value2)).toString();
+export const divideNumbers = (value1: number | string, value2: number | string) => BigNumber(value1).dividedBy(BigNumber(value2)).toString();
 
 export const debounce = (
 	func: () => void,

@@ -85,6 +85,10 @@ body {
   align-items: center;
 }
 
+.graph-zone-container {
+  border: 1px solid #ffffff3b;
+}
+
 .full-height {
   height: 100%;
 }
