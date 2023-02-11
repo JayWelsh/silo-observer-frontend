@@ -73,11 +73,11 @@ export default function SiloSearch(props: PropsFromRedux & ISiloSearchProps) {
       disableClearable
       disabled={searchableSilos?.length > 0 ? false : true}
       options={searchableSilos?.length > 0 ? searchableSilos : []}
-      getOptionLabel={(option) => option.name}
+      getOptionLabel={(option) => `${option.name}-${option.address}`}
       style={{width: '100%'}}
       autoHighlight
       renderOption={(props, option: ISearchableSilo) => (
-        <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
+        <Box key={`search-${option.address}-${option.symbol}`} component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
           <img
             loading="lazy"
             width="20"
