@@ -25,6 +25,28 @@ interface IDateToValue {
   [key: string]: BigNumber;
 }
 
+interface ITvlEntry {
+  tvl: string
+  timestamp: string
+  meta: string
+  duplicateCount: number
+}
+
+interface IDateToTvlEntry {
+  [key: string]: ITvlEntry
+}
+
+interface IBorrowEntry {
+  borrowed: string
+  timestamp: string
+  meta: string
+  duplicateCount: number
+}
+
+interface IDateToBorrowEntry {
+  [key: string]: IBorrowEntry
+}
+
 interface ITvlChartSelectionProps {
   tokenSymbol?: string;
   isConsideredMobile: boolean;
@@ -75,10 +97,22 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
         fetch(`${API_ENDPOINT}/borrowed-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=hourly`).then(resp => resp.json()),
     ]).then((data) => {
 
+      let currentNetworkCount = 2;
+
       let tvlTotalsDataMinutely = data[0].data.reverse();
       let tvlTotalsDataHourly = data[1].data.reverse();
       let borrowTotalsDataMinutely = data[2].data.reverse();
       let borrowTotalsDataHourly = data[3].data.reverse();
+
+      let tvlTotalsDataMinutelyTimeToEntry : IDateToTvlEntry = {};
+      let tvlTotalsDataHourlyTimeToEntry : IDateToTvlEntry = {};
+      let borrowTotalsDataMinutelyTimeToEntry : IDateToBorrowEntry = {};
+      let borrowTotalsDataHourlyTimeToEntry : IDateToBorrowEntry = {};
+
+      let tvlTotalsDataMinutelyGroupedByTimes = [];
+      let tvlTotalsDataHourlyGroupedByTimes = [];
+      let borrowTotalsDataMinutelyGroupedByTimes = [];
+      let borrowTotalsDataHourlyGroupedByTimes = [];
 
       let tvlTotalsTimeseriesTemp : ITokenRate[] = [];
       let borrowTotalsTimeseriesTemp : ITokenRate[] = [];
@@ -88,7 +122,19 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       let dateToBorrowTotalValue : IDateToValue = {};
       let dateToCombinedValue : IDateToValue = {};
 
+
       for(let entry of tvlTotalsDataMinutely) {
+        if(!tvlTotalsDataMinutelyTimeToEntry[entry.timestamp]) {
+          tvlTotalsDataMinutelyTimeToEntry[entry.timestamp] = entry;
+          tvlTotalsDataMinutelyTimeToEntry[entry.timestamp].duplicateCount = 1;
+        } else {
+          tvlTotalsDataMinutelyTimeToEntry[entry.timestamp].tvl = new BigNumber(tvlTotalsDataMinutelyTimeToEntry[entry.timestamp].tvl).plus(entry.tvl).toString();
+          tvlTotalsDataMinutelyTimeToEntry[entry.timestamp].duplicateCount++;
+        }
+      }
+
+      for(let [timestamp, entry] of Object.entries(tvlTotalsDataMinutelyTimeToEntry)) {
+        if(entry.duplicateCount === currentNetworkCount) {
           tvlTotalsTimeseriesTemp.push({
               date: entry.timestamp,
               value: Number(entry.tvl)
@@ -101,9 +147,18 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
           } else {
               dateToCombinedValue[entry.timestamp] = dateToCombinedValue[entry.timestamp].plus(entry.tvl);
           }
+        }
       }
 
       for(let entry of tvlTotalsDataHourly) {
+        if(!tvlTotalsDataHourlyTimeToEntry[entry.timestamp]) {
+          tvlTotalsDataHourlyTimeToEntry[entry.timestamp] = entry;
+        } else {
+          tvlTotalsDataHourlyTimeToEntry[entry.timestamp].tvl = new BigNumber(tvlTotalsDataHourlyTimeToEntry[entry.timestamp].tvl).plus(entry.tvl).toString();
+        }
+      }
+
+      for(let [timestamp, entry] of Object.entries(tvlTotalsDataHourlyTimeToEntry)) {
         if(!dateToTvlTotalValue[entry.timestamp]) {
           tvlTotalsTimeseriesTemp.push({
               date: entry.timestamp,
@@ -118,21 +173,43 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       }
 
       for(let entry of borrowTotalsDataMinutely) {
-        borrowTotalsTimeseriesTemp.push({
-            date: entry.timestamp,
-            value: Number(entry.borrowed)
-        });
-        if(!dateToBorrowTotalValue[entry.timestamp]) {
-          dateToBorrowTotalValue[entry.timestamp] = new BigNumber(entry.borrowed);
-        }
-        if(!dateToCombinedValue[entry.timestamp]) {
-            dateToCombinedValue[entry.timestamp] = new BigNumber(entry.borrowed);
+        if(!borrowTotalsDataMinutelyTimeToEntry[entry.timestamp]) {
+          borrowTotalsDataMinutelyTimeToEntry[entry.timestamp] = entry;
+          borrowTotalsDataMinutelyTimeToEntry[entry.timestamp].duplicateCount = 1;
         } else {
-            dateToCombinedValue[entry.timestamp] = dateToCombinedValue[entry.timestamp].plus(entry.borrowed);
+          borrowTotalsDataMinutelyTimeToEntry[entry.timestamp].borrowed = new BigNumber(borrowTotalsDataMinutelyTimeToEntry[entry.timestamp].borrowed).plus(entry.borrowed).toString();
+          borrowTotalsDataMinutelyTimeToEntry[entry.timestamp].duplicateCount++;
+        }
+      }
+
+      for(let [timestamp, entry] of Object.entries(borrowTotalsDataMinutelyTimeToEntry)) {
+        if(entry.duplicateCount === currentNetworkCount) {
+          borrowTotalsTimeseriesTemp.push({
+              date: entry.timestamp,
+              value: Number(entry.borrowed)
+          });
+          if(!dateToBorrowTotalValue[entry.timestamp]) {
+            dateToBorrowTotalValue[entry.timestamp] = new BigNumber(entry.borrowed);
+          }
+          if(!dateToCombinedValue[entry.timestamp]) {
+              dateToCombinedValue[entry.timestamp] = new BigNumber(entry.borrowed);
+          } else {
+              dateToCombinedValue[entry.timestamp] = dateToCombinedValue[entry.timestamp].plus(entry.borrowed);
+          }
         }
       }
 
       for(let entry of borrowTotalsDataHourly) {
+        if(!borrowTotalsDataHourlyTimeToEntry[entry.timestamp]) {
+          borrowTotalsDataHourlyTimeToEntry[entry.timestamp] = entry;
+          borrowTotalsDataHourlyTimeToEntry[entry.timestamp].duplicateCount = 1;
+        } else {
+          borrowTotalsDataHourlyTimeToEntry[entry.timestamp].borrowed = new BigNumber(borrowTotalsDataHourlyTimeToEntry[entry.timestamp].borrowed).plus(entry.borrowed).toString();
+          borrowTotalsDataHourlyTimeToEntry[entry.timestamp].duplicateCount++;
+        }
+      }
+
+      for(let [timestamp, entry] of Object.entries(borrowTotalsDataHourlyTimeToEntry)) {
         if(!dateToBorrowTotalValue[entry.timestamp]) {
           borrowTotalsTimeseriesTemp.push({
               date: entry.timestamp,
