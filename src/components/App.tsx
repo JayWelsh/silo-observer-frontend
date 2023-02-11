@@ -35,6 +35,9 @@ const App = (props: PropsFromRedux) => {
   const theme = React.useMemo(
     () =>
       createTheme({
+        shape: {
+          borderRadius: 8
+        },
         palette: {
           mode: props.darkMode ? 'dark' : 'light',
           ...(props.darkMode && {

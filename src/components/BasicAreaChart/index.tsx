@@ -118,7 +118,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
     }
 
     return (
-      <div className="graph-zone-container" style={{minHeight: height, width: '100%', position: 'relative', borderRadius: 10, backgroundColor: 'black'}}>
+      <div className="graph-zone-container" style={{minHeight: height, width: '100%', position: 'relative', borderRadius: 8, backgroundColor: 'black'}}>
         <div
           style={{
             height: 76,

@@ -55,7 +55,7 @@ const GithubRepoNavigatorDialog = (props: IGithubRepoNavigatorProps) => {
             <RepoEntrySquareOuter>
               <RepoEntrySquareInner>
                 <ExternalLink href="https://github.com/JayWelsh/silo-observer-frontend">
-                  <CardActionArea className="hover-opacity-button full-height hover-border" style={{borderRadius: 5}}>
+                  <CardActionArea className="hover-opacity-button full-height hover-border" style={{borderRadius: 8}}>
                     <RepoEntry>
                       <PreviewIcon style={{width: 120, height: 120, marginBottom: 12}}/>
                       <Typography variant="h6">Frontend</Typography>
@@ -69,7 +69,7 @@ const GithubRepoNavigatorDialog = (props: IGithubRepoNavigatorProps) => {
             <RepoEntrySquareOuter>
               <RepoEntrySquareInner>
                 <ExternalLink href="https://github.com/JayWelsh/silo-observer-backend">
-                  <CardActionArea className="hover-opacity-button full-height hover-border" style={{borderRadius: 5}}>
+                  <CardActionArea className="hover-opacity-button full-height hover-border" style={{borderRadius: 8}}>
                     <RepoEntry>
                       <SettingsSuggestIcon style={{width: 120, height: 120, marginBottom: 12}}/>
                       <Typography variant="h6">Backend</Typography>

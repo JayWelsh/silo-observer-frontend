@@ -19,6 +19,7 @@ export interface IRate {
 export interface ISilo {
     name: string
     address: string
+    network: string
     input_token_address: string
     tvl: number
     borrowed: number
