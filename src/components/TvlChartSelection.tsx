@@ -109,11 +109,6 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       let borrowTotalsDataMinutelyTimeToEntry : IDateToBorrowEntry = {};
       let borrowTotalsDataHourlyTimeToEntry : IDateToBorrowEntry = {};
 
-      let tvlTotalsDataMinutelyGroupedByTimes = [];
-      let tvlTotalsDataHourlyGroupedByTimes = [];
-      let borrowTotalsDataMinutelyGroupedByTimes = [];
-      let borrowTotalsDataHourlyGroupedByTimes = [];
-
       let tvlTotalsTimeseriesTemp : ITokenRate[] = [];
       let borrowTotalsTimeseriesTemp : ITokenRate[] = [];
       let combinedTotalsTimeseriesTemp : ITokenRate[] = [];
@@ -136,7 +131,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       for(let [timestamp, entry] of Object.entries(tvlTotalsDataMinutelyTimeToEntry)) {
         if(entry.duplicateCount === currentNetworkCount) {
           tvlTotalsTimeseriesTemp.push({
-              date: entry.timestamp,
+              date: timestamp,
               value: Number(entry.tvl)
           })
           if(!dateToTvlTotalValue[entry.timestamp]) {
@@ -161,7 +156,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       for(let [timestamp, entry] of Object.entries(tvlTotalsDataHourlyTimeToEntry)) {
         if(!dateToTvlTotalValue[entry.timestamp]) {
           tvlTotalsTimeseriesTemp.push({
-              date: entry.timestamp,
+              date: timestamp,
               value: Number(entry.tvl)
           })
           if(!dateToCombinedValue[entry.timestamp]) {
@@ -185,7 +180,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       for(let [timestamp, entry] of Object.entries(borrowTotalsDataMinutelyTimeToEntry)) {
         if(entry.duplicateCount === currentNetworkCount) {
           borrowTotalsTimeseriesTemp.push({
-              date: entry.timestamp,
+              date: timestamp,
               value: Number(entry.borrowed)
           });
           if(!dateToBorrowTotalValue[entry.timestamp]) {
@@ -212,7 +207,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       for(let [timestamp, entry] of Object.entries(borrowTotalsDataHourlyTimeToEntry)) {
         if(!dateToBorrowTotalValue[entry.timestamp]) {
           borrowTotalsTimeseriesTemp.push({
-              date: entry.timestamp,
+              date: timestamp,
               value: Number(entry.borrowed)
           });
           if(!dateToCombinedValue[entry.timestamp]) {
