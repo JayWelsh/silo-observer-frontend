@@ -167,7 +167,7 @@ export default function SortableTable(props: ISortableTableProps) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+      <Paper sx={{ width: '100%', mb: 2, border: '1px solid #ffffff3b' }}>
         <EnhancedTableToolbar tableHeading={tableHeading} />
         <TableContainer>
           <Table
@@ -192,7 +192,7 @@ export default function SortableTable(props: ISortableTableProps) {
                       hover
                       onClick={(event) => handleClick(event, index)}
                       tabIndex={-1}
-                      key={row.name}
+                      key={`${row.name}-${row.network}`}
                     >
                       {columnConfig.map((columnConfigEntry, index) => {
                         return (

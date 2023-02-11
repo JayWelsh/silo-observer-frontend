@@ -30,6 +30,17 @@ interface ISiloOverviewData {
 
 const imageGetter = ((symbol: string) => `https://app.silo.finance/images/logos/${symbol}.png`)
 
+const networkImageGetter = ((network: string) => {
+  switch(network) {
+    case "ethereum":
+      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/ethereum-logo.png";
+    case "arbitrum":
+      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/arbitrum-logo.svg";
+    default:
+      return "";
+  }
+})
+
 const internalLinkGetter = ((symbol: string) => `/silo/${symbol}/tvl`)
 
 export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchProps) {
@@ -46,6 +57,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
 
       const {
         name,
+        network,
         tvl,
         borrowed,
         input_token_address,
@@ -87,6 +99,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
       
       siloOverviewDataBuild.push({
         name,
+        network,
         tvl,
         borrowed,
         baseBorrowRate,
@@ -115,6 +128,15 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             imageGetter: imageGetter,
             fallbackImage: 'https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/question-mark-white.svg',
             internalLinkGetter: internalLinkGetter,
+          },
+          {
+            id: 'silo-overview-table-network-col',
+            label: 'Network',
+            valueKey: 'network',
+            numeric: false,
+            disablePadding: false,
+            imageGetter: networkImageGetter,
+            valueFormatter: (str: string) => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
           },
           {
             id: 'silo-overview-table-tvl-col',

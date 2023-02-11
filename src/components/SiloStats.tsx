@@ -64,8 +64,8 @@ export default function SiloStats(props: PropsFromRedux & ISiloStatsProps) {
       </Grid>
       <Typography variant="h4" style={{marginTop: 24, marginBottom: 12, textAlign: "center"}}>Rates</Typography>
       <Grid container spacing={2}>
-        {siloOverview && siloOverview.latest_rates && siloOverview.latest_rates.map((entry) => 
-          <Grid item xs={12} sm={6} md={4}>
+        {siloOverview && siloOverview.latest_rates && siloOverview.latest_rates.map((entry, index) => 
+          <Grid item key={`latest-rates-${entry?.asset?.symbol}-${index}`} xs={12} sm={6} md={4}>
             <SingleStatCard
               title={entry?.asset?.symbol ? entry.asset.symbol : ""}
               subtitle={entry?.side ? entry.side : ""}
