@@ -45,6 +45,7 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
 
   const [chartSelection, setChartSelection] = useState<string>('daily-active-users');
   const [siloZoneSelection, setSiloZoneSelection] = useState<string>('user-metrics');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleChange = (event: SelectChangeEvent) => {
     setChartSelection(event.target.value as string);
@@ -63,6 +64,7 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
   };
 
   useEffect(() => {
+    setIsLoading(true);
     setDailyActiveUsersTimeseries([]);
     Promise.all([
         fetch(`${API_ENDPOINT}/events/borrow/distinct-daily-users`).then(resp => resp.json()),
@@ -70,6 +72,8 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
         fetch(`${API_ENDPOINT}/events/repay/distinct-daily-users`).then(resp => resp.json()),
         fetch(`${API_ENDPOINT}/events/withdraw/distinct-daily-users`).then(resp => resp.json()),
     ]).then((data) => {
+
+      setIsLoading(false);
 
       let borrowEventsDistinctDailyUsers = data[0].data.reverse();
       let depositEventsDistinctDailyUsers = data[1].data.reverse();
@@ -215,6 +219,7 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
                   <div style={{width: '100%'}}>
                       <BasicAreaChartContainer
                           chartData={dailyActiveUsersTimeseries}
+                          loading={isLoading}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`Unique Daily Users`}
                           rightTextFormatValueFn={(value: any) => priceFormat(value, 0, 'User(s)', false)}
