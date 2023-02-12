@@ -69,6 +69,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
 
   const [chartSelection, setChartSelection] = useState<string>('tvl+borrowed');
   const [siloZoneSelection, setSiloZoneSelection] = useState<string>('tvl+borrowed');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleChange = (event: SelectChangeEvent) => {
     setChartSelection(event.target.value as string);
@@ -87,6 +88,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     setBorrowedTotalsTimeseries([]);
     setTvlTotalsTimeseries([]);
     setCombinedTotalsTimeseries([]);
@@ -96,6 +98,8 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
         fetch(`${API_ENDPOINT}/borrowed-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=minutely`).then(resp => resp.json()),
         fetch(`${API_ENDPOINT}/borrowed-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=hourly`).then(resp => resp.json()),
     ]).then((data) => {
+
+      setIsLoading(false);
 
       let currentNetworkCount = 2;
 
@@ -293,6 +297,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
                   <div style={{width: '100%'}}>
                       <BasicAreaChartContainer
                           chartData={tvlTotalsTimeseries}
+                          loading={isLoading}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`TVL`}
                           rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
@@ -311,6 +316,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
                   <div style={{width: '100%'}}>
                       <BasicAreaChartContainer
                           chartData={borrowedTotalsTimeseries}
+                          loading={isLoading}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`Borrowed`}
                           rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
@@ -329,6 +335,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
                   <div style={{width: '100%'}}>
                       <BasicAreaChartContainer
                           chartData={combinedTotalsTimeseries}
+                          loading={isLoading}
                           leftTextTitle={`${tokenSymbol ? `${tokenSymbol} Silo` : 'All Silos'}`}
                           leftTextSubtitle={`TVL + Borrows`}
                           rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}

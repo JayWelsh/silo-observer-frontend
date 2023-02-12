@@ -64,6 +64,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
   const [chartTypeSelection, setChartTypeSelection] = useState<string>('borrower');
   const [siloZoneSelection, setSiloZoneSelection] = useState<string>('rates');
   const [chartAssetSelection, setChartAssetSelection] = useState<string | undefined>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleChartTypeChange = (event: SelectChangeEvent) => {
     setChartTypeSelection(event.target.value as string);
@@ -82,6 +83,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     setSiloInputTokenAddress(undefined);
     setBorrowerRates({});
     setLenderRates({});
@@ -90,6 +92,8 @@ const RateChartSelection = (props: IRateChartSelection) => {
       fetch(`${API_ENDPOINT}/rates/silo/${tokenSymbol}?perPage=8640`).then(resp => resp.json()),
       fetch(`${API_ENDPOINT}/rates/silo/${tokenSymbol}?perPage=8640&resolution=hourly`).then(resp => resp.json()),
     ]).then((data) => {
+
+      setIsLoading(false);
 
       // Group rates by asset (e.g. BAL/XAI/WETH, but using the asset address) and by side (BORROWER/LENDER)
 
@@ -345,6 +349,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
                   <div style={{width: '100%'}}>
                       <BasicAreaChartContainer
                           chartData={[]}
+                          loading={isLoading}
                           leftTextTitle={`Loading...`}
                           leftTextSubtitle={`Loading...`}
                           rightText={`Loading...`}
@@ -365,6 +370,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
                   <div style={{width: '100%'}}>
                       <BasicAreaChartContainer
                           chartData={value[1]}
+                          loading={isLoading}
                           leftTextTitle={`${tokenAddressToSymbolMapping[value[0]]} APY`}
                           leftTextSubtitle={`Borrower`}
                           rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '% APY', false)}
@@ -386,6 +392,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
                 <div style={{width: '100%'}}>
                     <BasicAreaChartContainer
                         chartData={value[1]}
+                        loading={isLoading}
                         leftTextTitle={`${tokenAddressToSymbolMapping[value[0]]} APY`}
                         leftTextSubtitle={`Lender`}
                         rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '% APY', false)}

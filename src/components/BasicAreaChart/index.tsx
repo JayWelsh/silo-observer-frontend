@@ -1,10 +1,18 @@
 import React, {useEffect, useState} from 'react';
 
+import { animated, useSpring, config } from '@react-spring/web'
+
 import BigNumber from 'bignumber.js';
+
+import { Theme } from '@mui/material/styles';
+import createStyles from '@mui/styles/createStyles';
+import makeStyles from '@mui/styles/makeStyles';
 
 import Typography from '@mui/material/Typography';
 
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
+
+import LogoDarkMode from '../../assets/png/logo.png'
 
 import BasicAreaChartInner from './BasicAreaChartInner'
 import BrushChart from '../BrushChart';
@@ -29,6 +37,23 @@ const placeholderData = [
   }
 ]
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    loadingIconContainer: {
+      position: 'absolute',
+      zIndex: 1,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadingIcon: {
+      width: 'auto',
+      height: 100,
+      opacity: 0.6,
+    }
+  }),
+);
+
 interface IBasicAreaChartProps {
   chartData: ITimeseries[]
   height: number
@@ -38,6 +63,7 @@ interface IBasicAreaChartProps {
   showChange?: boolean
   changeType?: "neutral" | "up-good" | "down-good",
   isPercentage?: boolean,
+  loading?: boolean,
   formatValueFn: (arg1: string | number) => string,
   rightTextFormatValueFn?: (arg1: string | number) => string,
   hideTime?: boolean,
@@ -63,13 +89,28 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
       formatValueFn,
       isConsideredMobile,
       hideTime,
+      loading,
     } = props;
+
+    const classes = useStyles();
 
     const [filteredChartData, setFilteredChartData] = useState(chartData);
 
     useEffect(() => {
       setFilteredChartData(chartData);
     }, [chartData])
+
+    const loadingSpring = useSpring({
+      from: {
+        rotate: '0deg',
+      },
+      to: {
+        rotate: "360deg",
+      },
+      loop: true,
+      delay: 150,
+      config: config.molasses,
+    })
 
     const getChange = (firstValue: number, lastValue: number) => {
       let returnString = "+ 0.00 %"
@@ -162,6 +203,11 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
             }
           </div>
         </div>
+        {loading &&
+          <div style={{height: 465, width: '100%'}} className={classes.loadingIconContainer}>
+            <animated.img style={loadingSpring} className={classes.loadingIcon} src={LogoDarkMode} alt="loading icon" />
+          </div>
+        }
         <ParentSize debounceTime={10}>
           {({ width: w }) => {
             return (
