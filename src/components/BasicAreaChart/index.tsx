@@ -105,11 +105,11 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
         rotate: '0deg',
       },
       to: {
-        rotate: "360deg",
+        rotate: "180deg",
       },
       loop: true,
       delay: 150,
-      config: config.molasses,
+      config: config.wobbly,
     })
 
     const getChange = (firstValue: number, lastValue: number) => {

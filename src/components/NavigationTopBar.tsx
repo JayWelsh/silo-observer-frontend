@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
+import { animated, useSpring, config } from '@react-spring/web'
+
 import { useNavigate } from "react-router-dom";
 
 import { Theme } from '@mui/material/styles';
@@ -73,6 +75,7 @@ const NavigationTopBar = (props: PropsFromRedux & INavigationTopBarProps) => {
   // const [localShowLeftMenu, setLocalShowLeftMenu] = useState(props.showLeftMenu)
   const [localDarkMode, setLocalDarkMode] = useState(props.darkMode)
   const [showGithubNavigation, setShowGithubNavigation] = useState(false);
+  const [logoHovered, setLogoHovered] = useState(false);
 
   useEffect(() => {
     // setLocalShowLeftMenu(props.showLeftMenu)
@@ -81,6 +84,16 @@ const NavigationTopBar = (props: PropsFromRedux & INavigationTopBarProps) => {
   useEffect(() => {
     setLocalDarkMode(props.darkMode)
   }, [props.darkMode])
+
+  const logoSpring = useSpring({
+    from: {
+      rotate: '0deg',
+    },
+    to: {
+      rotate: logoHovered ? "180deg" : "0deg",
+    },
+    config: config.wobbly,
+  })
 
   return (
     <div className={classes.root}>
@@ -98,7 +111,7 @@ const NavigationTopBar = (props: PropsFromRedux & INavigationTopBarProps) => {
           {/* <div style={{width: '115px', position: 'relative', marginRight: '15px', alignSelf: 'start'}}>
             <img onClick={() => props.history.push('/')} height={'115px'} style={{cursor: 'pointer', position: 'absolute', top: 10}} src={localDarkMode ? LogoDarkMode : LogoLightMode} alt="logo" />
           </div> */}
-          <img onClick={() => navigate('/')} height={'40px'} style={{cursor: 'pointer'}} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
+          <animated.img onMouseEnter={() => setLogoHovered(true)} onMouseLeave={() => setLogoHovered(false)} style={{...logoSpring, cursor: 'pointer'}} onClick={() => navigate('/')} height={'40px'} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
           {!isConsideredMobile &&
             <Typography onClick={() => navigate('/')} variant="h6" className={classes.title}>
               silo.observer
