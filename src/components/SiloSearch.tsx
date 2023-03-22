@@ -33,7 +33,7 @@ export default function SiloSearch(props: PropsFromRedux & ISiloSearchProps) {
   const pathMatch = useCurrentPath();
   
   useEffect(() => {
-    fetch(`${API_ENDPOINT}/silos?perPage=1440`).then(resp => resp.json())
+    fetch(`${API_ENDPOINT}/silos?perPage=4320`).then(resp => resp.json())
     .then(response => {
       if(response?.data?.length > 0) {
         setSiloOverviews(response?.data);
