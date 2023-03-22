@@ -94,9 +94,9 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
     setCombinedTotalsTimeseries([]);
     Promise.all([
         fetch(`${API_ENDPOINT}/tvl-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=minutely`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/tvl-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=hourly`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/tvl-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=4320&resolution=hourly`).then(resp => resp.json()),
         fetch(`${API_ENDPOINT}/borrowed-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=minutely`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/borrowed-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=hourly`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/borrowed-totals/${tokenSymbol ? `silo/${tokenSymbol}` : 'whole-platform'}?perPage=4320&resolution=hourly`).then(resp => resp.json()),
     ]).then((data) => {
 
       setIsLoading(false);
