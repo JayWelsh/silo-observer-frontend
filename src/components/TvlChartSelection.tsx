@@ -25,6 +25,10 @@ interface IDateToValue {
   [key: string]: BigNumber;
 }
 
+interface IDateToNetworksIncluded {
+  [key: string]: string[];
+}
+
 interface ITvlEntry {
   tvl: string
   timestamp: string
@@ -101,6 +105,8 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
 
       setIsLoading(false);
 
+      let networkToUnixStartDate : {[key: string]: number} = {};
+
       let currentNetworkCount = 2;
 
       let tvlTotalsDataMinutely = data[0].data.reverse();
@@ -120,6 +126,8 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       let dateToTvlTotalValue : IDateToValue = {};
       let dateToBorrowTotalValue : IDateToValue = {};
       let dateToCombinedValue : IDateToValue = {};
+      let dateToNetworksIncludedTVL : IDateToNetworksIncluded = {};
+      let dateToNetworksIncludedBorrowed : IDateToNetworksIncluded = {};
 
 
       for(let entry of tvlTotalsDataMinutely) {
@@ -129,6 +137,16 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
         } else {
           tvlTotalsDataMinutelyTimeToEntry[entry.timestamp].tvl = new BigNumber(tvlTotalsDataMinutelyTimeToEntry[entry.timestamp].tvl).plus(entry.tvl).toString();
           tvlTotalsDataMinutelyTimeToEntry[entry.timestamp].duplicateCount++;
+        }
+        let unixTimestamp = Math.floor(new Date(entry.timestamp).getTime() / 1000);
+        if(!networkToUnixStartDate[entry.network] || (unixTimestamp < networkToUnixStartDate[entry.network])) {
+          networkToUnixStartDate[entry.network] = unixTimestamp;
+        }
+        if(!dateToNetworksIncludedTVL[entry.timestamp]) {
+          dateToNetworksIncludedTVL[entry.timestamp] = [];
+          dateToNetworksIncludedTVL[entry.timestamp].push(entry.network);
+        } else if(dateToNetworksIncludedTVL[entry.timestamp].indexOf(entry.network) === -1) {
+          dateToNetworksIncludedTVL[entry.timestamp].push(entry.network);
         }
       }
 
@@ -155,6 +173,16 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
         } else {
           tvlTotalsDataHourlyTimeToEntry[entry.timestamp].tvl = new BigNumber(tvlTotalsDataHourlyTimeToEntry[entry.timestamp].tvl).plus(entry.tvl).toString();
         }
+        let unixTimestamp = Math.floor(new Date(entry.timestamp).getTime() / 1000);
+        if(!networkToUnixStartDate[entry.network] || (unixTimestamp < networkToUnixStartDate[entry.network])) {
+          networkToUnixStartDate[entry.network] = unixTimestamp;
+        }
+        if(!dateToNetworksIncludedTVL[entry.timestamp]) {
+          dateToNetworksIncludedTVL[entry.timestamp] = [];
+          dateToNetworksIncludedTVL[entry.timestamp].push(entry.network);
+        } else if(dateToNetworksIncludedTVL[entry.timestamp].indexOf(entry.network) === -1) {
+          dateToNetworksIncludedTVL[entry.timestamp].push(entry.network);
+        }
       }
 
       for(let [timestamp, entry] of Object.entries(tvlTotalsDataHourlyTimeToEntry)) {
@@ -178,6 +206,16 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
         } else {
           borrowTotalsDataMinutelyTimeToEntry[entry.timestamp].borrowed = new BigNumber(borrowTotalsDataMinutelyTimeToEntry[entry.timestamp].borrowed).plus(entry.borrowed).toString();
           borrowTotalsDataMinutelyTimeToEntry[entry.timestamp].duplicateCount++;
+        }
+        let unixTimestamp = Math.floor(new Date(entry.timestamp).getTime() / 1000);
+        if(!networkToUnixStartDate[entry.network] || (unixTimestamp < networkToUnixStartDate[entry.network])) {
+          networkToUnixStartDate[entry.network] = unixTimestamp;
+        }
+        if(!dateToNetworksIncludedBorrowed[entry.timestamp]) {
+          dateToNetworksIncludedBorrowed[entry.timestamp] = [];
+          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.network);
+        } else if(dateToNetworksIncludedBorrowed[entry.timestamp].indexOf(entry.network) === -1) {
+          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.network);
         }
       }
 
@@ -206,6 +244,16 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
           borrowTotalsDataHourlyTimeToEntry[entry.timestamp].borrowed = new BigNumber(borrowTotalsDataHourlyTimeToEntry[entry.timestamp].borrowed).plus(entry.borrowed).toString();
           borrowTotalsDataHourlyTimeToEntry[entry.timestamp].duplicateCount++;
         }
+        let unixTimestamp = Math.floor(new Date(entry.timestamp).getTime() / 1000);
+        if(!networkToUnixStartDate[entry.network] || (unixTimestamp < networkToUnixStartDate[entry.network])) {
+          networkToUnixStartDate[entry.network] = unixTimestamp;
+        }
+        if(!dateToNetworksIncludedBorrowed[entry.timestamp]) {
+          dateToNetworksIncludedBorrowed[entry.timestamp] = [];
+          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.network);
+        } else if(dateToNetworksIncludedBorrowed[entry.timestamp].indexOf(entry.network) === -1) {
+          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.network);
+        }
       }
 
       for(let [timestamp, entry] of Object.entries(borrowTotalsDataHourlyTimeToEntry)) {
@@ -230,13 +278,61 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       }
 
       // Sort borrowTotalsTimeseriesTemp
-      borrowTotalsTimeseriesTemp = borrowTotalsTimeseriesTemp.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      borrowTotalsTimeseriesTemp = borrowTotalsTimeseriesTemp.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).filter((item) => {
+        let shouldIncludeValue = true;
+        let requiredNetworks = [];
+        for(let [network, startDate] of Object.entries(networkToUnixStartDate)) {
+          let itemDateUnix = Math.floor(new Date(item.date).getTime() / 1000);
+          if(itemDateUnix >= startDate) {
+            requiredNetworks.push(network);
+          }
+        }
+        for(let requiredNetwork of requiredNetworks) {
+          if(dateToNetworksIncludedBorrowed[item.date].indexOf(requiredNetwork) === -1) {
+            shouldIncludeValue = false;
+          }
+        }
+        return shouldIncludeValue;
+      });
 
       // Sort tvlTotalsTimeseriesTemp
-      tvlTotalsTimeseriesTemp = tvlTotalsTimeseriesTemp.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      tvlTotalsTimeseriesTemp = tvlTotalsTimeseriesTemp.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).filter((item) => {
+        let shouldIncludeValue = true;
+        let requiredNetworks = [];
+        for(let [network, startDate] of Object.entries(networkToUnixStartDate)) {
+          let itemDateUnix = Math.floor(new Date(item.date).getTime() / 1000);
+          if(itemDateUnix >= startDate) {
+            requiredNetworks.push(network);
+          }
+        }
+        for(let requiredNetwork of requiredNetworks) {
+          if(dateToNetworksIncludedTVL[item.date].indexOf(requiredNetwork) === -1) {
+            shouldIncludeValue = false;
+          }
+        }
+        return shouldIncludeValue;
+      });
 
       // Sort combinedTotalsTimeseriesTemp
-      combinedTotalsTimeseriesTemp = combinedTotalsTimeseriesTemp.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      combinedTotalsTimeseriesTemp = combinedTotalsTimeseriesTemp.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).filter((item) => {
+        let shouldIncludeValue = true;
+        let requiredNetworks = [];
+        for(let [network, startDate] of Object.entries(networkToUnixStartDate)) {
+          let itemDateUnix = Math.floor(new Date(item.date).getTime() / 1000);
+          if(itemDateUnix >= startDate) {
+            requiredNetworks.push(network);
+          }
+        }
+        for(let requiredNetwork of requiredNetworks) {
+          if(dateToNetworksIncludedTVL[item.date].indexOf(requiredNetwork) === -1) {
+            shouldIncludeValue = false;
+          }
+          if(dateToNetworksIncludedBorrowed[item.date].indexOf(requiredNetwork) === -1) {
+            shouldIncludeValue = false;
+          }
+        }
+        return shouldIncludeValue;
+      });
 
       setBorrowedTotalsTimeseries(borrowTotalsTimeseriesTemp);
       setTvlTotalsTimeseries(tvlTotalsTimeseriesTemp);
