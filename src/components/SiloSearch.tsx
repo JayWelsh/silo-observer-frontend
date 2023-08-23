@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 
 import { useCurrentPath } from '../hooks';
-import { API_ENDPOINT } from '../constants';
+import { API_ENDPOINT, DEPLOYMENT_ID_TO_HUMAN_READABLE, NETWORK_TO_HUMAN_READABLE } from '../constants';
 import { ISilo } from '../interfaces';
 
 import { PropsFromRedux } from '../containers/SiloSearchContainer';
@@ -15,6 +15,9 @@ interface ISearchableSilo {
   name: string
   symbol: string
   address: string
+  network: string
+  deployment: string
+  deployment_id: string
 }
 
 interface ISiloSearchProps {
@@ -50,6 +53,9 @@ export default function SiloSearch(props: PropsFromRedux & ISiloSearchProps) {
         name: silo.name,
         symbol: silo.name,
         address: silo.address,
+        network: NETWORK_TO_HUMAN_READABLE[silo.network],
+        deployment: DEPLOYMENT_ID_TO_HUMAN_READABLE[silo.deployment_id],
+        deployment_id: silo.deployment_id,
       })
     }
     setSearchableSilos(searchableSilos);
@@ -62,18 +68,20 @@ export default function SiloSearch(props: PropsFromRedux & ISiloSearchProps) {
       //@ts-ignore
       onChange={(event: any, newValue: ISearchableSilo) => {
         // setValue(newValue);
+        console.log({pathMatch})
         if(newValue.name) {
-          if(pathMatch === '/silo/:tokenSymbol/tvl' || pathMatch === '/') {
-            navigate(`/silo/${newValue.name}/tvl`)
-          } else if (pathMatch === '/silo/:tokenSymbol/rates') {
-            navigate(`/silo/${newValue.name}/rates`)
+          if(pathMatch === '/silo/:deploymentID/:tokenSymbol/tvl' || pathMatch === '/') {
+            console.log("does navigate");
+            navigate(`/silo/${newValue.deployment_id}/${newValue.name}/tvl`)
+          } else if (pathMatch === '/silo/:deploymentID/:tokenSymbol/rates') {
+            navigate(`/silo/${newValue.deployment_id}/${newValue.name}/rates`)
           }
         }
       }}
       disableClearable
       disabled={searchableSilos?.length > 0 ? false : true}
       options={searchableSilos?.length > 0 ? searchableSilos : []}
-      getOptionLabel={(option) => `${option.name}-${option.address}`}
+      getOptionLabel={(option) => `${option.name}`}
       style={{width: '100%'}}
       autoHighlight
       renderOption={(props, option: ISearchableSilo) => (
@@ -88,7 +96,7 @@ export default function SiloSearch(props: PropsFromRedux & ISiloSearchProps) {
             }}
             alt=""
           />
-          {option.name}
+          {option.name} ({option.network} - {option.deployment})
         </Box>
       )}
       renderInput={(params) => (
