@@ -1,6 +1,6 @@
 // API
-// export const API_ENDPOINT = "https://api.silo.observer";
-export const API_ENDPOINT = "http://localhost:8000";
+export const API_ENDPOINT = "https://api.silo.observer";
+// export const API_ENDPOINT = "http://localhost:8000";
 
 // Contract Addresses
 export const XAI_ADDRESS_ETH_MAINNET = "0xd7C9F0e536dC865Ae858b0C0453Fe76D13c3bEAc";

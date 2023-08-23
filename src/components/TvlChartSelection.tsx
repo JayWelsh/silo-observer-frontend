@@ -109,7 +109,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
 
       let networkToUnixStartDate : {[key: string]: number} = {};
 
-      let currentNetworkCount = 3;
+      let currentNetworkCount = 2;
 
       let tvlTotalsDataMinutely = data[0].data.reverse();
       let tvlTotalsDataHourly = data[1].data.reverse();
