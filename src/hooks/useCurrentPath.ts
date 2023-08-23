@@ -2,8 +2,8 @@ import { matchRoutes, useLocation } from "react-router-dom"
 
 const routes = [
   { path: "/" },
-  { path: "/silo/:tokenSymbol/rates" },
-  { path: "/silo/:tokenSymbol/tvl" },
+  { path: "/silo/:deploymentID/:tokenSymbol/rates" },
+  { path: "/silo/:deploymentID/:tokenSymbol/tvl" },
 ]
 
 const useCurrentPath = () => {

@@ -11,3 +11,8 @@ export const DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} = {
   "arbitrum-original": "Original",
   "ethereum-llama": "LLAMA",
 }
+
+export const NETWORK_TO_HUMAN_READABLE : {[key: string]: string} = {
+  "ethereum": "Ethereum",
+  "arbitrum": "Arbitrum",
+}
