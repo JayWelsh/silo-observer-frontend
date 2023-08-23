@@ -14,18 +14,20 @@ import { PropsFromRedux } from '../containers/SiloStatsContainer';
 
 interface ISiloStatsProps {
   tokenSymbol?: string
+  deploymentID?: string;
 }
 
 export default function SiloStats(props: PropsFromRedux & ISiloStatsProps) {
 
   let {
-    tokenSymbol
+    tokenSymbol,
+    deploymentID,
   } = props;
 
   const [siloOverview, setSiloOverview] = useState<ISilo | undefined>();
   
   useEffect(() => {
-    fetch(`${API_ENDPOINT}/silo/${tokenSymbol}`).then(resp => resp.json())
+    fetch(`${API_ENDPOINT}/silo/${deploymentID}/${tokenSymbol}`).then(resp => resp.json())
     .then(response => {
       let rateOrder = [tokenSymbol, "XAI", "WETH"];
       if(response?.data) {
@@ -37,7 +39,7 @@ export default function SiloStats(props: PropsFromRedux & ISiloStatsProps) {
         setSiloOverview(undefined);
       }
     })
-  }, [tokenSymbol])
+  }, [tokenSymbol, deploymentID])
 
   return (
     <>

@@ -29,9 +29,9 @@ const PageContainer = () => {
             <div className={classes.root}>
                 <Routes>
                     <Route path="/" element={<HomePage/>} />
-                    <Route path="/silo/:tokenSymbol/rates" element={<SiloRatesPage />} />
-                    <Route path="/silo/:tokenSymbol/tvl" element={<SiloTvlPage />} />
-                    <Route path="/silo/tvl" element={<SiloTvlPage />} />
+                    <Route path="/silo/:deploymentID/:tokenSymbol/rates" element={<SiloRatesPage />} />
+                    <Route path="/silo/:deploymentID/:tokenSymbol/tvl" element={<SiloTvlPage />} />
+                    {/* <Route path="/silo/tvl" element={<SiloTvlPage />} /> */}
                 </Routes>
             </div>
         </Navigation>

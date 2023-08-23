@@ -13,7 +13,7 @@ import ReturnHomeLink from '../components/ReturnHomeLink';
 
 const SiloRatesPage = () => {
 
-    let { tokenSymbol } = useParams();
+    let { tokenSymbol, deploymentID } = useParams();
 
     return (
         <Container maxWidth="lg">
@@ -22,13 +22,14 @@ const SiloRatesPage = () => {
             <div style={{marginTop: 12}}/>
             <SiloSearchContainer />
             <div style={{marginTop: 24}}/>
-            {tokenSymbol && 
+            {(tokenSymbol && deploymentID) && 
                 <RateChartSelectionContainer
                     tokenSymbol={tokenSymbol}
+                    deploymentID={deploymentID}
                 />
             }
             <div style={{marginTop: 24}}/>
-            <SiloStatsContainer tokenSymbol={tokenSymbol} />
+            <SiloStatsContainer tokenSymbol={tokenSymbol} deploymentID={deploymentID} />
             <div style={{marginBottom: 50}}/>
         </Container>
     )
