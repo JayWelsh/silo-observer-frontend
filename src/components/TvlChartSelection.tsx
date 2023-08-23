@@ -99,9 +99,9 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
     setTvlTotalsTimeseries([]);
     setCombinedTotalsTimeseries([]);
     Promise.all([
-        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=minutely`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=144&resolution=minutely`).then(resp => resp.json()),
         fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=8000&resolution=hourly`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=1440&resolution=minutely`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=144&resolution=minutely`).then(resp => resp.json()),
         fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=8000&resolution=hourly`).then(resp => resp.json()),
     ]).then((data) => {
 
@@ -109,7 +109,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
 
       let networkToUnixStartDate : {[key: string]: number} = {};
 
-      let currentNetworkCount = 2;
+      let currentNetworkCount = 3;
 
       let tvlTotalsDataMinutely = data[0].data.reverse();
       let tvlTotalsDataHourly = data[1].data.reverse();
@@ -153,7 +153,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       }
 
       for(let [timestamp, entry] of Object.entries(tvlTotalsDataMinutelyTimeToEntry)) {
-        if(entry.duplicateCount === currentNetworkCount) {
+        if((entry.duplicateCount === currentNetworkCount) || deploymentID) {
           tvlTotalsTimeseriesTemp.push({
               date: timestamp,
               value: Number(entry.tvl)
@@ -222,7 +222,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       }
 
       for(let [timestamp, entry] of Object.entries(borrowTotalsDataMinutelyTimeToEntry)) {
-        if(entry.duplicateCount === currentNetworkCount) {
+        if((entry.duplicateCount === currentNetworkCount) || deploymentID) {
           borrowTotalsTimeseriesTemp.push({
               date: timestamp,
               value: Number(entry.borrowed)
