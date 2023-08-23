@@ -14,7 +14,7 @@ BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
 const SiloTvlPage = () => {
 
-  let { tokenSymbol } = useParams();
+  let { tokenSymbol, deploymentID } = useParams();
 
   return (
       <Container maxWidth="lg">
@@ -25,9 +25,10 @@ const SiloTvlPage = () => {
           <div style={{marginTop: 24}}/>
           <TvlChartSelectionContainer
             tokenSymbol={tokenSymbol}
+            deploymentID={deploymentID}
           />
           <div style={{marginTop: 24}}/>
-          <SiloStatsContainer tokenSymbol={tokenSymbol} />
+          <SiloStatsContainer tokenSymbol={tokenSymbol} deploymentID={deploymentID} />
           <div style={{marginBottom: 50}}/>
       </Container>
   )

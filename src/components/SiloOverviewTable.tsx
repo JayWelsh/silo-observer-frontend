@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { 
   XAI_ADDRESS_ETH_MAINNET,
   WETH_ADDRESS_ETH_MAINNET,
+  DEPLOYMENT_ID_TO_HUMAN_READABLE,
 } from '../constants';
 import { ISilo } from '../interfaces';
 
@@ -11,6 +12,8 @@ import SortableTable from './SortableTable';
 import { PropsFromRedux } from '../containers/SiloOverviewTableContainer';
 
 import { priceFormat } from "../utils";
+
+import LlamaLogo from "../assets/png/llama.png";
 
 interface ISiloSearchProps {
   siloOverviews: ISilo[]
@@ -41,7 +44,16 @@ const networkImageGetter = ((network: string) => {
   }
 })
 
-const internalLinkGetter = ((symbol: string) => `/silo/${symbol}/tvl`)
+const deploymentImageGetter = ((deploymentID: string) => {
+  switch(deploymentID) {
+    case "ethereum-llama":
+      return LlamaLogo;
+    default:
+      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/silo-circle.png";
+  }
+})
+
+const internalLinkGetter = ((symbol: string, deploymentID: string) => `/silo/${deploymentID}/${symbol}/tvl`)
 
 export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchProps) {
   const [siloOverviewData, setSiloOverviewData] = useState<ISiloOverviewData[]>([]);
@@ -58,6 +70,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
       const {
         name,
         network,
+        deployment_id,
         tvl,
         borrowed,
         input_token_address,
@@ -100,6 +113,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
       siloOverviewDataBuild.push({
         name,
         network,
+        deploymentID: deployment_id,
         tvl,
         borrowed,
         baseBorrowRate,
@@ -137,6 +151,15 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             disablePadding: false,
             imageGetter: networkImageGetter,
             valueFormatter: (str: string) => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
+          },
+          {
+            id: 'silo-overview-table-deployment-col',
+            label: 'Deployment',
+            valueKey: 'deploymentID',
+            numeric: false,
+            disablePadding: false,
+            imageGetter: deploymentImageGetter,
+            valueFormatter: (str: string) => `${DEPLOYMENT_ID_TO_HUMAN_READABLE[str]}`
           },
           {
             id: 'silo-overview-table-tvl-col',

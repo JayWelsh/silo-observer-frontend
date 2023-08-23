@@ -37,7 +37,7 @@ interface IColumnConfigEntry {
   valueFormatter?: (arg0: any) => any
   imageGetter?: (arg0: any) => any
   fallbackImage?: string
-  internalLinkGetter?: (arg0: any) => string
+  internalLinkGetter?: (arg0: any, arg1: any) => string
 }
 
 interface EnhancedTableProps {
@@ -192,7 +192,7 @@ export default function SortableTable(props: ISortableTableProps) {
                       hover
                       onClick={(event) => handleClick(event, index)}
                       tabIndex={-1}
-                      key={`${row.name}-${row.network}`}
+                      key={`${row.name}-${row.network}-${row.deploymentID}`}
                     >
                       {columnConfig.map((columnConfigEntry, index) => {
                         return (
@@ -203,7 +203,7 @@ export default function SortableTable(props: ISortableTableProps) {
                             align={index > 0 ? "left" : "left"}
                           >
                             <div style={{display: 'flex', alignItems: 'center', whiteSpace: 'nowrap'}}>
-                              {columnConfigEntry?.imageGetter &&
+                              {columnConfigEntry?.imageGetter && (columnConfigEntry?.imageGetter(row[columnConfigEntry.valueKey])?.length > 0) &&
                                 <img
                                   loading="lazy"
                                   width="25"
@@ -218,7 +218,7 @@ export default function SortableTable(props: ISortableTableProps) {
                               }
                               {
                                 columnConfigEntry?.internalLinkGetter &&
-                                <Link style={{color: 'white'}} to={columnConfigEntry.internalLinkGetter(row[columnConfigEntry.valueKey])}>
+                                <Link style={{color: 'white'}} to={columnConfigEntry.internalLinkGetter(row[columnConfigEntry.valueKey], row.deploymentID)}>
                                   {row[columnConfigEntry.valueKey]}
                                 </Link>
                               }

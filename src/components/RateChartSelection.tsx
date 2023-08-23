@@ -14,6 +14,7 @@ import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
 
 interface IRateChartSelection {
   tokenSymbol: string;
+  deploymentID: string;
   isConsideredMobile: boolean;
   overrideHandleSiloZoneChange?: (arg0: SelectChangeEvent<string>) => void;
 }
@@ -47,6 +48,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
 
   const {
     tokenSymbol,
+    deploymentID,
     isConsideredMobile,
     overrideHandleSiloZoneChange,
   } = props;
@@ -89,8 +91,8 @@ const RateChartSelection = (props: IRateChartSelection) => {
     setLenderRates({});
     setTokenAddressToSymbolMapping({});
     Promise.all([
-      fetch(`${API_ENDPOINT}/rates/silo/${tokenSymbol}?perPage=8640`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/rates/silo/${tokenSymbol}?perPage=8640&resolution=hourly`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/rates/silo/${deploymentID}/${tokenSymbol}?perPage=8640`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/rates/silo/${deploymentID}/${tokenSymbol}?perPage=8640&resolution=hourly`).then(resp => resp.json()),
     ]).then((data) => {
 
       setIsLoading(false);
@@ -254,7 +256,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
       setLenderRates(tokenRatesLender);
       setTokenAddressToSymbolMapping(tokenAddressToSymbol);
     });
-  }, [tokenSymbol])
+  }, [tokenSymbol, deploymentID])
 
   useEffect(() => {
     if(siloInputTokenAddress) {

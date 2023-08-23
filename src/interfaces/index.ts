@@ -20,6 +20,7 @@ export interface ISilo {
     name: string
     address: string
     network: string
+    deployment_id: string
     input_token_address: string
     tvl: number
     borrowed: number
