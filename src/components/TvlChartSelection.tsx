@@ -100,9 +100,9 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
     setCombinedTotalsTimeseries([]);
     Promise.all([
         fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=144&resolution=minutely`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=8000&resolution=hourly`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=16000&resolution=hourly`).then(resp => resp.json()),
         fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=144&resolution=minutely`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=8000&resolution=hourly`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=16000&resolution=hourly`).then(resp => resp.json()),
     ]).then((data) => {
 
       setIsLoading(false);
