@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
+import { matchSorter } from 'match-sorter';
+
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -61,6 +63,19 @@ export default function SiloSearch(props: PropsFromRedux & ISiloSearchProps) {
     setSearchableSilos(searchableSilos);
   }, [siloOverviews])
 
+  //@ts-ignore
+  function matchSorterAcrossKeys(list, search, options) {
+    //@ts-ignore
+    const joinedKeysString = item => options.keys.map(key => item[key]).join(' ')
+    return matchSorter(list, search, {
+      ...options,
+      keys: [...options.keys, joinedKeysString],
+    })
+  }
+
+  //@ts-ignore
+  const filterOptions = (options, { inputValue }) => {return matchSorterAcrossKeys(options, inputValue, {keys: ['name', 'network', 'deployment', 'address']})};
+
   return (
     <Autocomplete
       // freeSolo
@@ -78,10 +93,12 @@ export default function SiloSearch(props: PropsFromRedux & ISiloSearchProps) {
           }
         }
       }}
+      //@ts-ignore
+      filterOptions={filterOptions}
       disableClearable
       disabled={searchableSilos?.length > 0 ? false : true}
       options={searchableSilos?.length > 0 ? searchableSilos : []}
-      getOptionLabel={(option) => `${option.name}`}
+      getOptionLabel={(option: ISearchableSilo) => `${option?.name} (${option?.network} - ${option?.deployment})`}
       style={{width: '100%'}}
       autoHighlight
       renderOption={(props, option: ISearchableSilo) => (
