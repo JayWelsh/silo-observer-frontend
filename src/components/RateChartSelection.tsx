@@ -80,7 +80,7 @@ const RateChartSelection = (props: IRateChartSelection) => {
     let value = event.target.value as string;
     setSiloZoneSelection(value)
     if(value === 'tvl+borrowed') {
-      navigate(`/silo/${tokenSymbol}/tvl`);
+      navigate(`/silo/${deploymentID}/${tokenSymbol}/tvl`);
     }
   };
 
