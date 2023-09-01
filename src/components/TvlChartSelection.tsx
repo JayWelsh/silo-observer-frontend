@@ -107,7 +107,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
 
       setIsLoading(false);
 
-      let networkToUnixStartDate : {[key: string]: number} = {};
+      let deploymentToUnixStartDate : {[key: string]: number} = {};
 
       let currentNetworkCount = 3;
 
@@ -131,7 +131,6 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       let dateToNetworksIncludedTVL : IDateToNetworksIncluded = {};
       let dateToNetworksIncludedBorrowed : IDateToNetworksIncluded = {};
 
-
       for(let entry of tvlTotalsDataMinutely) {
         if(!tvlTotalsDataMinutelyTimeToEntry[entry.timestamp]) {
           tvlTotalsDataMinutelyTimeToEntry[entry.timestamp] = entry;
@@ -141,14 +140,14 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
           tvlTotalsDataMinutelyTimeToEntry[entry.timestamp].duplicateCount++;
         }
         let unixTimestamp = Math.floor(new Date(entry.timestamp).getTime() / 1000);
-        if(!networkToUnixStartDate[entry.network] || (unixTimestamp < networkToUnixStartDate[entry.network])) {
-          networkToUnixStartDate[entry.network] = unixTimestamp;
+        if(!deploymentToUnixStartDate[entry.deployment_id] || (unixTimestamp < deploymentToUnixStartDate[entry.deployment_id])) {
+          deploymentToUnixStartDate[entry.deployment_id] = unixTimestamp;
         }
         if(!dateToNetworksIncludedTVL[entry.timestamp]) {
           dateToNetworksIncludedTVL[entry.timestamp] = [];
-          dateToNetworksIncludedTVL[entry.timestamp].push(entry.network);
-        } else if(dateToNetworksIncludedTVL[entry.timestamp].indexOf(entry.network) === -1) {
-          dateToNetworksIncludedTVL[entry.timestamp].push(entry.network);
+          dateToNetworksIncludedTVL[entry.timestamp].push(entry.deployment_id);
+        } else if(dateToNetworksIncludedTVL[entry.timestamp].indexOf(entry.deployment_id) === -1) {
+          dateToNetworksIncludedTVL[entry.timestamp].push(entry.deployment_id);
         }
       }
 
@@ -176,14 +175,14 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
           tvlTotalsDataHourlyTimeToEntry[entry.timestamp].tvl = new BigNumber(tvlTotalsDataHourlyTimeToEntry[entry.timestamp].tvl).plus(entry.tvl).toString();
         }
         let unixTimestamp = Math.floor(new Date(entry.timestamp).getTime() / 1000);
-        if(!networkToUnixStartDate[entry.network] || (unixTimestamp < networkToUnixStartDate[entry.network])) {
-          networkToUnixStartDate[entry.network] = unixTimestamp;
+        if(!deploymentToUnixStartDate[entry.deployment_id] || (unixTimestamp < deploymentToUnixStartDate[entry.deployment_id])) {
+          deploymentToUnixStartDate[entry.deployment_id] = unixTimestamp;
         }
         if(!dateToNetworksIncludedTVL[entry.timestamp]) {
           dateToNetworksIncludedTVL[entry.timestamp] = [];
-          dateToNetworksIncludedTVL[entry.timestamp].push(entry.network);
-        } else if(dateToNetworksIncludedTVL[entry.timestamp].indexOf(entry.network) === -1) {
-          dateToNetworksIncludedTVL[entry.timestamp].push(entry.network);
+          dateToNetworksIncludedTVL[entry.timestamp].push(entry.deployment_id);
+        } else if(dateToNetworksIncludedTVL[entry.timestamp].indexOf(entry.deployment_id) === -1) {
+          dateToNetworksIncludedTVL[entry.timestamp].push(entry.deployment_id);
         }
       }
 
@@ -210,14 +209,14 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
           borrowTotalsDataMinutelyTimeToEntry[entry.timestamp].duplicateCount++;
         }
         let unixTimestamp = Math.floor(new Date(entry.timestamp).getTime() / 1000);
-        if(!networkToUnixStartDate[entry.network] || (unixTimestamp < networkToUnixStartDate[entry.network])) {
-          networkToUnixStartDate[entry.network] = unixTimestamp;
+        if(!deploymentToUnixStartDate[entry.deployment_id] || (unixTimestamp < deploymentToUnixStartDate[entry.deployment_id])) {
+          deploymentToUnixStartDate[entry.deployment_id] = unixTimestamp;
         }
         if(!dateToNetworksIncludedBorrowed[entry.timestamp]) {
           dateToNetworksIncludedBorrowed[entry.timestamp] = [];
-          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.network);
-        } else if(dateToNetworksIncludedBorrowed[entry.timestamp].indexOf(entry.network) === -1) {
-          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.network);
+          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.deployment_id);
+        } else if(dateToNetworksIncludedBorrowed[entry.timestamp].indexOf(entry.deployment_id) === -1) {
+          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.deployment_id);
         }
       }
 
@@ -247,14 +246,14 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
           borrowTotalsDataHourlyTimeToEntry[entry.timestamp].duplicateCount++;
         }
         let unixTimestamp = Math.floor(new Date(entry.timestamp).getTime() / 1000);
-        if(!networkToUnixStartDate[entry.network] || (unixTimestamp < networkToUnixStartDate[entry.network])) {
-          networkToUnixStartDate[entry.network] = unixTimestamp;
+        if(!deploymentToUnixStartDate[entry.deployment_id] || (unixTimestamp < deploymentToUnixStartDate[entry.deployment_id])) {
+          deploymentToUnixStartDate[entry.deployment_id] = unixTimestamp;
         }
         if(!dateToNetworksIncludedBorrowed[entry.timestamp]) {
           dateToNetworksIncludedBorrowed[entry.timestamp] = [];
-          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.network);
-        } else if(dateToNetworksIncludedBorrowed[entry.timestamp].indexOf(entry.network) === -1) {
-          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.network);
+          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.deployment_id);
+        } else if(dateToNetworksIncludedBorrowed[entry.timestamp].indexOf(entry.deployment_id) === -1) {
+          dateToNetworksIncludedBorrowed[entry.timestamp].push(entry.deployment_id);
         }
       }
 
@@ -282,14 +281,14 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       // Sort borrowTotalsTimeseriesTemp
       borrowTotalsTimeseriesTemp = borrowTotalsTimeseriesTemp.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).filter((item) => {
         let shouldIncludeValue = true;
-        let requiredNetworks = [];
-        for(let [network, startDate] of Object.entries(networkToUnixStartDate)) {
+        let requiredDeployments = [];
+        for(let [network, startDate] of Object.entries(deploymentToUnixStartDate)) {
           let itemDateUnix = Math.floor(new Date(item.date).getTime() / 1000);
           if(itemDateUnix >= startDate) {
-            requiredNetworks.push(network);
+            requiredDeployments.push(network);
           }
         }
-        for(let requiredNetwork of requiredNetworks) {
+        for(let requiredNetwork of requiredDeployments) {
           if(dateToNetworksIncludedBorrowed[item.date].indexOf(requiredNetwork) === -1) {
             shouldIncludeValue = false;
           }
@@ -300,14 +299,14 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       // Sort tvlTotalsTimeseriesTemp
       tvlTotalsTimeseriesTemp = tvlTotalsTimeseriesTemp.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).filter((item) => {
         let shouldIncludeValue = true;
-        let requiredNetworks = [];
-        for(let [network, startDate] of Object.entries(networkToUnixStartDate)) {
+        let requiredDeployments = [];
+        for(let [network, startDate] of Object.entries(deploymentToUnixStartDate)) {
           let itemDateUnix = Math.floor(new Date(item.date).getTime() / 1000);
           if(itemDateUnix >= startDate) {
-            requiredNetworks.push(network);
+            requiredDeployments.push(network);
           }
         }
-        for(let requiredNetwork of requiredNetworks) {
+        for(let requiredNetwork of requiredDeployments) {
           if(dateToNetworksIncludedTVL[item.date].indexOf(requiredNetwork) === -1) {
             shouldIncludeValue = false;
           }
@@ -318,14 +317,14 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       // Sort combinedTotalsTimeseriesTemp
       combinedTotalsTimeseriesTemp = combinedTotalsTimeseriesTemp.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).filter((item) => {
         let shouldIncludeValue = true;
-        let requiredNetworks = [];
-        for(let [network, startDate] of Object.entries(networkToUnixStartDate)) {
+        let requiredDeployments = [];
+        for(let [network, startDate] of Object.entries(deploymentToUnixStartDate)) {
           let itemDateUnix = Math.floor(new Date(item.date).getTime() / 1000);
           if(itemDateUnix >= startDate) {
-            requiredNetworks.push(network);
+            requiredDeployments.push(network);
           }
         }
-        for(let requiredNetwork of requiredNetworks) {
+        for(let requiredNetwork of requiredDeployments) {
           if(dateToNetworksIncludedTVL[item.date].indexOf(requiredNetwork) === -1) {
             shouldIncludeValue = false;
           }
