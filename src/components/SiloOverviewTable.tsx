@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { 
   XAI_ADDRESS_ETH_MAINNET,
   WETH_ADDRESS_ETH_MAINNET,
+  CRVUSD_ADDRESS_ETH_MAINNET,
   DEPLOYMENT_ID_TO_HUMAN_READABLE,
 } from '../constants';
 import { ISilo } from '../interfaces';
@@ -78,12 +79,14 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
       } = silo;
 
       // build up base asset rates
-      let baseBorrowRate;
-      let baseLendRate;
-      let wethBorrowRate;
-      let wethLendRate;
-      let xaiBorrowRate;
-      let xaiLendRate;
+      let baseBorrowRate = 0;
+      let baseLendRate = 0;
+      let wethBorrowRate = 0;
+      let wethLendRate = 0;
+      let xaiBorrowRate = 0;
+      let xaiLendRate = 0;
+      let crvUSDBorrowRate = 0;
+      let crvUSDLendRate = 0;
 
       for(let rate of latest_rates) {
         let rateValue = rate.rate;
@@ -101,6 +104,13 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             wethLendRate = rateValue;
           }
         }
+        if(rate.asset_address === CRVUSD_ADDRESS_ETH_MAINNET) {
+          if(rate.side === "BORROWER") {
+            crvUSDBorrowRate = rateValue;
+          } else if (rate.side === "LENDER") {
+            crvUSDLendRate = rateValue;
+          }
+        }
         if(rate.asset_address === input_token_address) {
           if(rate.side === "BORROWER") {
             baseBorrowRate = rateValue;
@@ -109,11 +119,23 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
           }
         }
       }
+
+      // for sorting by deployment ids
+      let sortableDeploymentID = "";
+      if(deployment_id === 'ethereum-llama') {
+        sortableDeploymentID = 'a-ethereum-llama';
+      } else if (deployment_id === 'ethereum-original') {
+        sortableDeploymentID = 'b-ethereum-original';
+      } else if (deployment_id === 'arbitrum-original') {
+        sortableDeploymentID = 'c-arbitrum-original';
+      }
       
       siloOverviewDataBuild.push({
         name,
         network,
+        sortableDeploymentID,
         deploymentID: deployment_id,
+        tvlPlusBorrowed: Number(tvl) + Number(borrowed),
         tvl,
         borrowed,
         baseBorrowRate,
@@ -122,6 +144,8 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
         wethLendRate,
         xaiBorrowRate,
         xaiLendRate,
+        crvUSDBorrowRate,
+        crvUSDLendRate,
       })
     }
     setSiloOverviewData(siloOverviewDataBuild)
@@ -131,7 +155,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
     <>
       <SortableTable
         tableHeading="Silo Overviews"
-        defaultSortValueKey="tvl"
+        defaultSortValueKey="tvlPlusBorrowed"
         columnConfig={[
           {
             id: 'silo-overview-table-silo-col',
@@ -155,11 +179,19 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
           {
             id: 'silo-overview-table-deployment-col',
             label: 'Deployment',
-            valueKey: 'deploymentID',
+            valueKey: 'sortableDeploymentID',
             numeric: false,
             disablePadding: false,
-            imageGetter: deploymentImageGetter,
-            valueFormatter: (str: string) => `${DEPLOYMENT_ID_TO_HUMAN_READABLE[str]}`
+            imageGetter: (str: string, row: any) => deploymentImageGetter(row.deploymentID),
+            valueFormatter: (str: string, row: any) => `${DEPLOYMENT_ID_TO_HUMAN_READABLE[row.deploymentID]}`
+          },
+          {
+            id: 'silo-overview-table-tvl-plus-borrowed-col',
+            label: 'TVL + Borrowed',
+            valueKey: 'tvlPlusBorrowed',
+            numeric: true,
+            disablePadding: false,
+            valueFormatter: priceFormat,
           },
           {
             id: 'silo-overview-table-tvl-col',
@@ -194,12 +226,28 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             valueFormatter: (value) => priceFormat(value, 2, '%', false),
           },
           {
+            id: 'silo-overview-table-crvusd-borrow-apy-col',
+            label: 'crvUSD Borrow APY',
+            valueKey: 'crvUSDBorrowRate',
+            numeric: true,
+            disablePadding: false,
+            valueFormatter: (value, row) => row.deploymentID === 'ethereum-llama' ? priceFormat(value, 2, '%', false) : 'N/A',
+          },
+          {
+            id: 'silo-overview-table-crvusd-lend-apy-col',
+            label: 'crvUSD Lend APY',
+            valueKey: 'crvUSDLendRate',
+            numeric: true,
+            disablePadding: false,
+            valueFormatter: (value, row) => row.deploymentID === 'ethereum-llama' ? priceFormat(value, 2, '%', false) : 'N/A',
+          },
+          {
             id: 'silo-overview-table-xai-borrow-apy-col',
             label: 'XAI Borrow APY',
             valueKey: 'xaiBorrowRate',
             numeric: true,
             disablePadding: false,
-            valueFormatter: (value) => priceFormat(value, 2, '%', false),
+            valueFormatter: (value, row) => (['ethereum-original', 'arbitrum-original'].indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
           },
           {
             id: 'silo-overview-table-xai-lend-apy-col',
@@ -207,7 +255,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             valueKey: 'xaiLendRate',
             numeric: true,
             disablePadding: false,
-            valueFormatter: (value) => priceFormat(value, 2, '%', false),
+            valueFormatter: (value, row) => (['ethereum-original', 'arbitrum-original'].indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
           },
           {
             id: 'silo-overview-table-weth-borrow-apy-col',
@@ -215,7 +263,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             valueKey: 'wethBorrowRate',
             numeric: true,
             disablePadding: false,
-            valueFormatter: (value) => priceFormat(value, 2, '%', false),
+            valueFormatter: (value, row) => (['ethereum-original', 'arbitrum-original'].indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
           },
           {
             id: 'silo-overview-table-weth-lend-apy-col',
@@ -223,7 +271,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             valueKey: 'wethLendRate',
             numeric: true,
             disablePadding: false,
-            valueFormatter: (value) => priceFormat(value, 2, '%', false),
+            valueFormatter: (value, row) => (['ethereum-original', 'arbitrum-original'].indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
           },
         ]}
         tableData={siloOverviewData}
