@@ -34,8 +34,8 @@ interface IColumnConfigEntry {
   valueKey: string
   numeric: boolean
   disablePadding: boolean
-  valueFormatter?: (arg0: any) => any
-  imageGetter?: (arg0: any) => any
+  valueFormatter?: (arg0: any, arg1?: any) => any
+  imageGetter?: (arg0: any, arg1?: any) => any
   fallbackImage?: string
   internalLinkGetter?: (arg0: any, arg1: any) => string
 }
@@ -203,12 +203,12 @@ export default function SortableTable(props: ISortableTableProps) {
                             align={index > 0 ? "left" : "left"}
                           >
                             <div style={{display: 'flex', alignItems: 'center', whiteSpace: 'nowrap'}}>
-                              {columnConfigEntry?.imageGetter && (columnConfigEntry?.imageGetter(row[columnConfigEntry.valueKey])?.length > 0) &&
+                              {columnConfigEntry?.imageGetter && (columnConfigEntry?.imageGetter(row[columnConfigEntry.valueKey], row)?.length > 0) &&
                                 <img
                                   loading="lazy"
                                   width="25"
                                   style={{marginRight: 18}}
-                                  src={columnConfigEntry?.imageGetter(row[columnConfigEntry.valueKey])}
+                                  src={columnConfigEntry?.imageGetter(row[columnConfigEntry.valueKey], row)}
                                   onError={({ currentTarget }) => {
                                     currentTarget.onerror = null; // prevents looping
                                     currentTarget.src="https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/question-mark-white.svg";
@@ -225,7 +225,7 @@ export default function SortableTable(props: ISortableTableProps) {
                               {!columnConfigEntry?.internalLinkGetter &&
                                 <>
                                   {columnConfigEntry.valueFormatter
-                                    ? columnConfigEntry.valueFormatter(row[columnConfigEntry.valueKey]) 
+                                    ? columnConfigEntry.valueFormatter(row[columnConfigEntry.valueKey], row) 
                                     : row[columnConfigEntry.valueKey]
                                   }
                                 </>
