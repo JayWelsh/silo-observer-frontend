@@ -105,7 +105,7 @@ const SiloTokenBar = (props: PropsFromRedux) => {
             SILO:&nbsp;
             <span style={{fontWeight: 'bold'}}>
               {!siloTokenData && `Loading...`}
-              {siloTokenData && `${priceFormat(Number(siloTokenData.last_price_usd), 2, "$")} (`}
+              {siloTokenData && `${priceFormat(Number(siloTokenData.last_price_usd), 3, "$")} (`}
               {siloTokenData &&
                 <span style={{ color: Number(siloTokenData.change_24hr_usd_percent) >= 0 ? "#32cd32" : "red" }}>
                   {`${Number(siloTokenData.change_24hr_usd_percent) >= 0 ? '+' : '-'} ${priceFormat(Number(siloTokenData.change_24hr_usd_percent.replace('-', '')), 2, "%", false)}`}
@@ -121,7 +121,7 @@ const SiloTokenBar = (props: PropsFromRedux) => {
         <>
           <StatBlock>
             <Typography variant="subtitle2" style={{fontWeight: 400}}>
-              SILO: <span style={{fontWeight: 'bold'}}>{siloTokenData ? `${priceFormat(Number(siloTokenData.last_price_usd), 2, "$")}` : 'Loading...'}</span>
+              SILO: <span style={{fontWeight: 'bold'}}>{siloTokenData ? `${priceFormat(Number(siloTokenData.last_price_usd), 3, "$")}` : 'Loading...'}</span>
             </Typography>
           </StatBlock>
           <StatBlock>
