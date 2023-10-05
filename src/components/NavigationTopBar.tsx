@@ -25,6 +25,8 @@ import LogoLightMode from '../assets/png/logo.png'
 import { PropsFromRedux } from '../containers/NavigationTopBarContainer';
 import { ExternalLink } from '../components/ExternalLink';
 
+import SiloTokenBarContainer from '../containers/SiloTokenBarContainer';
+
 import GithubRepoNavigatorDialog from './GithubRepoNavigatorDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -97,6 +99,7 @@ const NavigationTopBar = (props: PropsFromRedux & INavigationTopBarProps) => {
 
   return (
     <div className={classes.root}>
+      <SiloTokenBarContainer />
       <AppBar style={{background: 'linear-gradient(-90deg, #000000, #000000)'}} position="static">
         <Toolbar>
           {/* <IconButton

@@ -108,6 +108,10 @@ export const percToColor = (perc: number) => {
 	let h = r * 0x10000 + g * 0x100 + b * 0x1;
 	return '#' + ('000000' + h.toString(16)).slice(-6);
 }
+
+export const sleep = (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
   
 // export function getEtherscanLink(
 // 	chainId: string,
