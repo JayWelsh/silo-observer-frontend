@@ -95,7 +95,7 @@ const SiloTokenBar = (props: PropsFromRedux) => {
     <Bar
       style={siloTokenData ? {
         backgroundColor: Number(siloTokenData.change_24hr_usd_percent) >= 0 ? "#011f00" : "#1f0000",
-        background: Number(siloTokenData.change_24hr_usd_percent) >= 0 ? "linear-gradient(0deg, rgba(2,50,0,1) 0%, rgba(0,0,0,1) 100%)" : "linear-gradient(0deg, rgba(30,0,0,1) 0%, rgba(0,0,0,1) 100%)"
+        background: Number(siloTokenData.change_24hr_usd_percent) >= 0 ? "linear-gradient(0deg, rgba(2,40,0,1) 0%, rgba(0,0,0,1) 100%)" : "linear-gradient(0deg, rgba(30,0,0,1) 0%, rgba(0,0,0,1) 100%)"
       } : {}}
     >
       {isConsideredMobile && 
