@@ -26,3 +26,22 @@ export interface ISilo {
     borrowed: number
     latest_rates: IRate[]
 }
+
+export interface ISiloTokenDataResponse {
+    data: ISiloTokenDataResponseData
+}
+
+export interface ISiloTokenDataResponseData {
+    address: string
+    network_name: string
+    symbol: string
+    standard: string
+    decimals: string
+    name: string
+    last_price_usd: string
+    is_base_asset: boolean
+    market_cap_usd: string
+    volume_24hr_usd: string
+    change_24hr_usd_percent: string
+    coingecko_id: string
+}
