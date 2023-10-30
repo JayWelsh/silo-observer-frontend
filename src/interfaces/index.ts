@@ -45,3 +45,16 @@ export interface ISiloTokenDataResponseData {
     change_24hr_usd_percent: string
     coingecko_id: string
 }
+
+interface IPieGroupedData {
+    name: string;
+    value: number;
+}
+
+export interface IPieData {
+    name: string;
+    value: number;
+    fill?: string;
+    markForRemoval?: boolean;
+    groupedData?: IPieGroupedData[];
+}
