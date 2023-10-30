@@ -6,7 +6,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import SiloSearchContainer from '../containers/SiloSearchContainer';
 import TvlChartSelectionContainer from '../containers/TvlChartSelectionContainer';
 import UserMetricsChartSelectionContainer from '../containers/UserMetricsChartSelectionContainer';
-import SiloTotalAssetCompositionContainer from '../containers/SiloTotalAssetCompositionContainer';
+// import SiloTotalAssetCompositionContainer from '../containers/SiloTotalAssetCompositionContainer';
 import SiloOverviewTableContainer from '../containers/SiloOverviewTableContainer';
 
 const HomePage = () => {
