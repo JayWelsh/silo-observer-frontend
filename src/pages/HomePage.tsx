@@ -36,8 +36,8 @@ const HomePage = () => {
                     />
                 }
             </div>
-            <div style={{marginTop: 24}}/>
-            <SiloTotalAssetCompositionContainer/>
+            {/* <div style={{marginTop: 24}}/>
+            <SiloTotalAssetCompositionContainer/> */}
             <div style={{marginTop: 24}}/>
             <SiloOverviewTableContainer/>
             <div style={{marginBottom: 50}}/>
