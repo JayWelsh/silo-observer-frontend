@@ -10,8 +10,9 @@ import { PropsFromRedux } from '../containers/SiloOverviewTableContainer';
 import PieChartContainer from '../containers/PieChartContainer';
 
 interface IDataReponse {
-  tvl: string;
+  tvl: string | number;
   asset: IAsset;
+  markForRemoval?: boolean;
 }
 
 export default function SiloTotalAssetComposition(props: PropsFromRedux) {
@@ -35,23 +36,77 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
 
       let runningTotal = 0;
       let otherRecord : IPieData = {
-        name: "Other",
+        name: "Other Assets",
         value: 0,
         groupedData: [],
       };
 
-      let formattedPieData : IPieData[] = pieDataResponse.sort((a, b) => Number(a) - Number(b)).map((entry) => {
+      interface IAggregateEntry {
+        tvl: number
+        asset: IAsset
+        addresses: string[]
+      }
+      interface IAggregateAssets {
+        [key: string]: IAggregateEntry
+      }
+
+      let aggregateAssets : IAggregateAssets = {
+        "WETH": {
+          tvl: 0,
+          asset: {
+            symbol: "WETH",
+            decimals: 18,
+            address: "",
+          },
+          addresses: ["0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"]
+        },
+        "USDC": {
+          tvl: 0,
+          asset: {
+            symbol: "USDC",
+            decimals: 8,
+            address: "",
+          },
+          addresses: ["0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8", "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"]
+        },
+      }
+
+      let enableAggregation = true;
+
+      let useSourceData = pieDataResponse;
+      if(enableAggregation) {
+        useSourceData = pieDataResponse.map((entry) => {
+          if(aggregateAssets[entry.asset.symbol] && (aggregateAssets[entry.asset.symbol].addresses.indexOf(entry.asset.address) > -1)) {
+            entry.markForRemoval = true;
+            aggregateAssets[entry.asset.symbol].tvl += Number(entry.tvl);
+          }
+          return entry;
+        }).filter((entry) => !entry.markForRemoval);
+
+        for(let [symbol, aggregateAsset] of Object.entries(aggregateAssets)) {
+          if(symbol && (aggregateAsset.tvl > 0)) {
+            useSourceData.push(aggregateAsset)
+          }
+        }
+      }
+
+      let formattedPieData : IPieData[] = useSourceData.sort((a, b) => Number(b.tvl) - Number(a.tvl)).map((entry) => {
         let markForRemoval = false;
         let percentageOfWhole = Number(((Number(entry.tvl) * 100) / totalTvl).toFixed(2));
         runningTotal += percentageOfWhole;
-        if((runningTotal > 95) && (percentageOfWhole < 1)) {
+        if((runningTotal > 95) || (percentageOfWhole < 1)) {
           otherRecord.value += percentageOfWhole;
           if(otherRecord.groupedData) {
-            otherRecord.groupedData.push({
-              name: entry.asset.symbol,
-              value: percentageOfWhole,
-            })
+            if(percentageOfWhole > 0) {
+              otherRecord.groupedData.push({
+                name: entry.asset.symbol,
+                value: percentageOfWhole,
+              })
+            }
           }
+          markForRemoval = true;
+        }
+        if(percentageOfWhole === 0) {
           markForRemoval = true;
         }
         return {
@@ -72,7 +127,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
 
   return (
     <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>
-      <PieChartContainer data={pieData} loading={isLoading} title={"Asset Composition"}/>
+      <PieChartContainer data={pieData} loading={isLoading} title={"TVL Asset Composition"}/>
     </Card>
   );
 }
