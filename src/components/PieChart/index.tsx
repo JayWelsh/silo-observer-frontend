@@ -43,17 +43,22 @@ const StyledTooltipText = styled.p`
 interface IStyledTooltipTextStacked {
   first?: boolean
   last?: boolean
+  fontSize?: string
 }
 
 const StyledTooltipTextStacked = styled.p<IStyledTooltipTextStacked>`
   font-weight: bold;
-  font-size: 14px;
+  font-size: ${props => props.fontSize ? props.fontSize : `14px`};
   margin-top: ${props => props.first ? `1em` : `6px`};
   margin-bottom: ${props => props.last ? `1em` : `6px`};
 `
 
-const CustomTooltip = (props: TooltipProps<ValueType, NameType>) => {
-  let { active, payload } = props;
+interface ICustomTooltip {
+  isConsideredMobile: boolean;
+}
+
+const CustomTooltip = (props: TooltipProps<ValueType, NameType> & ICustomTooltip) => {
+  let { active, payload, isConsideredMobile } = props;
   if (active && payload && payload.length) {
     let groupedData = payload[0].payload?.groupedData;
     let maxColumnLength = 18;
@@ -73,14 +78,14 @@ const CustomTooltip = (props: TooltipProps<ValueType, NameType>) => {
       <StyledTooltip>
         {groupedData && 
           <>
-            <StyledTooltipTextStacked first={true} style={{textDecoration: 'underline'}}>{`${payload[0].name}`}</StyledTooltipTextStacked>
+            <StyledTooltipTextStacked fontSize={isConsideredMobile ? "11px" : "14px"} first={true} style={{textDecoration: 'underline'}}>{`${payload[0].name}`}</StyledTooltipTextStacked>
             <div style={{display: 'flex'}}>
               {
                 groupedDataInColumns.map((columnData, index) => 
                   <div key={`grouped-tooltip-column-${index}`} style={(index > 0) ? { marginLeft: 32 } : {}}>
                     {
                       columnData.map((entry: IPieData, dataIndex: number) => 
-                        <StyledTooltipTextStacked key={`grouped-tooltip-column-data-${index}-${dataIndex}`} last={dataIndex === (columnData.length - 1)}>{`${centerShortenLongString(entry.name, 12)}: ${entry.value} %`}</StyledTooltipTextStacked>
+                        <StyledTooltipTextStacked fontSize={isConsideredMobile ? "11px" : "14px"} key={`grouped-tooltip-column-data-${index}-${dataIndex}`} last={dataIndex === (columnData.length - 1)}>{`${centerShortenLongString(entry.name, 12)}: ${entry.value} %`}</StyledTooltipTextStacked>
                       )
                     }
                   </div>
@@ -110,7 +115,7 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
     data,
     loading,
     title,
-    // isConsideredMobile,
+    isConsideredMobile,
   } = props;
 
   const [showLabels, setShowLabels] = useState(true);
@@ -171,15 +176,15 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
 
   return (
     <>
+      {loading &&
+        <LoadingIcon height={650} />
+      }
       {title && 
         <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10}}>
           {title || 'Loading...'}
         </Typography>
       }
       <div style={{height: 650, position: 'relative', paddingLeft: 16, paddingRight: 16, paddingBottom: 32 }}>
-        {loading &&
-          <LoadingIcon height={650} />
-        }
         <ResponsiveContainer width="100%" height="100%">
           <PieChart 
             width={550}
@@ -213,7 +218,7 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
             />
             <Legend layout="horizontal" align="center" />
             <Tooltip
-              content={<CustomTooltip />}
+              content={<CustomTooltip isConsideredMobile={isConsideredMobile} />}
               // wrapperStyle={{ visibility: "visible" }}
             />
           </PieChart>

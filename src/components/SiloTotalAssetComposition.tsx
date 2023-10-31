@@ -26,8 +26,6 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
       fetch(`${API_ENDPOINT}/tvl-totals/latest/assets/whole-platform`).then(resp => resp.json()),
     ]).then((data) => {
 
-      setIsLoading(false);
-
       let pieDataResponse : IDataReponse[] = data[0].data;
 
       let totalTvl = pieDataResponse.reduce((acc: number, entry: IDataReponse) => {
@@ -119,6 +117,8 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
       if(otherRecord.value > 0) {
         formattedPieData.push(otherRecord);
       }
+
+      setIsLoading(false);
 
       setPieData(formattedPieData);
 

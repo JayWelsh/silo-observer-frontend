@@ -12,6 +12,8 @@ const LoadingIconContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  padding: 'inherit',
+  left: 0,
 }));
 
 interface ILoadingIconProps {
