@@ -32,7 +32,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
         return acc + Number(entry.tvl);
       }, 0);
 
-      let runningTotal = 0;
+      // let runningTotal = 0;
       let otherRecord : IPieData = {
         name: "Other Assets",
         value: 0,
@@ -91,7 +91,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
       let formattedPieData : IPieData[] = useSourceData.sort((a, b) => Number(b.tvl) - Number(a.tvl)).map((entry) => {
         let markForRemoval = false;
         let percentageOfWhole = Number(((Number(entry.tvl) * 100) / totalTvl).toFixed(2));
-        runningTotal += percentageOfWhole;
+        // runningTotal += percentageOfWhole;
         if(percentageOfWhole < 1) {
           otherRecord.value += percentageOfWhole;
           if(otherRecord.groupedData) {
