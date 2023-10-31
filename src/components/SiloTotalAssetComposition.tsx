@@ -92,7 +92,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
         let markForRemoval = false;
         let percentageOfWhole = Number(((Number(entry.tvl) * 100) / totalTvl).toFixed(2));
         runningTotal += percentageOfWhole;
-        if((runningTotal > 95) || (percentageOfWhole < 1)) {
+        if((runningTotal > 97) || (percentageOfWhole < 1)) {
           otherRecord.value += percentageOfWhole;
           if(otherRecord.groupedData) {
             if(percentageOfWhole > 0) {

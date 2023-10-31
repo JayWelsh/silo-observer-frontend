@@ -24,7 +24,11 @@ import LoadingIcon from '../LoadingIcon';
 
 const color = scaleSequential(interpolateRainbow);
 
-const StyledTooltip = styled.div`
+interface IStyledTooltip {
+  maxHeight?: string;
+}
+
+const StyledTooltip = styled.div<IStyledTooltip>`
   background-color: black;
   opacity: 0.9;
   padding-top: 4px;
@@ -33,7 +37,7 @@ const StyledTooltip = styled.div`
   padding-right: 24px;
   border: 1px solid #fff;
   border-radius: 8px;
-  max-height: 650px;
+  max-height: ${props => props.maxHeight ? props.maxHeight : `650px`};
 `
 
 const StyledTooltipText = styled.p`
@@ -75,7 +79,7 @@ const CustomTooltip = (props: TooltipProps<ValueType, NameType> & ICustomTooltip
       }
     }
     return (
-      <StyledTooltip>
+      <StyledTooltip maxHeight={isConsideredMobile ? "550px" : "650px"}>
         {groupedData && 
           <>
             <StyledTooltipTextStacked fontSize={isConsideredMobile ? "11px" : "14px"} first={true} style={{textDecoration: 'underline'}}>{`${payload[0].name}`}</StyledTooltipTextStacked>
@@ -177,14 +181,14 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
   return (
     <>
       {loading &&
-        <LoadingIcon height={650} />
+        <LoadingIcon height={isConsideredMobile ? 550 : 650} />
       }
       {title && 
         <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10}}>
           {title || 'Loading...'}
         </Typography>
       }
-      <div style={{height: 650, position: 'relative', paddingLeft: 16, paddingRight: 16, paddingBottom: 32 }}>
+      <div style={{height: isConsideredMobile ? 550 : 650, position: 'relative', paddingLeft: 16, paddingRight: 16, paddingBottom: 32 }}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart 
             width={550}
