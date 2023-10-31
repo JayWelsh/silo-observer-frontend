@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { createTheme, StyledEngineProvider, Theme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import '../styles/App.css';
+import '../styles/App.scss';
 import { PropsFromRedux } from '../containers/AppContainer';
 
 import PageContainer from './PageContainer';

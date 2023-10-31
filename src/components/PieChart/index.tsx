@@ -55,6 +55,7 @@ const StyledTooltipTextStacked = styled.p<IStyledTooltipTextStacked>`
   font-size: ${props => props.fontSize ? props.fontSize : `14px`};
   margin-top: ${props => props.first ? `1em` : `6px`};
   margin-bottom: ${props => props.last ? `1em` : `6px`};
+  white-space: nowrap;
 `
 
 interface ICustomTooltip {
@@ -123,6 +124,7 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
   } = props;
 
   const [showLabels, setShowLabels] = useState(true);
+  // const [activeIndex, setActiveIndex] = useState<number | undefined>(undefined);
 
   const windowSize = useWindowSize();
 
@@ -204,6 +206,7 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
             }}
           >
             <Pie 
+              // activeIndex={activeIndex}
               data={dataWithFills}
               dataKey="value"
               cx="50%"
@@ -219,11 +222,17 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
                   undefined
               }
               activeShape={renderActiveShape}
+              // onClick={(data, index) => setActiveIndex(index)}
             />
             <Legend layout="horizontal" align="center" />
             <Tooltip
+              
               content={<CustomTooltip isConsideredMobile={isConsideredMobile} />}
-              // wrapperStyle={{ visibility: "visible" }}
+              wrapperStyle={{
+                zIndex: 1,
+                // visibility: "visible"
+              }}
+              allowEscapeViewBox={{ x: true, y: true }}
             />
           </PieChart>
         </ResponsiveContainer>
