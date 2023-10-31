@@ -221,7 +221,7 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
                 : 
                   undefined
               }
-              activeShape={renderActiveShape}
+              activeShape={isConsideredMobile ? undefined : renderActiveShape}
               // onClick={(data, index) => setActiveIndex(index)}
             />
             <Legend layout="horizontal" align="center" />
@@ -232,7 +232,7 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
                 zIndex: 1,
                 // visibility: "visible"
               }}
-              allowEscapeViewBox={{ x: true, y: true }}
+              // allowEscapeViewBox={{ x: true, y: true }}
             />
           </PieChart>
         </ResponsiveContainer>
