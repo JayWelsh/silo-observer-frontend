@@ -102,6 +102,12 @@ body {
   flex-direction: column;
 }
 
+.recharts-wrapper {
+  :focus {
+    outline: none;
+  }
+}
+
 @keyframes rotate {
   0% {transform: rotate(0deg);}
   /* 25% {transform: rotate(10deg);}
