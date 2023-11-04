@@ -11,6 +11,8 @@ import WithdrawIcon from '@mui/icons-material/Outbox';
 import BorrowIcon from '@mui/icons-material/AccountBalance';
 import RepaidIcon from '@mui/icons-material/CreditScore';
 
+import LoadingIcon from './LoadingIcon';
+
 import { API_ENDPOINT } from '../constants';
 
 import { PropsFromRedux } from '../containers/DailyStatsContainer';
@@ -40,6 +42,7 @@ const StatContainer = styled("div")(({ theme }) => ({
 const StatEntryContainer = styled(Card)(({ theme }) => ({
   padding: theme.spacing(4),
   textAlign: 'center',
+  position: 'relative',
 }));
 
 interface IStatEntry {
@@ -52,7 +55,7 @@ interface IStatEntry {
 
 export default function DailyStats(props: PropsFromRedux) {
 
-  const placeholderCollection = Array.from({length: 4}).map(() => { return { title: "Loading..", value: "Loading..." } });
+  const placeholderCollection = Array.from({length: 4}).map(() => { return { title: "Loading", value: "Loading", icon: <LoadingIcon relative={true} iconHeight={48} height={54} /> } });
 
   const [statCollection, setStatCollection] = useState<IStatEntry[]>(placeholderCollection);
   // const [isLoading, setIsLoading] = useState<boolean>(true);
