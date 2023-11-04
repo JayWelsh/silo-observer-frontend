@@ -18,7 +18,7 @@ export const centerShortenLongString = (string: string, maxLength: number) => {
 	}
 }
 
-const getDynamicFormat = (currentFormat = '0,0.00', number: number) => {
+const getDynamicFormat = (currentFormat = '0,0.00', number: number | string) => {
 	let requestedDecimals = 0;
 	let preDecimalFormat;
 	let postDecimalFormat;
@@ -68,7 +68,7 @@ const getDynamicFormat = (currentFormat = '0,0.00', number: number) => {
 	return dynamicFormat;
 }
 
-export const priceFormat = (number: number, decimals = 2, currency = "$", prefix = true) => {
+export const priceFormat = (number: number | string, decimals = 2, currency = "$", prefix = true) => {
 	let decimalString = "";
 	for(let i = 0; i < decimals; i++){
 			decimalString += "0";
@@ -77,7 +77,7 @@ export const priceFormat = (number: number, decimals = 2, currency = "$", prefix
 			prefix = false;
 	}
 	let format = '0,0.' + decimalString;
-	if(number < 10) {
+	if(Number(number) < 10) {
 			format = getDynamicFormat(format, number);
 	}
 	let result = numeral(number).format(format);
