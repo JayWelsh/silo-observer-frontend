@@ -132,7 +132,7 @@ export default function DailyStats(props: PropsFromRedux) {
         <StatGrid container spacing={2}>
             {statCollection.map(({title, subtitle, value, formatter, icon}) => 
               <Grid item xs={12} md={6}>
-                <StatEntryContainer>
+                <StatEntryContainer className="secondary-card">
                   {icon &&
                     <div style={{marginBottom: 8}}>
                       {icon}
