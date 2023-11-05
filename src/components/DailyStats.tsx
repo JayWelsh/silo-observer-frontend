@@ -88,7 +88,7 @@ export default function DailyStats(props: PropsFromRedux) {
       let depositEntry = {
         title: "Deposited",
         icon: <DepositIcon style={{fontSize: '3rem'}}/>,
-        value: dailyDepositUSDRecord.usd,
+        value: dailyDepositUSDRecord?.usd ? dailyDepositUSDRecord.usd : 0,
         formatter: (value: string) => { return priceFormat(value, 2, "$", true) }
       }
 
@@ -97,7 +97,7 @@ export default function DailyStats(props: PropsFromRedux) {
       let withdrawEntry = {
         title: "Withdrawn",
         icon: <WithdrawIcon style={{fontSize: '3rem'}}/>,
-        value: dailyWithdrawUSDRecord.usd,
+        value: dailyWithdrawUSDRecord?.usd ? dailyWithdrawUSDRecord.usd : 0,
         formatter: (value: string) => { return priceFormat(value, 2, "$", true) }
       }
 
@@ -106,7 +106,7 @@ export default function DailyStats(props: PropsFromRedux) {
       let borrowEntry = {
         title: "Borrowed",
         icon: <BorrowIcon style={{fontSize: '3rem'}}/>,
-        value: dailyBorrowUSDRecord.usd,
+        value: dailyBorrowUSDRecord?.usd ? dailyBorrowUSDRecord.usd : 0,
         formatter: (value: string) => { return priceFormat(value, 2, "$", true) }
       }
 
@@ -115,7 +115,7 @@ export default function DailyStats(props: PropsFromRedux) {
       let repayEntry = {
         title: "Repaid",
         icon: <RepaidIcon style={{fontSize: '3rem'}}/>,
-        value: dailyRepayUSDRecord.usd,
+        value: dailyRepayUSDRecord?.usd ? dailyRepayUSDRecord.usd : 0,
         formatter: (value: string) => { return priceFormat(value, 2, "$", true) }
       }
 
