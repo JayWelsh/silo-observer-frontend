@@ -10,6 +10,7 @@ import Navigation from './Navigation';
 import HomePage from '../pages/HomePage';
 import SiloRatesPage from '../pages/SiloRatesPage';
 import SiloTvlPage from '../pages/SiloTvlPage';
+import VolumePage from '../pages/VolumePage';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,6 +32,7 @@ const PageContainer = () => {
                     <Route path="/" element={<HomePage/>} />
                     <Route path="/silo/:deploymentID/:tokenSymbol/rates" element={<SiloRatesPage />} />
                     <Route path="/silo/:deploymentID/:tokenSymbol/tvl" element={<SiloTvlPage />} />
+                    <Route path="/volume/:volumeType" element={<VolumePage />} />
                     {/* <Route path="/silo/tvl" element={<SiloTvlPage />} /> */}
                 </Routes>
             </div>

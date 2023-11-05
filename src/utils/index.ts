@@ -196,6 +196,13 @@ export const debounce = (
 	}
 }
 
+export const capitalizeFirstLetter = (input: string): string => {
+  if (input.length === 0) {
+    return input; // Return the input as is if it's an empty string
+  }
+  return input.charAt(0).toUpperCase() + input.slice(1);
+}
+
 // export const parsePostgresDate = () => {
 // 	const parseDate = timeParse('%Y-%m-%dT%H:%M:%S.%LZ');
 // 	return 

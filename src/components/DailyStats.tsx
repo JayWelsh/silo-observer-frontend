@@ -15,7 +15,11 @@ import LoadingIcon from './LoadingIcon';
 
 import { API_ENDPOINT } from '../constants';
 
+import LoadingIconPlain from './LoadingIconPlain';
+
 import { PropsFromRedux } from '../containers/DailyStatsContainer';
+
+import LinkWrapper from './LinkWrapper';
 
 import {
   priceFormat
@@ -52,12 +56,13 @@ interface IStatEntry {
   subtitle?: string
   value: string
   icon?: JSX.Element
+  route?: string
   formatter?: (arg: string) => string
 }
 
 export default function DailyStats(props: PropsFromRedux) {
 
-  const placeholderCollection = Array.from({length: 4}).map(() => { return { title: "Loading", value: "Loading", icon: <LoadingIcon relative={true} iconHeight={48} height={54} /> } });
+  const placeholderCollection = Array.from({length: 4}).map(() => { return { title: "Loading", value: "Loading", icon: <LoadingIconPlain relative={true} iconHeight={48} height={54} /> } });
 
   const [statCollection, setStatCollection] = useState<IStatEntry[]>(placeholderCollection);
   // const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -89,7 +94,8 @@ export default function DailyStats(props: PropsFromRedux) {
         title: "Deposited",
         icon: <DepositIcon style={{fontSize: '3rem'}}/>,
         value: dailyDepositUSDRecord?.usd ? dailyDepositUSDRecord.usd : 0,
-        formatter: (value: string) => { return priceFormat(value, 2, "$", true) }
+        formatter: (value: string) => { return priceFormat(value, 2, "$", true) },
+        route: "/volume/deposit",
       }
 
       newStatCollection.push(depositEntry);
@@ -98,7 +104,8 @@ export default function DailyStats(props: PropsFromRedux) {
         title: "Withdrawn",
         icon: <WithdrawIcon style={{fontSize: '3rem'}}/>,
         value: dailyWithdrawUSDRecord?.usd ? dailyWithdrawUSDRecord.usd : 0,
-        formatter: (value: string) => { return priceFormat(value, 2, "$", true) }
+        formatter: (value: string) => { return priceFormat(value, 2, "$", true) },
+        route: "/volume/withdraw",
       }
 
       newStatCollection.push(withdrawEntry);
@@ -107,7 +114,8 @@ export default function DailyStats(props: PropsFromRedux) {
         title: "Borrowed",
         icon: <BorrowIcon style={{fontSize: '3rem'}}/>,
         value: dailyBorrowUSDRecord?.usd ? dailyBorrowUSDRecord.usd : 0,
-        formatter: (value: string) => { return priceFormat(value, 2, "$", true) }
+        formatter: (value: string) => { return priceFormat(value, 2, "$", true) },
+        route: "/volume/borrow",
       }
 
       newStatCollection.push(borrowEntry);
@@ -116,7 +124,8 @@ export default function DailyStats(props: PropsFromRedux) {
         title: "Repaid",
         icon: <RepaidIcon style={{fontSize: '3rem'}}/>,
         value: dailyRepayUSDRecord?.usd ? dailyRepayUSDRecord.usd : 0,
-        formatter: (value: string) => { return priceFormat(value, 2, "$", true) }
+        formatter: (value: string) => { return priceFormat(value, 2, "$", true) },
+        route: "/volume/repay",
       }
 
       newStatCollection.push(repayEntry);
@@ -135,20 +144,22 @@ export default function DailyStats(props: PropsFromRedux) {
       <Typography className="secondary-text" variant="subtitle1" style={{marginBottom: 24, fontWeight: 300}}>UTC Timezone</Typography>
       <StatContainer>
         <StatGrid container spacing={2}>
-            {statCollection.map(({title, subtitle, value, formatter, icon}) => 
-              <Grid item xs={12} md={6}>
-                <StatEntryContainer className="secondary-card">
-                  {icon &&
-                    <div style={{marginBottom: 8}}>
-                      {icon}
-                    </div>
-                  }
-                  <Typography variant="h4" style={{marginBottom: subtitle ? 0 : 16, fontSize: '1.8rem'}}>
-                    {title}
-                  </Typography>
-                  {subtitle && <Typography variant="subtitle1"  style={{marginBottom: 8}}>{subtitle}</Typography>}
-                  <Typography variant="h6" style={{fontWeight: 'bold'}}>{formatter ? formatter(value) : value}</Typography>
-                </StatEntryContainer>
+            {statCollection.map(({title, subtitle, value, formatter, icon, route}, statIndex) => 
+              <Grid key={`stat-collection-entry-${statIndex}`} item xs={12} md={6}>
+                <LinkWrapper link={route}>
+                  <StatEntryContainer className="secondary-card">
+                    {icon &&
+                      <div style={{marginBottom: 8}}>
+                        {icon}
+                      </div>
+                    }
+                    <Typography variant="h4" style={{marginBottom: subtitle ? 0 : 16, fontSize: '1.8rem'}}>
+                      {title}
+                    </Typography>
+                    {subtitle && <Typography variant="subtitle1"  style={{marginBottom: 8}}>{subtitle}</Typography>}
+                    <Typography variant="h6" style={{fontWeight: 'bold'}}>{formatter ? formatter(value) : value}</Typography>
+                  </StatEntryContainer>
+                </LinkWrapper>
               </Grid>
             )}
         </StatGrid>

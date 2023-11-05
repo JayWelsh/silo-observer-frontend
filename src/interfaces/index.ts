@@ -58,3 +58,7 @@ export interface IPieData {
     markForRemoval?: boolean;
     groupedData?: IPieGroupedData[];
 }
+export interface IVolumeResponseEntry {
+    usd: string;
+    day_timestamp_unix: number;
+}

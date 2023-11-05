@@ -9,7 +9,7 @@ import { localPoint } from '@visx/event';
 import { LinearGradient } from '@visx/gradient';
 import { AxisBottom } from '@visx/axis';
 import { min, max, extent, bisector } from 'd3-array';
-import { timeFormat } from 'd3-time-format';
+import { timeFormat, utcFormat } from 'd3-time-format';
 
 import { ITimeseries } from '.';
 
@@ -30,6 +30,9 @@ const tooltipStyles = {
 // util
 const formatDate = timeFormat("%I:%M %p | %b %d %Y");
 const formatDateHideTime = timeFormat("%b %d %Y");
+
+const formatDateUTC = utcFormat("%I:%M %p | %b %d %Y");
+const formatDateHideTimeUTC = utcFormat("%b %d %Y");
 
 const tickDateFormat = timeFormat('%b %d');
 const formatTickDate = (date: any) => {
@@ -55,6 +58,7 @@ export type AreaProps = {
   hideTime?: boolean,
   formatValue: (arg0: string | number) => string
   isLoadingPlaceholder?: boolean
+  utc?: boolean
 };
 
 export default withTooltip<AreaProps, ITimeseries>(
@@ -71,6 +75,7 @@ export default withTooltip<AreaProps, ITimeseries>(
     formatValue,
     hideTime,
     isLoadingPlaceholder = false,
+    utc = false,
   }: AreaProps & WithTooltipProvidedProps<ITimeseries>) => {
     if (width < 10) return null;
 
@@ -356,7 +361,16 @@ export default withTooltip<AreaProps, ITimeseries>(
                 ...(!tooltipDateTranslateLeft && !tooltipDateTranslateRight && {transform: 'translateX(-50%)'})
               }}
             >
-              {hideTime ? formatDateHideTime(getDate(tooltipData)) : formatDate(getDate(tooltipData))}
+              {utc &&
+                <>
+                  {hideTime ? formatDateHideTimeUTC(getDate(tooltipData)) : formatDateUTC(getDate(tooltipData))} (UTC)
+                </>
+              }
+              {!utc &&
+                <>
+                  {hideTime ? formatDateHideTime(getDate(tooltipData)) : formatDate(getDate(tooltipData))}
+                </>
+              }
             </Tooltip>
           </div>
         )}

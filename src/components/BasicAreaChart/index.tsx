@@ -68,6 +68,7 @@ interface IBasicAreaChartProps {
   rightTextFormatValueFn?: (arg1: string | number) => string,
   hideTime?: boolean,
   isConsideredMobile: boolean
+  utc?: boolean
 }
 
 const neutralColor = "#ff14fc";
@@ -90,6 +91,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
       isConsideredMobile,
       hideTime,
       loading,
+      utc = false,
     } = props;
 
     const classes = useStyles();
@@ -219,6 +221,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
                     isLoadingPlaceholder={(filteredChartData && filteredChartData.length > 0) ? false : true}
                     formatValue={formatValueFn}
                     hideTime={hideTime}
+                    utc={utc}
                 />
               </>
             )
