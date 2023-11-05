@@ -11,8 +11,6 @@ import WithdrawIcon from '@mui/icons-material/Outbox';
 import BorrowIcon from '@mui/icons-material/AccountBalance';
 import RepaidIcon from '@mui/icons-material/CreditScore';
 
-import LoadingIcon from './LoadingIcon';
-
 import { API_ENDPOINT } from '../constants';
 
 import LoadingIconPlain from './LoadingIconPlain';
