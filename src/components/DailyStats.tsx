@@ -27,6 +27,8 @@ const Container = styled(Card)(({ theme }) => ({
   justifyContent: 'center',
   textAlign: 'center',
   flexDirection: 'column',
+  backgroundColor: '#00000033',
+  backgroundImage: 'none',
 }));
 
 const StatGrid = styled(Grid)(() => ({
@@ -128,7 +130,7 @@ export default function DailyStats(props: PropsFromRedux) {
   return (
     <Container>
       <Typography variant="h4" style={{marginBottom: 0}}>
-        Today's Events
+        Today's Activity
       </Typography>
       <Typography className="secondary-text" variant="subtitle1" style={{marginBottom: 24, fontWeight: 300}}>UTC Timezone</Typography>
       <StatContainer>
