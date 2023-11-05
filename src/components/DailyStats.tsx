@@ -65,10 +65,10 @@ export default function DailyStats(props: PropsFromRedux) {
   useEffect(() => {
     // setIsLoading(true);
     Promise.all([
-      fetch(`${API_ENDPOINT}/volume/deposit?perPage=1&page=1&order=DESC`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/withdraw?perPage=1&page=1&order=DESC`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/borrow?perPage=1&page=1&order=DESC`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/repay?perPage=1&page=1&order=DESC`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/deposit?period=today`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/withdraw?period=today`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/borrow?period=today`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/repay?period=today`).then(resp => resp.json()),
     ]).then((data) => {
     
       let [
