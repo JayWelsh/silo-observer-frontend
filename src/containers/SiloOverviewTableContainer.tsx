@@ -8,10 +8,12 @@ import SiloOverviewTable from '../components/SiloOverviewTable';
 
 interface RootState {
   siloOverviews: ISilo[]
+  selectedNetworkIDs: string[]
 }
   
 const mapStateToProps = (state: RootState) => ({
-  siloOverviews: state.siloOverviews
+  siloOverviews: state.siloOverviews,
+  selectedNetworkIDs: state.selectedNetworkIDs,
 })
 
 const connector = connect(mapStateToProps, {})

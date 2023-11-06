@@ -6,7 +6,7 @@ import { API_ENDPOINT } from '../constants';
 
 import { IPieData, IAsset } from '../interfaces';
 
-import { PropsFromRedux } from '../containers/SiloOverviewTableContainer';
+import { PropsFromRedux } from '../containers/SiloTotalAssetCompositionContainer';
 import PieChartContainer from '../containers/PieChartContainer';
 
 interface IDataReponse {
@@ -17,13 +17,17 @@ interface IDataReponse {
 
 export default function SiloTotalAssetComposition(props: PropsFromRedux) {
 
+  let {
+    selectedNetworkIDs,
+  } = props;
+
   const [pieData, setPieData] = useState<IPieData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setIsLoading(true);
     Promise.all([
-      fetch(`${API_ENDPOINT}/tvl-totals/latest/assets/whole-platform`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/tvl-totals/latest/assets/whole-platform?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
     ]).then((data) => {
 
       let pieDataResponse : IDataReponse[] = data[0].data;
@@ -120,7 +124,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
       setPieData(formattedPieData);
 
     })
-  }, [])
+  }, [selectedNetworkIDs])
 
   return (
     <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>

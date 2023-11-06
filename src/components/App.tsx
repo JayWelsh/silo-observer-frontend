@@ -40,6 +40,9 @@ const App = (props: PropsFromRedux) => {
         },
         palette: {
           mode: props.darkMode ? 'dark' : 'light',
+          primary: {
+            main: '#FFF',
+          },
           ...(props.darkMode && {
             background: {
               default: "#131313",
@@ -61,7 +64,6 @@ const App = (props: PropsFromRedux) => {
   );
 
   return (
-    //@ts-ignore
     <BrowserRouter>
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={theme}>

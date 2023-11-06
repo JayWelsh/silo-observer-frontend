@@ -61,95 +61,98 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
 
   let {
     siloOverviews,
+    selectedNetworkIDs,
   } = props;
 
   useEffect(() => {
     let siloOverviewDataBuild = [];
     for(let silo of siloOverviews) {
-      console.log({silo})
 
-      const {
-        name,
-        network,
-        deployment_id,
-        tvl,
-        borrowed,
-        input_token_address,
-        latest_rates,
-      } = silo;
+      if(selectedNetworkIDs.indexOf(silo.network) > -1) {
 
-      // build up base asset rates
-      let baseBorrowRate = 0;
-      let baseLendRate = 0;
-      let wethBorrowRate = 0;
-      let wethLendRate = 0;
-      let xaiBorrowRate = 0;
-      let xaiLendRate = 0;
-      let crvUSDBorrowRate = 0;
-      let crvUSDLendRate = 0;
+        const {
+          name,
+          network,
+          deployment_id,
+          tvl,
+          borrowed,
+          input_token_address,
+          latest_rates,
+        } = silo;
 
-      for(let rate of latest_rates) {
-        let rateValue = rate.rate;
-        if(rate.asset_address === XAI_ADDRESS_ETH_MAINNET) {
-          if(rate.side === "BORROWER") {
-            xaiBorrowRate = rateValue;
-          } else if (rate.side === "LENDER") {
-            xaiLendRate = rateValue;
+        // build up base asset rates
+        let baseBorrowRate = 0;
+        let baseLendRate = 0;
+        let wethBorrowRate = 0;
+        let wethLendRate = 0;
+        let xaiBorrowRate = 0;
+        let xaiLendRate = 0;
+        let crvUSDBorrowRate = 0;
+        let crvUSDLendRate = 0;
+
+        for(let rate of latest_rates) {
+          let rateValue = rate.rate;
+          if(rate.asset_address === XAI_ADDRESS_ETH_MAINNET) {
+            if(rate.side === "BORROWER") {
+              xaiBorrowRate = rateValue;
+            } else if (rate.side === "LENDER") {
+              xaiLendRate = rateValue;
+            }
+          }
+          if(rate.asset_address === WETH_ADDRESS_ETH_MAINNET) {
+            if(rate.side === "BORROWER") {
+              wethBorrowRate = rateValue;
+            } else if (rate.side === "LENDER") {
+              wethLendRate = rateValue;
+            }
+          }
+          if(rate.asset_address === CRVUSD_ADDRESS_ETH_MAINNET) {
+            if(rate.side === "BORROWER") {
+              crvUSDBorrowRate = rateValue;
+            } else if (rate.side === "LENDER") {
+              crvUSDLendRate = rateValue;
+            }
+          }
+          if(rate.asset_address === input_token_address) {
+            if(rate.side === "BORROWER") {
+              baseBorrowRate = rateValue;
+            } else if (rate.side === "LENDER") {
+              baseLendRate = rateValue;
+            }
           }
         }
-        if(rate.asset_address === WETH_ADDRESS_ETH_MAINNET) {
-          if(rate.side === "BORROWER") {
-            wethBorrowRate = rateValue;
-          } else if (rate.side === "LENDER") {
-            wethLendRate = rateValue;
-          }
+
+        // for sorting by deployment ids
+        let sortableDeploymentID = "";
+        if(deployment_id === 'ethereum-llama') {
+          sortableDeploymentID = 'a-ethereum-llama';
+        } else if (deployment_id === 'ethereum-original') {
+          sortableDeploymentID = 'b-ethereum-original';
+        } else if (deployment_id === 'arbitrum-original') {
+          sortableDeploymentID = 'c-arbitrum-original';
         }
-        if(rate.asset_address === CRVUSD_ADDRESS_ETH_MAINNET) {
-          if(rate.side === "BORROWER") {
-            crvUSDBorrowRate = rateValue;
-          } else if (rate.side === "LENDER") {
-            crvUSDLendRate = rateValue;
-          }
-        }
-        if(rate.asset_address === input_token_address) {
-          if(rate.side === "BORROWER") {
-            baseBorrowRate = rateValue;
-          } else if (rate.side === "LENDER") {
-            baseLendRate = rateValue;
-          }
-        }
+        
+        siloOverviewDataBuild.push({
+          name,
+          network,
+          sortableDeploymentID,
+          deploymentID: deployment_id,
+          tvlPlusBorrowed: Number(tvl) + Number(borrowed),
+          tvl,
+          borrowed,
+          baseBorrowRate,
+          baseLendRate,
+          wethBorrowRate,
+          wethLendRate,
+          xaiBorrowRate,
+          xaiLendRate,
+          crvUSDBorrowRate,
+          crvUSDLendRate,
+        })
       }
-
-      // for sorting by deployment ids
-      let sortableDeploymentID = "";
-      if(deployment_id === 'ethereum-llama') {
-        sortableDeploymentID = 'a-ethereum-llama';
-      } else if (deployment_id === 'ethereum-original') {
-        sortableDeploymentID = 'b-ethereum-original';
-      } else if (deployment_id === 'arbitrum-original') {
-        sortableDeploymentID = 'c-arbitrum-original';
-      }
-      
-      siloOverviewDataBuild.push({
-        name,
-        network,
-        sortableDeploymentID,
-        deploymentID: deployment_id,
-        tvlPlusBorrowed: Number(tvl) + Number(borrowed),
-        tvl,
-        borrowed,
-        baseBorrowRate,
-        baseLendRate,
-        wethBorrowRate,
-        wethLendRate,
-        xaiBorrowRate,
-        xaiLendRate,
-        crvUSDBorrowRate,
-        crvUSDLendRate,
-      })
     }
     setSiloOverviewData(siloOverviewDataBuild)
-  }, [siloOverviews])
+  }, [siloOverviews, selectedNetworkIDs])
 
   return (
     <>

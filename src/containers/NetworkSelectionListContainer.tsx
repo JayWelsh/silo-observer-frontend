@@ -1,25 +1,27 @@
 import { connect, ConnectedProps } from 'react-redux';
 
-import {
-  ISilo,
-} from '../interfaces';
+import { setSelectedNetworkIDs } from '../state/actions';
 
-import DailyStats from '../components/DailyStats';
+import NetworkSelectionList from '../components/NetworkSelectionList';
 
 interface RootState {
-  siloOverviews: ISilo[]
+  darkMode: boolean
   isConsideredMobile: boolean
   selectedNetworkIDs: string[]
 }
   
 const mapStateToProps = (state: RootState) => ({
-  siloOverviews: state.siloOverviews,
+  darkMode: state.darkMode,
   isConsideredMobile: state.isConsideredMobile,
   selectedNetworkIDs: state.selectedNetworkIDs
 })
 
-const connector = connect(mapStateToProps, {})
+const mapDispatchToProps = {
+  setSelectedNetworkIDs
+}
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
   
 export type PropsFromRedux = ConnectedProps<typeof connector>
 
-export default connector(DailyStats)
+export default connector(NetworkSelectionList)

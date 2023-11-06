@@ -60,6 +60,10 @@ interface IStatEntry {
 
 export default function DailyStats(props: PropsFromRedux) {
 
+  let {
+    selectedNetworkIDs,
+  } = props;
+
   const placeholderCollection = Array.from({length: 4}).map(() => { return { title: "Loading", value: "Loading", icon: <LoadingIconPlain relative={true} iconHeight={48} height={54} /> } });
 
   const [statCollection, setStatCollection] = useState<IStatEntry[]>(placeholderCollection);
@@ -68,10 +72,10 @@ export default function DailyStats(props: PropsFromRedux) {
   useEffect(() => {
     // setIsLoading(true);
     Promise.all([
-      fetch(`${API_ENDPOINT}/volume/deposit?period=today`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/withdraw?period=today`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/borrow?period=today`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/repay?period=today`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/deposit?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/withdraw?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/borrow?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/repay?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
     ]).then((data) => {
     
       let [
@@ -132,7 +136,7 @@ export default function DailyStats(props: PropsFromRedux) {
       
       // setIsLoading(false);
     })
-  }, [])
+  }, [selectedNetworkIDs])
 
   return (
     <Container>
