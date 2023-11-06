@@ -13,6 +13,7 @@ import { priceFormat } from '../utils';
 import { API_ENDPOINT } from '../constants';
 
 import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
+import { PropsFromRedux } from '../containers/UserMetricsChartSelectionContainer';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
@@ -31,12 +32,13 @@ interface IDailyActiveUsersSelectionProps {
   overrideHandleSiloZoneChange?: (arg0: SelectChangeEvent<string>) => void;
 }
 
-const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) => {
+const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps & PropsFromRedux) => {
 
   const {
     tokenSymbol,
     isConsideredMobile,
     overrideHandleSiloZoneChange,
+    selectedNetworkIDs,
   } = props;
 
   let navigate = useNavigate();
@@ -67,10 +69,10 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
     setIsLoading(true);
     setDailyActiveUsersTimeseries([]);
     Promise.all([
-        fetch(`${API_ENDPOINT}/events/borrow/distinct-daily-users`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/events/deposit/distinct-daily-users`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/events/repay/distinct-daily-users`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/events/withdraw/distinct-daily-users`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events/borrow/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events/deposit/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events/repay/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events/withdraw/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
     ]).then((data) => {
 
       setIsLoading(false);
@@ -167,7 +169,7 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps) 
       setDailyActiveUsersTimeseries(dailyActiveUsersTimeseries);
 
     })
-  }, [tokenSymbol])
+  }, [tokenSymbol, selectedNetworkIDs])
 
   return (
     <>
