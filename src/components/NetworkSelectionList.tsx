@@ -10,7 +10,7 @@ import Checkbox from '@mui/material/Checkbox';
 import ListItemIcon from '@mui/material/ListItemIcon';
 
 import EthereumLogo from '../assets/png/ethereum-logo.png';
-import ArbitrumLogo from '../assets/svg/arbitrum-logo.svg';
+import ArbitrumLogo from '../assets/svg/arbitrum-logo.png';
 import { PropsFromRedux } from '../containers/NetworkSelectionListContainer';
 
 import { compareArrays } from '../utils';
