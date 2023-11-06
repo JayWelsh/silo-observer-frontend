@@ -4,13 +4,15 @@ import React, {useEffect, useState} from 'react';
 
 import BigNumber from 'bignumber.js';
 
-import { priceFormat, capitalizeFirstLetter } from '../utils';
+import { priceFormat, capitalizeFirstLetter, selectedChainIDsToDisplayString } from '../utils';
 
-import { API_ENDPOINT } from '../constants';
+import { API_ENDPOINT, CHAIN_COUNT } from '../constants';
 
 import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
 
 import { IVolumeResponseEntry } from '../interfaces';
+
+import { PropsFromRedux } from '../containers/VolumeChartSelectionContainer';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
@@ -25,11 +27,12 @@ interface ITvlChartSelectionProps {
   // overrideHandleSiloZoneChange?: (arg0: SelectChangeEvent<string>) => void;
 }
 
-const TvlChartSelection = (props: ITvlChartSelectionProps) => {
+const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
 
   const {
     volumeType,
     // isConsideredMobile,
+    selectedNetworkIDs,
   } = props;
 
   const [combinedTotalsTimeseries, setCombinedTotalsTimeseries] = useState<ITimeseries[]>([]);
@@ -40,7 +43,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
     setIsLoading(true);
     setCombinedTotalsTimeseries([]);
     Promise.all([
-      fetch(`${API_ENDPOINT}/volume/${volumeType}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/${volumeType}?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
     ]).then((data) => {
 
       setIsLoading(false);
@@ -55,7 +58,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       setCombinedTotalsTimeseries(chartData);
 
     })
-  }, [volumeType])
+  }, [volumeType, selectedNetworkIDs])
 
   return (
     <>
@@ -66,7 +69,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
                       <BasicAreaChartContainer
                           chartData={combinedTotalsTimeseries}
                           loading={isLoading}
-                          leftTextTitle={`All Silo Deployments`}
+                          leftTextTitle={selectedNetworkIDs.length === CHAIN_COUNT ? `All Silo Deployments` : `${selectedChainIDsToDisplayString(selectedNetworkIDs)} Silo Deployments`}
                           leftTextSubtitle={`Daily ${capitalizeFirstLetter(volumeType)} Volume`}
                           rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
                           showChange={true}

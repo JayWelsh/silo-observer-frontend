@@ -1,17 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/es/integration/react'
 
 import './styles/index.css';
 import AppContainer from './containers/AppContainer';
 // import reportWebVitals from './reportWebVitals';
-import store from './state';
+import store, { persistor } from './state';
+
+const PGate = PersistGate as any;
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* @ts-ignore */}
     <Provider store={store}>
-      <AppContainer />
+      <PGate
+        loading={null}
+        persistor={persistor}
+      >
+        <AppContainer />
+      </PGate>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

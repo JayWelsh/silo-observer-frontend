@@ -9,11 +9,13 @@ import SiloTotalAssetComposition from '../components/SiloTotalAssetComposition';
 interface RootState {
   siloOverviews: ISilo[]
   isConsideredMobile: boolean
+  selectedNetworkIDs: string[]
 }
   
 const mapStateToProps = (state: RootState) => ({
   siloOverviews: state.siloOverviews,
   isConsideredMobile: state.isConsideredMobile,
+  selectedNetworkIDs: state.selectedNetworkIDs,
 })
 
 const connector = connect(mapStateToProps, {})

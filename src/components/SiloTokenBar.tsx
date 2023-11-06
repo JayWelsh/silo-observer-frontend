@@ -45,7 +45,6 @@ const SiloTokenBar = (props: PropsFromRedux) => {
 
   useEffect(() => {
     let isMounted = true;
-    console.log({fetchIndex})
     const refreshSiloTokenBar = async () => {
       setIsLoading(true);
       await Promise.all([

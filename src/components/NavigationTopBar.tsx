@@ -26,6 +26,7 @@ import { PropsFromRedux } from '../containers/NavigationTopBarContainer';
 import { ExternalLink } from '../components/ExternalLink';
 
 import SiloTokenBarContainer from '../containers/SiloTokenBarContainer';
+import NetworkSelectionListContainer from '../containers/NetworkSelectionListContainer';
 
 import GithubRepoNavigatorDialog from './GithubRepoNavigatorDialog';
 
@@ -99,45 +100,50 @@ const NavigationTopBar = (props: PropsFromRedux & INavigationTopBarProps) => {
 
   return (
     <div className={classes.root}>
-      <SiloTokenBarContainer />
-      <AppBar style={{background: 'linear-gradient(-90deg, #000000, #000000)'}} position="static">
-        <Toolbar>
-          {/* <IconButton
-            onClick={() => props.setShowLeftMenu(!localShowLeftMenu)}
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-            size="large">
-            <MenuIcon />
-          </IconButton> */}
-          {/* <div style={{width: '115px', position: 'relative', marginRight: '15px', alignSelf: 'start'}}>
-            <img onClick={() => props.history.push('/')} height={'115px'} style={{cursor: 'pointer', position: 'absolute', top: 10}} src={localDarkMode ? LogoDarkMode : LogoLightMode} alt="logo" />
-          </div> */}
-          <animated.img onMouseEnter={() => setLogoHovered(true)} onMouseLeave={() => setLogoHovered(false)} style={{...logoSpring, cursor: 'pointer'}} onClick={() => navigate('/')} height={'40px'} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
-          {!isConsideredMobile &&
-            <Typography onClick={() => navigate('/')} variant="h6" className={classes.title}>
-              silo.observer
-            </Typography>
-          }
-          <div className={classes.flexer}/>
-          <div className={"flex-center-all"}>
-            <ExternalLink className={"hover-opacity-button flex-center-all"} href={"https://discord.gg/txcZWpmrj7"}>
-              <img alt="Discord Server Link" className={classes.socialIcon} style={{width: 40}} src={DiscordLogo} />
-            </ExternalLink>
-            <GitHubIcon onClick={() => setShowGithubNavigation(true)} style={{width: 40}} className={[classes.socialIcon, "hover-opacity-button"].join(' ')}/>
-          </div>
-          {/* <Web3ModalButton/>
-          <IconButton
-            color="inherit"
-            onClick={() => props.setDarkMode(!localDarkMode)}
-            aria-label="delete"
-            className={classes.margin}
-            size="large">
-            {localDarkMode ? <LightModeIcon/> : <DarkModeIcon />}
-          </IconButton> */}
-        </Toolbar>
-      </AppBar>
+      <div style={{position: 'fixed', width: '100%', zIndex: 9}}>
+        <SiloTokenBarContainer />
+        <AppBar style={{background: 'linear-gradient(-90deg, #000000, #000000)', top: 30}}>
+          <Toolbar>
+            {/* <IconButton
+              onClick={() => props.setShowLeftMenu(!localShowLeftMenu)}
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              aria-label="menu"
+              size="large">
+              <MenuIcon />
+            </IconButton> */}
+            {/* <div style={{width: '115px', position: 'relative', marginRight: '15px', alignSelf: 'start'}}>
+              <img onClick={() => props.history.push('/')} height={'115px'} style={{cursor: 'pointer', position: 'absolute', top: 10}} src={localDarkMode ? LogoDarkMode : LogoLightMode} alt="logo" />
+            </div> */}
+            <animated.img onMouseEnter={() => setLogoHovered(true)} onMouseLeave={() => setLogoHovered(false)} style={{...logoSpring, cursor: 'pointer'}} onClick={() => navigate('/')} height={'40px'} src={localDarkMode ? LogoDarkMode : LogoLightMode} className={[classes.logoSpacer].join(' ')} alt="logo" />
+            {!isConsideredMobile &&
+              <Typography onClick={() => navigate('/')} variant="h6" className={classes.title}>
+                silo.observer
+              </Typography>
+            }
+            <div className={classes.flexer}/>
+            <div className={"flex-center-all"}>
+              <NetworkSelectionListContainer />
+              <ExternalLink className={"hover-opacity-button flex-center-all"} href={"https://discord.gg/txcZWpmrj7"}>
+                <img alt="Discord Server Link" className={classes.socialIcon} style={{width: 40}} src={DiscordLogo} />
+              </ExternalLink>
+              <GitHubIcon onClick={() => setShowGithubNavigation(true)} style={{width: 40}} className={[classes.socialIcon, "hover-opacity-button"].join(' ')}/>
+            </div>
+            {/* <Web3ModalButton/>
+            <IconButton
+              color="inherit"
+              onClick={() => props.setDarkMode(!localDarkMode)}
+              aria-label="delete"
+              className={classes.margin}
+              size="large">
+              {localDarkMode ? <LightModeIcon/> : <DarkModeIcon />}
+            </IconButton> */}
+          </Toolbar>
+        </AppBar>
+      </div>
+      <div style={{height: 30}} />
+      <Toolbar/>
       <GithubRepoNavigatorDialog open={showGithubNavigation} onClose={() => setShowGithubNavigation(false)}/>
     </div>
   );

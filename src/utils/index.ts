@@ -146,7 +146,7 @@ export const multiplyNumbers = (value1: number | string, value2: number | string
 export const divideNumbers = (value1: number | string, value2: number | string) => BigNumber(value1).dividedBy(BigNumber(value2)).toString();
 
 export const debounce = (
-	func: () => void,
+	func: (arg0: any) => void,
 	wait: number,
 	immediate: boolean
 ) => {
@@ -201,6 +201,33 @@ export const capitalizeFirstLetter = (input: string): string => {
     return input; // Return the input as is if it's an empty string
   }
   return input.charAt(0).toUpperCase() + input.slice(1);
+}
+
+export const selectedChainIDsToDisplayString = (input: string[]): string => {
+	return input.map((entry) => capitalizeFirstLetter(entry)).join(" & ");
+}
+
+export const compareArrays = (array1: string[], array2: string[]): boolean => {
+	// Convert arrays to sets for efficient comparison
+	const set1 = new Set(array1);
+	const set2 = new Set(array2);
+
+	// Check if the sets are equal, indicating that the contents match
+	return arraysAreEqual(set1, set2);
+}
+
+export const arraysAreEqual = <T>(set1: Set<T>, set2: Set<T>): boolean => {
+	if (set1.size !== set2.size) {
+			return false;
+	}
+
+	for (const item of set1) {
+			if (!set2.has(item)) {
+					return false;
+			}
+	}
+
+	return true;
 }
 
 // export const parsePostgresDate = () => {

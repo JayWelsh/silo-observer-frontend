@@ -26,3 +26,8 @@ export const setSiloOverviews = (siloOverviews: ISilo[]) => ({
     type: "SET_SILO_OVERVIEWS",
     siloOverviews
 })
+
+export const setSelectedNetworkIDs = (selectedNetworkIDs: string[]) => ({
+    type: "SET_SELECTED_NETWORK_IDS",
+    selectedNetworkIDs
+})

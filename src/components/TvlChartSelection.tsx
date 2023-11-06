@@ -10,9 +10,10 @@ import BigNumber from 'bignumber.js';
 
 import { priceFormat } from '../utils';
 
-import { API_ENDPOINT } from '../constants';
+import { API_ENDPOINT, CHAIN_ID_TO_DEPLOYMENT_COUNT } from '../constants';
 
 import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
+import { PropsFromRedux } from '../containers/TvlChartSelectionContainer';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
@@ -58,13 +59,14 @@ interface ITvlChartSelectionProps {
   overrideHandleSiloZoneChange?: (arg0: SelectChangeEvent<string>) => void;
 }
 
-const TvlChartSelection = (props: ITvlChartSelectionProps) => {
+const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
 
   const {
     tokenSymbol,
     deploymentID,
     isConsideredMobile,
     overrideHandleSiloZoneChange,
+    selectedNetworkIDs,
   } = props;
 
   let navigate = useNavigate();
@@ -99,17 +101,24 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
     setTvlTotalsTimeseries([]);
     setCombinedTotalsTimeseries([]);
     Promise.all([
-        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=144&resolution=minutely`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=16000&resolution=hourly`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=144&resolution=minutely`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}` : 'whole-platform'}?perPage=16000&resolution=hourly`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&`}perPage=144&resolution=minutely`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&`}perPage=16000&resolution=hourly`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&`}perPage=144&resolution=minutely`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&`}perPage=16000&resolution=hourly`).then(resp => resp.json()),
     ]).then((data) => {
 
       setIsLoading(false);
 
       let deploymentToUnixStartDate : {[key: string]: number} = {};
 
-      let currentNetworkCount = 3;
+      let currentNetworkCount = selectedNetworkIDs.reduce((acc, networkId) => {
+        if(CHAIN_ID_TO_DEPLOYMENT_COUNT[networkId]) {
+          return acc + CHAIN_ID_TO_DEPLOYMENT_COUNT[networkId]
+        }
+        return acc;
+      }, 0);
+
+      console.log({currentNetworkCount, selectedNetworkIDs})
 
       let tvlTotalsDataMinutely = data[0].data.reverse();
       let tvlTotalsDataHourly = data[1].data.reverse();
@@ -340,7 +349,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps) => {
       setCombinedTotalsTimeseries(combinedTotalsTimeseriesTemp);
 
     })
-  }, [tokenSymbol, deploymentID])
+  }, [tokenSymbol, deploymentID, selectedNetworkIDs])
 
   return (
     <>
