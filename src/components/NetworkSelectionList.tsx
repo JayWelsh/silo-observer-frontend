@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Box from '@mui/material/Box';
@@ -108,10 +108,10 @@ export default function NetworkSelectionList(props: PropsFromRedux) {
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, paddingTop: "4px", paddingBottom: "2px" }}>
               {selected.map((value, index) => (
-                <>
+                <Fragment key={`network-selection-entry-${index}`}>
                   {(index > 0) && "+"}
                   <img src={networkIdToImage[value]} style={{width: networkIconSize, height: networkIconSize}} alt={`${value}`} />
-                </>
+                </Fragment>
               ))}
             </Box>
           )}

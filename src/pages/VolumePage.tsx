@@ -5,6 +5,7 @@ import Container from '@mui/material/Container';
 import VolumeChartSelectionContainer from '../containers/VolumeChartSelectionContainer';
 
 import ReturnHomeLink from '../components/ReturnHomeLink';
+import EventLogTableContainer from '../containers/EventLogTableContainer';
 
 const SiloTvlPage = () => {
 
@@ -18,6 +19,12 @@ const SiloTvlPage = () => {
           {volumeType && 
             <VolumeChartSelectionContainer
               volumeType={volumeType}
+            />
+          }
+          <div style={{marginTop: 24}}/>
+          {volumeType && 
+            <EventLogTableContainer
+              eventType={volumeType}
             />
           }
           <div style={{marginBottom: 50}}/>

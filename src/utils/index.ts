@@ -1,5 +1,6 @@
 import numeral from "numeral";
 import BigNumber from 'bignumber.js';
+import { utils } from 'ethers';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
@@ -91,6 +92,20 @@ export const priceFormat = (number: number | string, decimals = 2, currency = "$
 	}
 }
 
+export const formatTokenAmount = (amount: string, decimals: number) => {
+	return utils.formatUnits(amount, decimals);
+}
+
+export const tokenImageName = (symbol: string) => {
+	switch(symbol.toLowerCase()) {
+		case "silo":
+			return "SILO"
+		case "weth":
+			return "ETH-light"
+	}
+	return symbol;
+}
+
 // Credit for percToColour: https://gist.github.com/mlocati/7210513
 export const percToColor = (perc: number) => {
 	if(perc > 100){
@@ -112,30 +127,39 @@ export const percToColor = (perc: number) => {
 export const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-  
-// export function getEtherscanLink(
-// 	chainId: string,
-// 	data: string,
-// 	type: 'transaction' | 'token' | 'address' | 'block'
-// ): string {
-// 	const prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
 
-// 	switch (type) {
-// 		case 'transaction': {
-// 		return `${prefix}/tx/${data}`
-// 		}
-// 		case 'token': {
-// 		return `${prefix}/token/${data}`
-// 		}
-// 		case 'block': {
-// 		return `${prefix}/block/${data}`
-// 		}
-// 		case 'address':
-// 		default: {
-// 		return `${prefix}/address/${data}`
-// 		}
-// 	}
-// }
+const ETHERSCAN_PREFIXES_NETWORK_NAME: { [key: string]: string } = {
+	'ethereum': 'etherscan.io',
+	'ropsten': 'ropsten.etherscan.io',
+	'rinkeby': 'rinkeby.etherscan.io',
+	'goerli': 'goerli.etherscan.io',
+	'arbitrum': 'arbiscan.io',
+	'sepolia': 'sepolia.etherscan.io'
+}
+  
+export function getEtherscanLink(
+	chainName: string,
+	data: string,
+	type: 'transaction' | 'token' | 'address' | 'block'
+): string {
+	const prefix = `https://${ETHERSCAN_PREFIXES_NETWORK_NAME[chainName]}`
+
+	switch (type) {
+		case 'transaction': {
+		return `${prefix}/tx/${data}`
+		}
+		case 'token': {
+		return `${prefix}/token/${data}`
+		}
+		case 'block': {
+		return `${prefix}/block/${data}`
+		}
+		case 'address':
+		default: {
+		return `${prefix}/address/${data}`
+		}
+	}
+}
 
 export const subtractNumbers = (value1: number | string, value2: number | string) => BigNumber(value1).minus(BigNumber(value2)).toString();
 

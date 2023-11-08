@@ -1,8 +1,12 @@
 import React, { HTMLProps, useCallback } from 'react'
 import styled from 'styled-components'
 
-const StyledLink = styled.a`
-  text-decoration: none;
+interface IStyledLink {
+  decorate: boolean,
+}
+
+const StyledLink = styled.a<IStyledLink>`
+  ${props => props.decorate ? '' : 'text-decoration: none;'}
   cursor: pointer;
   font-weight: 500;
 
@@ -21,8 +25,9 @@ export function ExternalLink({
     target = '_blank',
     href,
     rel = 'noopener noreferrer',
+    decorate = false,
     ...rest
-  }: Omit<HTMLProps<HTMLAnchorElement>, 'as' | 'ref' | 'onClick'> & { href: string }) {
+  }: Omit<HTMLProps<HTMLAnchorElement>, 'as' | 'ref' | 'onClick'> & { href: string, decorate?: boolean }) {
     const handleClick = useCallback(
       (event: React.MouseEvent<HTMLAnchorElement>) => {
         // don't prevent default, don't redirect if it's a new tab
@@ -34,5 +39,5 @@ export function ExternalLink({
       },
       [target]
     )
-    return <StyledLink target={target} rel={rel} href={href} onClick={handleClick} {...rest} />
+    return <StyledLink decorate={decorate} target={target} rel={rel} href={href} onClick={handleClick} {...rest} />
 }

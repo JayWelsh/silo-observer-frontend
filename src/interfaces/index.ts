@@ -62,3 +62,17 @@ export interface IVolumeResponseEntry {
     usd: string;
     day_timestamp_unix: number;
 }
+
+export interface IContractEvent {
+    user_address: string;
+    amount: string;
+    tx_hash: string;
+    block_number: number;
+    receiver_address: string;
+    silo: ISilo;
+    asset: IAsset;
+    block_hash: string;
+    block_timestamp: string;
+    network: string;
+    block_day_timestamp: string;
+}
