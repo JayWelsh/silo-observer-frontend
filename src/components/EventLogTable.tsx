@@ -189,20 +189,20 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
             valueFormatter: (str: string, row: any) => `${DEPLOYMENT_ID_TO_HUMAN_READABLE[row.deployment_id]}`
           },
           {
-            id: 'event-log-table-event-time-col',
-            label: 'Event Time',
-            valueKey: 'block_timestamp_unix',
-            numeric: true,
-            disablePadding: false,
-            valueFormatter: (str: number) => (`${formatDate(new Date(str * 1000))}`),
-          },
-          {
             id: 'event-log-table-event-relative-time-col',
             label: 'Relative Time',
             valueKey: 'block_timestamp',
             numeric: false,
             disablePadding: false,
             valueFormatter: (str: Date) => (`${dayjs(str).fromNow()}`),
+          },
+          {
+            id: 'event-log-table-event-time-col',
+            label: 'Event Time',
+            valueKey: 'block_timestamp_unix',
+            numeric: true,
+            disablePadding: false,
+            valueFormatter: (str: number) => (`${formatDate(new Date(str * 1000))}`),
           },
           {
             id: 'event-log-table-event-tx-hash-col',
