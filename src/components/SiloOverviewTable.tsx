@@ -54,7 +54,7 @@ const deploymentImageGetter = ((deploymentID: string) => {
   }
 })
 
-const internalLinkGetter = ((symbol: string, deploymentID: string) => `/silo/${deploymentID}/${symbol}/tvl`)
+const internalLinkGetter = ((symbol: string, row: any) => `/silo/${row.deploymentID}/${symbol}/tvl`)
 
 export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchProps) {
   const [siloOverviewData, setSiloOverviewData] = useState<ISiloOverviewData[]>([]);

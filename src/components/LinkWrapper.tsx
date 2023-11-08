@@ -10,6 +10,7 @@ interface ILinkWrapper {
   className?: string,
   children: React.ReactNode,
   onClick?: () => void,
+  decorate?: boolean,
 }
 
 // we use this component to dynamically handle internal links and external links
@@ -21,17 +22,18 @@ const LinkWrapper = (props: ILinkWrapper) => {
     className,
     children,
     onClick,
+    decorate = false,
   } = props;
   if(external && link) {
     return (
-      <ExternalLink className={[className, 'no-decorate', 'inherit-color'].join(" ")} href={link}>
+      <ExternalLink decorate={decorate} className={[className, decorate ? '' : 'no-decorate', 'inherit-color'].join(" ")} href={link}>
         {children}
       </ExternalLink>
     )
   }
   if(!external && link) {
     return (
-      <Link onClick={() => onClick && onClick()} className={[className, 'no-decorate', 'inherit-color'].join(" ")} to={`${link}`}>
+      <Link onClick={() => onClick && onClick()} className={[className, decorate ? '' : 'no-decorate', 'inherit-color'].join(" ")} to={`${link}`}>
         {children}
       </Link>
     )

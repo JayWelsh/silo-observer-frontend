@@ -9,6 +9,7 @@ import UserMetricsChartSelectionContainer from '../containers/UserMetricsChartSe
 import DailyStatsContainer from '../containers/DailyStatsContainer';
 import SiloTotalAssetCompositionContainer from '../containers/SiloTotalAssetCompositionContainer';
 import SiloOverviewTableContainer from '../containers/SiloOverviewTableContainer';
+import EventLogTableContainer from '../containers/EventLogTableContainer';
 
 const HomePage = () => {
 
@@ -39,6 +40,8 @@ const HomePage = () => {
             </div>
             <div style={{marginTop: 24}}/>
             <DailyStatsContainer/>
+            <div style={{marginTop: 24}}/>
+            <EventLogTableContainer />
             <div style={{marginTop: 24}}/>
             <SiloTotalAssetCompositionContainer/>
             <div style={{marginTop: 24}}/>

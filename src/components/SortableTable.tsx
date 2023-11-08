@@ -12,7 +12,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import { visuallyHidden } from '@mui/utils';
-import { Link } from "react-router-dom";
+
+import LinkWrapper from './LinkWrapper';
+import LoadingIcon from './LoadingIcon';
 
 type Order = 'asc' | 'desc';
 
@@ -36,8 +38,10 @@ interface IColumnConfigEntry {
   disablePadding: boolean
   valueFormatter?: (arg0: any, arg1?: any) => any
   imageGetter?: (arg0: any, arg1?: any) => any
+  iconGetter?: (arg0: string, arg1?: any) => JSX.Element | undefined,
   fallbackImage?: string
   internalLinkGetter?: (arg0: any, arg1: any) => string
+  externalLinkGetter?: (arg0: any, arg1: any) => string
 }
 
 interface EnhancedTableProps {
@@ -46,6 +50,7 @@ interface EnhancedTableProps {
   order: Order;
   orderBy: string;
   rowCount: number;
+  disableSorting?: boolean
 }
 
 function EnhancedTableHead(props: EnhancedTableProps) {
@@ -53,7 +58,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     columnConfig,
     order,
     orderBy,
-    onRequestSort
+    onRequestSort,
+    disableSorting = false,
   } = props;
   const createSortHandler =
     (property: string) => (event: React.MouseEvent<unknown>) => {
@@ -69,6 +75,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             align={'left'}
             padding={columnConfigEntry.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === columnConfigEntry.id ? order : false}
+            style={disableSorting ? { pointerEvents: 'none' } : {}}
           >
             <TableSortLabel
               active={orderBy === columnConfigEntry.valueKey}
@@ -123,6 +130,13 @@ interface ISortableTableProps {
   defaultSortValueKey: string
   columnConfig: IColumnConfigEntry[]
   tableData: any[]
+  totalRecords?: number
+  parentRowsPerPage?: number
+  setParentPage?: (arg0: number) => void;
+  setParentPerPage?: (arg0: number) => void;
+  serverSidePagination?: boolean;
+  isLoading?: boolean;
+  disableSorting?: boolean;
 }
 
 export default function SortableTable(props: ISortableTableProps) {
@@ -132,12 +146,19 @@ export default function SortableTable(props: ISortableTableProps) {
     defaultSortValueKey,
     columnConfig,
     tableData,
+    totalRecords,
+    parentRowsPerPage,
+    setParentPage,
+    setParentPerPage,
+    serverSidePagination = false,
+    isLoading = false,
+    disableSorting = false,
   } = props;
   
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState(defaultSortValueKey);
   const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(100);
+  const [rowsPerPage, setRowsPerPage] = React.useState(parentRowsPerPage ? parentRowsPerPage : 50);
 
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -154,16 +175,25 @@ export default function SortableTable(props: ISortableTableProps) {
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
+    if(setParentPage) {
+      setParentPage(newPage)
+    }
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+    if(setParentPage) {
+      setParentPage(0)
+    }
+    if(setParentPerPage) {
+      setParentPerPage(parseInt(event.target.value, 10))
+    }
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
+  // const emptyRows =
+  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - tableData.length) : 0;
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -171,7 +201,7 @@ export default function SortableTable(props: ISortableTableProps) {
         <EnhancedTableToolbar tableHeading={tableHeading} />
         <TableContainer>
           <Table
-            sx={{ minWidth: 750 }}
+            sx={{ minWidth: 750, }}
             aria-labelledby="tableTitle"
             size={'medium'}
           >
@@ -181,10 +211,11 @@ export default function SortableTable(props: ISortableTableProps) {
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               rowCount={tableData.length}
+              disableSorting={disableSorting}
             />
-            <TableBody>
-              {sortData(tableData, columnConfig, order, orderBy)
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            <TableBody sx={{position: 'relative'}}>
+              {!isLoading && sortData(tableData, columnConfig, order, orderBy)
+                .slice(serverSidePagination ? 0 : page * rowsPerPage, serverSidePagination ? rowsPerPage : page * rowsPerPage + rowsPerPage)
                 .map((row: any, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
@@ -192,7 +223,7 @@ export default function SortableTable(props: ISortableTableProps) {
                       hover
                       onClick={(event) => handleClick(event, index)}
                       tabIndex={-1}
-                      key={`${row.name}-${row.network}-${row.deploymentID}`}
+                      key={`${row.name}-${row.network}-${row.deploymentID}-${index}`}
                     >
                       {columnConfig.map((columnConfigEntry, index) => {
                         return (
@@ -206,8 +237,7 @@ export default function SortableTable(props: ISortableTableProps) {
                               {columnConfigEntry?.imageGetter && (columnConfigEntry?.imageGetter(row[columnConfigEntry.valueKey], row)?.length > 0) &&
                                 <img
                                   loading="lazy"
-                                  width="25"
-                                  style={{marginRight: 18}}
+                                  style={{marginRight: 18, maxHeight: 25, width: 'auto'}}
                                   src={columnConfigEntry?.imageGetter(row[columnConfigEntry.valueKey], row)}
                                   onError={({ currentTarget }) => {
                                     currentTarget.onerror = null; // prevents looping
@@ -216,13 +246,30 @@ export default function SortableTable(props: ISortableTableProps) {
                                   alt=""
                                 />
                               }
+                              {columnConfigEntry?.iconGetter && (columnConfigEntry?.iconGetter(row[columnConfigEntry.valueKey], row)) &&
+                                <>
+                                  {columnConfigEntry?.iconGetter(row[columnConfigEntry.valueKey], row)}
+                                </>
+                              }
                               {
                                 columnConfigEntry?.internalLinkGetter &&
-                                <Link style={{color: 'white'}} to={columnConfigEntry.internalLinkGetter(row[columnConfigEntry.valueKey], row.deploymentID)}>
-                                  {row[columnConfigEntry.valueKey]}
-                                </Link>
+                                <LinkWrapper decorate={true} className="white-text" link={columnConfigEntry.internalLinkGetter(row[columnConfigEntry.valueKey], row)}>
+                                  {columnConfigEntry.valueFormatter
+                                    ? columnConfigEntry.valueFormatter(row[columnConfigEntry.valueKey], row) 
+                                    : row[columnConfigEntry.valueKey]
+                                  }
+                                </LinkWrapper>
                               }
-                              {!columnConfigEntry?.internalLinkGetter &&
+                              {
+                                columnConfigEntry?.externalLinkGetter &&
+                                <LinkWrapper external={true} decorate={true} className="white-text" link={columnConfigEntry.externalLinkGetter(row[columnConfigEntry.valueKey], row)}>
+                                  {columnConfigEntry.valueFormatter
+                                    ? columnConfigEntry.valueFormatter(row[columnConfigEntry.valueKey], row) 
+                                    : row[columnConfigEntry.valueKey]
+                                  }
+                                </LinkWrapper>
+                              }
+                              {(!columnConfigEntry?.internalLinkGetter && !columnConfigEntry?.externalLinkGetter) &&
                                 <>
                                   {columnConfigEntry.valueFormatter
                                     ? columnConfigEntry.valueFormatter(row[columnConfigEntry.valueKey], row) 
@@ -237,7 +284,7 @@ export default function SortableTable(props: ISortableTableProps) {
                     </TableRow>
                   );
                 })}
-              {emptyRows > 0 && (
+              {/* {emptyRows > 0 && (
                 <TableRow
                   style={{
                     height: 53 * emptyRows,
@@ -245,14 +292,24 @@ export default function SortableTable(props: ISortableTableProps) {
                 >
                   <TableCell colSpan={6} />
                 </TableRow>
+              )} */}
+              {isLoading && (
+                <TableRow
+                  style={{
+                    height: 58 * rowsPerPage,
+                  }}
+                >
+                  <TableCell colSpan={columnConfig.length} />
+                </TableRow>
               )}
+              {isLoading && <LoadingIcon height={100} selfCenter />}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
-          count={tableData.length}
+          count={totalRecords ? totalRecords : tableData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

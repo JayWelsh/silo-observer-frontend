@@ -20,6 +20,7 @@ interface ILoadingIconProps {
   iconHeight?: number;
   position?: string | undefined;
   relative?: boolean;
+  selfCenter?: boolean;
 }
 
 export default function LoadingIcon(props: ILoadingIconProps) {
@@ -28,6 +29,7 @@ export default function LoadingIcon(props: ILoadingIconProps) {
     height,
     iconHeight,
     relative = false,
+    selfCenter = false,
   } = props;
 
   const loadingSpring = useSpring({
@@ -49,7 +51,7 @@ export default function LoadingIcon(props: ILoadingIconProps) {
   })
 
   return (
-    <LoadingIconContainer style={{height: height, position: relative ? 'relative' : 'absolute', width: '100%'}}>
+    <LoadingIconContainer style={{height: height, position: relative ? 'relative' : 'absolute', width: '100%', ...(selfCenter && { top: '50%', transform: 'translateY(-50%)' })}}>
       <animated.img style={loadingSpring} src={LogoDarkMode} alt="loading icon" />
     </LoadingIconContainer>
   );
