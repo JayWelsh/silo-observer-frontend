@@ -70,6 +70,9 @@ const getDynamicFormat = (currentFormat = '0,0.00', number: number | string) => 
 }
 
 export const priceFormat = (number: number | string, decimals = 2, currency = "$", prefix = true) => {
+	if(!number) {
+		return "0.00";
+	}
 	let decimalString = "";
 	for(let i = 0; i < decimals; i++){
 			decimalString += "0";
