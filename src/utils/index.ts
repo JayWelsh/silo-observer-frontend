@@ -95,6 +95,30 @@ export const priceFormat = (number: number | string, decimals = 2, currency = "$
 	}
 }
 
+export const formatTimeAgo = (timestamp: number): string => {
+  const currentTime = Math.floor(Date.now() / 1000); // Convert current time to seconds
+  const timeDifference = currentTime - timestamp;
+
+  // Define time intervals in seconds
+  const intervals = {
+    year: 31536000,
+    month: 2592000,
+    day: 86400,
+    hour: 3600,
+    minute: 60,
+  };
+
+  for (const [unit, seconds] of Object.entries(intervals)) {
+    const intervalCount = Math.floor(timeDifference / seconds);
+
+    if (intervalCount >= 1) {
+      return intervalCount === 1 ? `${intervalCount} ${unit} ago` : `${intervalCount} ${unit}s ago`;
+    }
+  }
+
+  return 'Just now';
+}
+
 export const formatTokenAmount = (amount: string, decimals: number) => {
 	return utils.formatUnits(amount, decimals);
 }
