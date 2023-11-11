@@ -177,7 +177,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             numeric: false,
             disablePadding: false,
             imageGetter: networkImageGetter,
-            valueFormatter: (str: string) => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
+            valueFormatter: (str: string) => str ? `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}` : ``
           },
           {
             id: 'silo-overview-table-deployment-col',
