@@ -2,10 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import { utcFormat } from 'd3-time-format';
 
-import dayjs from 'dayjs';
-
-import relativeTime from 'dayjs/plugin/relativeTime';
-
 import DepositIcon from '@mui/icons-material/MoveToInbox';
 import WithdrawIcon from '@mui/icons-material/Outbox';
 import BorrowIcon from '@mui/icons-material/AccountBalance';
@@ -29,11 +25,10 @@ import {
   tokenImageName,
   centerShortenLongString,
   getEtherscanLink,
+  formatTimeAgo,
 } from "../utils";
 
 import LlamaLogo from "../assets/png/llama.png";
-
-dayjs.extend(relativeTime)
 
 const formatDate = utcFormat("%b-%d-%Y %I:%M %p (UTC)");
 
@@ -203,7 +198,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
             valueKey: 'block_timestamp',
             numeric: false,
             disablePadding: false,
-            valueFormatter: (str: Date) => (`${dayjs(str).fromNow()}`),
+            valueFormatter: (str: Date, row: any) => (`${formatTimeAgo(row.block_timestamp_unix)}`),
           },
           {
             id: 'event-log-table-event-time-col',
@@ -211,7 +206,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
             valueKey: 'block_timestamp_unix',
             numeric: true,
             disablePadding: false,
-            valueFormatter: (str: number) => (`${formatDate(new Date(str * 1000))}`),
+            valueFormatter: (unixTimestamp: number) => (`${formatDate(new Date(unixTimestamp * 1000))}`),
           },
           {
             id: 'event-log-table-event-tx-hash-col',
