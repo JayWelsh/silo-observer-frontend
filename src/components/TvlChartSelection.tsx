@@ -155,7 +155,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
         if(!dateToNetworksIncludedTVL[entry.timestamp]) {
           dateToNetworksIncludedTVL[entry.timestamp] = [];
           dateToNetworksIncludedTVL[entry.timestamp].push(entry.deployment_id);
-        } else if(dateToNetworksIncludedTVL[entry.timestamp].indexOf(entry.deployment_id) === -1) {
+        } else if(dateToNetworksIncludedTVL[entry.timestamp]?.indexOf(entry.deployment_id) === -1) {
           dateToNetworksIncludedTVL[entry.timestamp].push(entry.deployment_id);
         }
       }
@@ -298,7 +298,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
           }
         }
         for(let requiredNetwork of requiredDeployments) {
-          if(dateToNetworksIncludedBorrowed[item.date].indexOf(requiredNetwork) === -1) {
+          if(dateToNetworksIncludedBorrowed[item.date]?.indexOf(requiredNetwork) === -1) {
             shouldIncludeValue = false;
           }
         }
@@ -316,7 +316,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
           }
         }
         for(let requiredNetwork of requiredDeployments) {
-          if(dateToNetworksIncludedTVL[item.date].indexOf(requiredNetwork) === -1) {
+          if(dateToNetworksIncludedTVL[item.date]?.indexOf(requiredNetwork) === -1) {
             shouldIncludeValue = false;
           }
         }
@@ -334,10 +334,10 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
           }
         }
         for(let requiredNetwork of requiredDeployments) {
-          if(dateToNetworksIncludedTVL[item.date].indexOf(requiredNetwork) === -1) {
+          if(dateToNetworksIncludedTVL[item.date]?.indexOf(requiredNetwork) === -1) {
             shouldIncludeValue = false;
           }
-          if(dateToNetworksIncludedBorrowed[item.date].indexOf(requiredNetwork) === -1) {
+          if(dateToNetworksIncludedBorrowed[item.date]?.indexOf(requiredNetwork) === -1) {
             shouldIncludeValue = false;
           }
         }

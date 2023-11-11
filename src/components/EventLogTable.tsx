@@ -84,8 +84,10 @@ const internalLinkGetter = ((symbol: string, row: any) => `/silo/${row.deploymen
 export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable) {
   const [eventTableData, setEventTableData] = useState<IContractEvent[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [parentPage, setParentPage] = useState(0);
-  const [parentPerPage, setParentPerPage] = useState(10);
+  const [clientPage, setClientPage] = useState(0);
+  const [serverPage, setServerPage] = useState(0);
+  const [serverPerPage] = useState(500);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
 
   let {
@@ -94,13 +96,20 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
   } = props;
 
   useEffect(() => {
+    let deducedServerPage = Math.ceil((clientPage + 1) * rowsPerPage / serverPerPage) - 1;
+    if(deducedServerPage !== serverPage) {
+      setServerPage(deducedServerPage);
+    }
+  }, [clientPage, serverPage, rowsPerPage, serverPerPage])
+
+  useEffect(() => {
     setIsLoading(true);
     let urls : Promise<any>[] = [
-      fetch(`${API_ENDPOINT}/events?page=${parentPage + 1}&perPage=${parentPerPage}&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/events?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
     ];
     if(eventType) {
       urls = [
-        fetch(`${API_ENDPOINT}/events/${eventType}?page=${parentPage + 1}&perPage=${parentPerPage}&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events/${eventType}?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
       ]
     }
     Promise.all(urls).then((data) => {
@@ -117,7 +126,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
       
       setIsLoading(false);
     })
-  }, [selectedNetworkIDs, eventType, parentPage, parentPerPage])
+  }, [selectedNetworkIDs, eventType, serverPage, serverPerPage])
 
   return (
     <>
@@ -127,9 +136,9 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
         defaultSortValueKey="block_timestamp_unix"
         tableData={eventTableData}
         totalRecords={totalRecords}
-        setParentPage={setParentPage}
-        setParentPerPage={setParentPerPage}
-        parentRowsPerPage={parentPerPage}
+        setParentPage={setClientPage}
+        setParentPerPage={setRowsPerPage}
+        parentRowsPerPage={rowsPerPage}
         serverSidePagination={true}
         isLoading={isLoading}
         disableSorting={true}
@@ -177,7 +186,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
             numeric: true,
             disablePadding: false,
             imageGetter: networkImageGetter,
-            valueFormatter: (str: string) => `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`
+            valueFormatter: (str: string) => str ? `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}` : ``
           },
           {
             id: 'event-log-table-event-deployment-col',

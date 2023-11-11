@@ -215,7 +215,12 @@ export default function SortableTable(props: ISortableTableProps) {
             />
             <TableBody sx={{position: 'relative'}}>
               {!isLoading && sortData(tableData, columnConfig, order, orderBy)
-                .slice(serverSidePagination ? 0 : page * rowsPerPage, serverSidePagination ? rowsPerPage : page * rowsPerPage + rowsPerPage)
+                .slice(
+                  serverSidePagination ? Math.max((page % (tableData.length / rowsPerPage)) * rowsPerPage, 0)
+                    : page * rowsPerPage,
+                  serverSidePagination ? Math.min(tableData.length, Math.max((page % (tableData.length / rowsPerPage)) * rowsPerPage, 0) + rowsPerPage)
+                    : page * rowsPerPage + rowsPerPage
+                )
                 .map((row: any, index) => {
                   const labelId = `enhanced-table-checkbox-${index}`;
                   return (
