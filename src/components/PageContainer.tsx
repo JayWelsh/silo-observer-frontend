@@ -7,7 +7,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import createStyles from '@mui/styles/createStyles';
 
 import Navigation from './Navigation';
-import HomePage from '../pages/HomePage';
+import HomePageContainer from '../containers/HomePageContainer';
 import SiloRatesPage from '../pages/SiloRatesPage';
 import SiloTvlPage from '../pages/SiloTvlPage';
 import VolumePage from '../pages/VolumePage';
@@ -29,7 +29,7 @@ const PageContainer = () => {
         <Navigation>
             <div className={classes.root}>
                 <Routes>
-                    <Route path="/" element={<HomePage/>} />
+                    <Route path="/" element={<HomePageContainer/>} />
                     <Route path="/silo/:deploymentID/:tokenSymbol/rates" element={<SiloRatesPage />} />
                     <Route path="/silo/:deploymentID/:tokenSymbol/tvl" element={<SiloTvlPage />} />
                     <Route path="/volume/:volumeType" element={<VolumePage />} />
