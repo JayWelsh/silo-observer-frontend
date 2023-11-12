@@ -51,14 +51,14 @@ const HomePage = (props: PropsFromRedux) => {
             <EventLogTableContainer />
             <div style={{marginTop: 24}}/>
             <SiloTotalAssetCompositionContainer/>
+            <div style={{marginTop: 24}}/>
+            <SiloOverviewTableContainer/>
             {selectedNetworkIDs && (selectedNetworkIDs.indexOf("arbitrum") > -1) &&
                 <>
                     <div style={{marginTop: 24}}/>
                     <RewardLogTableContainer />
                 </>
             }
-            <div style={{marginTop: 24}}/>
-            <SiloOverviewTableContainer/>
             <div style={{marginBottom: 50}}/>
         </Container>
     )
