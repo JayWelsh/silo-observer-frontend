@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { AreaClosed, Line, Bar, LinePath } from '@visx/shape';
 import { curveStep } from '@visx/curve';
-import { scaleLinear, scaleTime } from "d3-scale";
+import { scaleLinear, scaleTime, scaleSymlog } from "d3-scale";
 import { PatternLines } from '@visx/pattern';
 import { withTooltip, Tooltip, TooltipWithBounds, defaultStyles } from '@visx/tooltip';
 import { WithTooltipProvidedProps } from '@visx/tooltip/lib/enhancers/withTooltip';
@@ -59,6 +59,7 @@ export type AreaProps = {
   formatValue: (arg0: string | number) => string
   isLoadingPlaceholder?: boolean
   utc?: boolean
+  scaleType?: string
 };
 
 export default withTooltip<AreaProps, ITimeseries>(
@@ -76,6 +77,7 @@ export default withTooltip<AreaProps, ITimeseries>(
     hideTime,
     isLoadingPlaceholder = false,
     utc = false,
+    scaleType = 'linear',
   }: AreaProps & WithTooltipProvidedProps<ITimeseries>) => {
     if (width < 10) return null;
 
@@ -117,9 +119,10 @@ export default withTooltip<AreaProps, ITimeseries>(
       [innerWidth, margin.left, timeseries],
     );
     const stockValueScale = useMemo(
-      () =>
-        scaleLinear().domain([(min(timeseries, getStockValue) || 0), (max(timeseries, getStockValue) || 0)]).range([innerHeight + margin.top, margin.top]),
-      [margin.top, innerHeight, timeseries],
+      () => scaleType === 'linear' 
+        ? scaleLinear().domain([(min(timeseries, getStockValue) || 0), (max(timeseries, getStockValue) || 0)]).range([innerHeight + margin.top, margin.top])
+        : scaleSymlog().domain([(min(timeseries, getStockValue) || 0), (max(timeseries, getStockValue) || 0)]).range([innerHeight + margin.top, margin.top]),
+      [margin.top, innerHeight, timeseries, scaleType],
     );
 
     // tooltip handler

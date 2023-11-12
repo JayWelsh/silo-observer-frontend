@@ -2,14 +2,8 @@ import React, { useEffect, useState } from 'react';
 
 import { utcFormat } from 'd3-time-format';
 
-import DepositIcon from '@mui/icons-material/MoveToInbox';
-import WithdrawIcon from '@mui/icons-material/Outbox';
-import BorrowIcon from '@mui/icons-material/AccountBalance';
-import RepayIcon from '@mui/icons-material/CreditScore';
+import RewardIcon from '@mui/icons-material/Redeem';
 
-import {
-  DEPLOYMENT_ID_TO_HUMAN_READABLE,
-} from '../constants';
 import { IContractEvent } from '../interfaces';
 
 import SortableTable from './SortableTable';
@@ -19,7 +13,6 @@ import { API_ENDPOINT } from '../constants';
 import { PropsFromRedux } from '../containers/SiloOverviewTableContainer';
 
 import { 
-  capitalizeFirstLetter,
   priceFormat,
   formatTokenAmount,
   tokenImageName,
@@ -27,8 +20,6 @@ import {
   getEtherscanLink,
   formatTimeAgo,
 } from "../utils";
-
-import LlamaLogo from "../assets/png/llama.png";
 
 const formatDate = utcFormat("%b-%d-%Y %I:%M %p (UTC)");
 
@@ -39,20 +30,10 @@ interface IEventLogTable {
 const iconGetter = (eventType: string, row: any) => {
   let fontSize = "1.5rem";
   let marginRight = 8;
-  if(eventType === "deposit") {
-    return <DepositIcon style={{fontSize, marginRight}}/>
-  } else if (eventType === "withdraw") {
-    return <WithdrawIcon style={{fontSize, marginRight}}/>
-  } else if (eventType === "borrow") {
-    return <BorrowIcon style={{fontSize, marginRight}}/>
-  } else if (eventType === "repay") {
-    return <RepayIcon style={{fontSize, marginRight}}/>
-  }
+  return <RewardIcon style={{fontSize, marginRight}}/>
 }
 
 const tokenImageGetter = ((amount: string, row: any) => `https://app.silo.finance/images/logos/${tokenImageName(row.asset.symbol)}.png`)
-
-const siloImageGetter = ((amount: string, row: any) => `https://app.silo.finance/images/logos/${tokenImageName(row.silo.name)}.png`)
 
 const networkImageGetter = ((network: string) => {
   switch(network) {
@@ -65,23 +46,12 @@ const networkImageGetter = ((network: string) => {
   }
 })
 
-const deploymentImageGetter = ((deploymentID: string) => {
-  switch(deploymentID) {
-    case "ethereum-llama":
-      return LlamaLogo;
-    default:
-      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/silo-circle.png";
-  }
-})
-
-const internalLinkGetter = ((symbol: string, row: any) => `/silo/${row.deployment_id}/${row.silo.name}/tvl`)
-
 export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable) {
   const [eventTableData, setEventTableData] = useState<IContractEvent[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [clientPage, setClientPage] = useState(0);
   const [serverPage, setServerPage] = useState(0);
-  const [serverPerPage] = useState(500);
+  const [serverPerPage] = useState(50);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -100,13 +70,8 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
   useEffect(() => {
     setIsLoading(true);
     let urls : Promise<any>[] = [
-      fetch(`${API_ENDPOINT}/events?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/events/reward?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
     ];
-    if(eventType) {
-      urls = [
-        fetch(`${API_ENDPOINT}/events/${eventType}?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
-      ]
-    }
     Promise.all(urls).then((data) => {
 
       let [
@@ -127,7 +92,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
     <>
       {
       <SortableTable
-        tableHeading={eventType ? `Latest ${capitalizeFirstLetter(eventType)} Events` : `Latest Protocol Events`}
+        tableHeading={`Latest ARB Reward Claims`}
         defaultSortValueKey="block_timestamp_unix"
         tableData={eventTableData}
         totalRecords={totalRecords}
@@ -145,7 +110,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
             numeric: false,
             disablePadding: false,
             iconGetter: iconGetter,
-            valueFormatter: (str: string) => capitalizeFirstLetter(str),
+            valueFormatter: (str: string) => `Reward Claimed`,
           },
           {
             id: 'event-log-table-event-amount-col',
@@ -165,16 +130,6 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
             valueFormatter: (str: string) => (priceFormat(str, 2)),
           },
           {
-            id: 'event-log-table-silo-col',
-            label: 'Silo',
-            valueKey: 'asset.silo.name',
-            numeric: true,
-            disablePadding: false,
-            imageGetter: siloImageGetter,
-            internalLinkGetter: internalLinkGetter,
-            valueFormatter: (str: string, row: any) => (row.silo.name),
-          },
-          {
             id: 'event-log-table-event-network-col',
             label: 'Network',
             valueKey: 'network',
@@ -182,15 +137,6 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
             disablePadding: false,
             imageGetter: networkImageGetter,
             valueFormatter: (str: string) => str ? `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}` : ``
-          },
-          {
-            id: 'event-log-table-event-deployment-col',
-            label: 'Deployment',
-            valueKey: 'deployment_id',
-            numeric: false,
-            disablePadding: false,
-            imageGetter: (str: string, row: any) => deploymentImageGetter(row.deployment_id),
-            valueFormatter: (str: string, row: any) => `${DEPLOYMENT_ID_TO_HUMAN_READABLE[row.deployment_id]}`
           },
           {
             id: 'event-log-table-event-relative-time-col',

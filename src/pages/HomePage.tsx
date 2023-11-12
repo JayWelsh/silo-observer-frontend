@@ -10,8 +10,15 @@ import DailyStatsContainer from '../containers/DailyStatsContainer';
 import SiloTotalAssetCompositionContainer from '../containers/SiloTotalAssetCompositionContainer';
 import SiloOverviewTableContainer from '../containers/SiloOverviewTableContainer';
 import EventLogTableContainer from '../containers/EventLogTableContainer';
+import RewardLogTableContainer from '../containers/RewardLogTableContainer';
 
-const HomePage = () => {
+import { PropsFromRedux } from '../containers/HomePageContainer';
+
+const HomePage = (props: PropsFromRedux) => {
+
+    let {
+        selectedNetworkIDs,
+    } = props;
 
     const [selectedChartZone, setSelectedChartZone] = useState('tvl+borrowed');
 
@@ -44,6 +51,12 @@ const HomePage = () => {
             <EventLogTableContainer />
             <div style={{marginTop: 24}}/>
             <SiloTotalAssetCompositionContainer/>
+            {selectedNetworkIDs && (selectedNetworkIDs.indexOf("arbitrum") > -1) &&
+                <>
+                    <div style={{marginTop: 24}}/>
+                    <RewardLogTableContainer />
+                </>
+            }
             <div style={{marginTop: 24}}/>
             <SiloOverviewTableContainer/>
             <div style={{marginBottom: 50}}/>

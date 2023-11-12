@@ -9,6 +9,7 @@ import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
 
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 
@@ -97,6 +98,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
     const classes = useStyles();
 
     const [filteredChartData, setFilteredChartData] = useState(chartData);
+    const [scaleType, setScaleType] = useState('linear');
 
     useEffect(() => {
       setFilteredChartData(chartData);
@@ -222,13 +224,18 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
                     formatValue={formatValueFn}
                     hideTime={hideTime}
                     utc={utc}
+                    scaleType={scaleType}
                 />
               </>
             )
           }}
         </ParentSize>
+        <div style={{marginRight: 16, marginLeft: 16, marginTop: 2, marginBottom: 8, textAlign: 'right'}}>
+          <Button onClick={() => setScaleType('log')} style={{paddingTop:0,paddingBottom:0,marginRight:4}} size="small" className={scaleType === 'linear' ? 'transparent-border' : ''} variant={'outlined'}>Log</Button>
+          <Button onClick={() => setScaleType('linear')} style={{paddingTop:0,paddingBottom:0}} size="small" className={scaleType === 'log' ? 'transparent-border' : ''} variant={'outlined'}>Linear</Button>
+        </div>
         {!isConsideredMobile &&
-          <div style={{padding: 10}}>
+          <div style={{padding: 10, paddingTop: 0}}>
             <ParentSize debounceTime={10}>
               {({ width: w }) => {
                   return (
