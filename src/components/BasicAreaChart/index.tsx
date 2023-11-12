@@ -246,6 +246,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
                         setFilteredChartData={setFilteredChartData}
                         height={100}
                         width={w}
+                        scaleType={scaleType}
                       />
                     </>
                   )

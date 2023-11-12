@@ -1,5 +1,5 @@
 import React, { useRef, useMemo } from 'react';
-import { scaleLinear, scaleTime } from "d3-scale";
+import { scaleLinear, scaleTime, scaleSymlog } from "d3-scale";
 import { Brush } from '@visx/brush';
 import { Bounds } from '@visx/brush/lib/types';
 import BaseBrush from '@visx/brush/lib/BaseBrush';
@@ -49,6 +49,7 @@ export type BrushProps = {
   timeseries: ITimeseries[]
   setFilteredChartData?: (arg0: ITimeseries[]) => void
   isLoadingPlaceholder?: boolean
+  scaleType?: string
 };
 
 function BrushChart({
@@ -64,6 +65,7 @@ function BrushChart({
     right: 0,
   },
   isLoadingPlaceholder,
+  scaleType = 'linear',
 }: BrushProps) {
   const brushRef = useRef<BaseBrush | null>(null);
 
@@ -94,9 +96,10 @@ function BrushChart({
     [xBrushMax, timeseries],
   );
   const brushStockScale = useMemo(
-    () =>
-      scaleLinear().domain([min(timeseries, getStockValue) || 0, max(timeseries, getStockValue) || 0]).range([yBrushMax, 0]),
-    [yBrushMax, timeseries],
+    () => scaleType === 'linear' 
+        ? scaleLinear().domain([min(timeseries, getStockValue) || 0, max(timeseries, getStockValue) || 0]).range([yBrushMax, 0])
+        : scaleSymlog().domain([min(timeseries, getStockValue) || 0, max(timeseries, getStockValue) || 0]).range([yBrushMax, 0]),
+    [yBrushMax, timeseries, scaleType],
   );
 
   const initialBrushPosition = useMemo(
