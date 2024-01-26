@@ -43,7 +43,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
     setIsLoading(true);
     setCombinedTotalsTimeseries([]);
     Promise.all([
-      fetch(`${API_ENDPOINT}/volume/${volumeType}?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/${volumeType}?networks=${selectedNetworkIDs.join(',')}&page=1&perPage=32000`).then(resp => resp.json()),
     ]).then((data) => {
 
       setIsLoading(false);
