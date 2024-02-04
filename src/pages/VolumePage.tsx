@@ -6,6 +6,7 @@ import VolumeChartSelectionContainer from '../containers/VolumeChartSelectionCon
 
 import ReturnHomeLink from '../components/ReturnHomeLink';
 import EventLogTableContainer from '../containers/EventLogTableContainer';
+import LiquidationLogTableContainer from '../containers/LiquidationLogTableContainer';
 
 const SiloTvlPage = () => {
 
@@ -22,7 +23,12 @@ const SiloTvlPage = () => {
             />
           }
           <div style={{marginTop: 24}}/>
-          {volumeType && 
+          {volumeType === 'liquidation' &&
+            <LiquidationLogTableContainer
+              eventType={volumeType}
+            />
+          }
+          {volumeType && (['liquidation'].indexOf(volumeType) === -1) && 
             <EventLogTableContainer
               eventType={volumeType}
             />

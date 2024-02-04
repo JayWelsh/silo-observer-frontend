@@ -76,7 +76,7 @@ const deploymentImageGetter = ((deploymentID: string) => {
 
 const internalLinkGetter = ((symbol: string, row: any) => `/silo/${row.deployment_id}/${row.silo.name}/tvl`)
 
-export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable) {
+export default function LiquidationLogTable(props: PropsFromRedux & IEventLogTable) {
   const [eventTableData, setEventTableData] = useState<IContractEvent[]>([]);
   const [totalRecords, setTotalRecords] = useState(0);
   const [clientPage, setClientPage] = useState(0);
@@ -142,12 +142,12 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
         columnConfig={[
           {
             id: 'event-log-table-event-name-col',
-            label: 'Event Type',
-            valueKey: 'event_name',
+            label: 'Record Type',
+            valueKey: 'record_fingerprint',
             numeric: false,
             disablePadding: false,
             iconGetter: iconGetter,
-            valueFormatter: (str: string) => capitalizeFirstLetter(str),
+            valueFormatter: (str: string) => 'Liquidation',
           },
           {
             id: 'event-log-table-event-amount-col',
@@ -161,7 +161,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
           {
             id: 'event-log-table-event-usd-amount-col',
             label: 'USD Amount',
-            valueKey: 'usd_value_at_event_time',
+            valueKey: 'amount_usd',
             numeric: true,
             disablePadding: false,
             valueFormatter: (str: string) => (priceFormat(str, 2)),
@@ -204,7 +204,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
           },
           {
             id: 'event-log-table-event-time-col',
-            label: 'Event Time',
+            label: 'Liquidation Time',
             valueKey: 'block_timestamp_unix',
             numeric: true,
             disablePadding: false,
