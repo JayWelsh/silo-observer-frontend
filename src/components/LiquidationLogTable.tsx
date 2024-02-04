@@ -2,10 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { utcFormat } from 'd3-time-format';
 
-import DepositIcon from '@mui/icons-material/MoveToInbox';
-import WithdrawIcon from '@mui/icons-material/Outbox';
-import BorrowIcon from '@mui/icons-material/AccountBalance';
-import RepayIcon from '@mui/icons-material/CreditScore';
+import LiquidationIcon from '@mui/icons-material/WaterDrop';
 
 import {
   DEPLOYMENT_ID_TO_HUMAN_READABLE,
@@ -39,15 +36,7 @@ interface IEventLogTable {
 const iconGetter = (eventType: string, row: any) => {
   let fontSize = "1.5rem";
   let marginRight = 8;
-  if(eventType === "deposit") {
-    return <DepositIcon style={{fontSize, marginRight}}/>
-  } else if (eventType === "withdraw") {
-    return <WithdrawIcon style={{fontSize, marginRight}}/>
-  } else if (eventType === "borrow") {
-    return <BorrowIcon style={{fontSize, marginRight}}/>
-  } else if (eventType === "repay") {
-    return <RepayIcon style={{fontSize, marginRight}}/>
-  }
+  return <LiquidationIcon style={{fontSize, marginRight}}/>
 }
 
 const tokenImageGetter = ((amount: string, row: any) => `https://app.silo.finance/images/logos/${tokenImageName(row.asset.symbol)}.png`)
@@ -218,6 +207,24 @@ export default function LiquidationLogTable(props: PropsFromRedux & IEventLogTab
             disablePadding: false,
             valueFormatter: (str: string) => (centerShortenLongString(str, 16)),
             externalLinkGetter: (str: string, row: any) => (getEtherscanLink(row.network, str, "transaction")),
+          },
+          {
+            id: 'event-log-table-liquidator-col',
+            label: 'Liquidator',
+            valueKey: 'liquidator_address',
+            numeric: false,
+            disablePadding: false,
+            valueFormatter: (str: string) => (centerShortenLongString(str, 16)),
+            externalLinkGetter: (str: string, row: any) => (getEtherscanLink(row.network, str, "address")),
+          },
+          {
+            id: 'event-log-table-liquidatee-col',
+            label: 'Liquidatee',
+            valueKey: 'liquidatee_address',
+            numeric: false,
+            disablePadding: false,
+            valueFormatter: (str: string) => (centerShortenLongString(str, 16)),
+            externalLinkGetter: (str: string, row: any) => (getEtherscanLink(row.network, str, "address")),
           },
         ]}
       />
