@@ -20,6 +20,7 @@ const SiloTvlPage = () => {
           {volumeType && 
             <VolumeChartSelectionContainer
               volumeType={volumeType}
+              enableDailyBuffering={true}
             />
           }
           <div style={{marginTop: 24}}/>

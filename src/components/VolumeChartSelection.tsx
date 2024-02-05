@@ -14,6 +14,8 @@ import { IVolumeResponseEntry } from '../interfaces';
 
 import { PropsFromRedux } from '../containers/VolumeChartSelectionContainer';
 
+import { fillDataGapsToCurrentDate } from '../utils';
+
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
 interface ITimeseries {
@@ -24,6 +26,7 @@ interface ITimeseries {
 interface ITvlChartSelectionProps {
   volumeType: "deposit" | "withdraw" | "borrowed" | "repay" | string;
   isConsideredMobile: boolean;
+  enableDailyBuffering?: boolean
   // overrideHandleSiloZoneChange?: (arg0: SelectChangeEvent<string>) => void;
 }
 
@@ -33,6 +36,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
     volumeType,
     // isConsideredMobile,
     selectedNetworkIDs,
+    enableDailyBuffering = false,
   } = props;
 
   const [combinedTotalsTimeseries, setCombinedTotalsTimeseries] = useState<ITimeseries[]>([]);
@@ -55,10 +59,14 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
         }
       })
 
+      if(enableDailyBuffering) {
+        chartData = fillDataGapsToCurrentDate(chartData);
+      }
+
       setCombinedTotalsTimeseries(chartData);
 
     })
-  }, [volumeType, selectedNetworkIDs])
+  }, [volumeType, selectedNetworkIDs, enableDailyBuffering])
 
   return (
     <>

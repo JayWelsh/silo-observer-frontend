@@ -95,6 +95,35 @@ export const priceFormat = (number: number | string, decimals = 2, currency = "$
 	}
 }
 
+interface DataRecord {
+	value: number;
+	date: number;
+}
+
+export const fillDataGapsToCurrentDate = (data: DataRecord[], defaultValue: number = 0): DataRecord[] => {
+	if (data.length === 0) return [];
+
+	// Sort data by date
+	data.sort((a, b) => a.date - b.date);
+
+	const filledData: DataRecord[] = [];
+	const oneDayInMillis = 24 * 60 * 60 * 1000; // milliseconds in one day
+	const currentDate = new Date().setHours(0, 0, 0, 0); // Current date with time set to 00:00:00
+
+	for (let i = 0; i < data.length; i++) {
+			filledData.push(data[i]);
+			const nextDate = i < data.length - 1 ? data[i + 1].date : currentDate;
+
+			let gapDate = data[i].date + oneDayInMillis;
+			while (gapDate < nextDate) {
+					filledData.push({ value: defaultValue, date: gapDate });
+					gapDate += oneDayInMillis;
+			}
+	}
+
+	return filledData;
+}
+
 export const formatTimeAgo = (timestamp: number): string => {
   const currentTime = Math.floor(Date.now() / 1000); // Convert current time to seconds
   const timeDifference = currentTime - timestamp;
