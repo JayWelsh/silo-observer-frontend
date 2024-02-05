@@ -6,6 +6,7 @@ import DepositIcon from '@mui/icons-material/MoveToInbox';
 import WithdrawIcon from '@mui/icons-material/Outbox';
 import BorrowIcon from '@mui/icons-material/AccountBalance';
 import RepayIcon from '@mui/icons-material/CreditScore';
+import LiquidationIcon from '@mui/icons-material/WaterDrop';
 
 import {
   DEPLOYMENT_ID_TO_HUMAN_READABLE,
@@ -47,6 +48,8 @@ const iconGetter = (eventType: string, row: any) => {
     return <BorrowIcon style={{fontSize, marginRight}}/>
   } else if (eventType === "repay") {
     return <RepayIcon style={{fontSize, marginRight}}/>
+  } else if (eventType === "liquidation") {
+    return <LiquidationIcon style={{fontSize, marginRight}}/>
   }
 }
 

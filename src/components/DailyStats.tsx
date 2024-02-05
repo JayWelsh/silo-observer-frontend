@@ -10,6 +10,7 @@ import DepositIcon from '@mui/icons-material/MoveToInbox';
 import WithdrawIcon from '@mui/icons-material/Outbox';
 import BorrowIcon from '@mui/icons-material/AccountBalance';
 import RepaidIcon from '@mui/icons-material/CreditScore';
+import LiquidateIcon from '@mui/icons-material/WaterDrop';
 
 import { API_ENDPOINT } from '../constants';
 
@@ -64,7 +65,7 @@ export default function DailyStats(props: PropsFromRedux) {
     selectedNetworkIDs,
   } = props;
 
-  const placeholderCollection = Array.from({length: 4}).map(() => { return { title: "Loading", value: "Loading", icon: <LoadingIconPlain relative={true} iconHeight={48} height={54} /> } });
+  const placeholderCollection = Array.from({length: 5}).map(() => { return { title: "Loading", value: "Loading", icon: <LoadingIconPlain relative={true} iconHeight={48} height={54} /> } });
 
   const [statCollection, setStatCollection] = useState<IStatEntry[]>(placeholderCollection);
   // const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -76,6 +77,7 @@ export default function DailyStats(props: PropsFromRedux) {
       fetch(`${API_ENDPOINT}/volume/withdraw?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
       fetch(`${API_ENDPOINT}/volume/borrow?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
       fetch(`${API_ENDPOINT}/volume/repay?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/liquidation?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
     ]).then((data) => {
     
       let [
@@ -83,12 +85,14 @@ export default function DailyStats(props: PropsFromRedux) {
         dailyWithdrawUSDResponse,
         dailyBorrowUSDResponse,
         dailyRepayUSDResponse,
+        dailyLiquidateUSDResponse,
       ] = data;
 
       let dailyDepositUSDRecord = dailyDepositUSDResponse.data[0];
       let dailyWithdrawUSDRecord = dailyWithdrawUSDResponse.data[0];
       let dailyBorrowUSDRecord = dailyBorrowUSDResponse.data[0];
       let dailyRepayUSDRecord = dailyRepayUSDResponse.data[0];
+      let dailyLiquidatedUSDRecord = dailyLiquidateUSDResponse.data[0];
 
       let newStatCollection : IStatEntry[] = [];
 
@@ -132,6 +136,18 @@ export default function DailyStats(props: PropsFromRedux) {
 
       newStatCollection.push(repayEntry);
 
+      let liquidationEntry = {
+        title: "Liquidated",
+        icon: <LiquidateIcon style={{fontSize: '3rem'}}/>,
+        value: dailyLiquidatedUSDRecord?.usd ? dailyLiquidatedUSDRecord.usd : 0,
+        formatter: (value: string) => {
+          console.log({value})
+           return priceFormat(value, 2, "$", true) },
+        route: "/volume/liquidation",
+      }
+
+      newStatCollection.push(liquidationEntry);
+
       setStatCollection(newStatCollection);
       
       // setIsLoading(false);
@@ -147,7 +163,7 @@ export default function DailyStats(props: PropsFromRedux) {
       <StatContainer>
         <StatGrid container spacing={2}>
             {statCollection.map(({title, subtitle, value, formatter, icon, route}, statIndex) => 
-              <Grid key={`stat-collection-entry-${statIndex}`} item xs={12} md={6}>
+              <Grid key={`stat-collection-entry-${statIndex}`} item xs={12} md={((statCollection.length % 2 === 1) && (statIndex === (statCollection.length - 1))) ? 12 : 6}>
                 <LinkWrapper link={route}>
                   <StatEntryContainer className="secondary-card">
                     {icon &&
