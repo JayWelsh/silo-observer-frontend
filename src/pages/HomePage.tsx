@@ -23,7 +23,7 @@ const HomePage = (props: PropsFromRedux) => {
     const [selectedChartZone, setSelectedChartZone] = useState('tvl+borrowed');
 
     return (
-        <Container maxWidth="xl">
+        <Container maxWidth="lg">
             <div style={{marginTop: 24}}/>
             <SiloSearchContainer />
             <div style={{marginTop: 24}}/>

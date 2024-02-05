@@ -13,7 +13,7 @@ const SiloTvlPage = () => {
   let { volumeType } = useParams();
 
   return (
-      <Container maxWidth="xl">
+      <Container maxWidth="lg">
           <div style={{marginTop: 12}}/>
           <ReturnHomeLink/>
           <div style={{marginTop: 12}}/>
