@@ -120,7 +120,7 @@ const SiloTokenBar = (props: PropsFromRedux) => {
         <>
           <StatBlock>
             <Typography variant="subtitle2" style={{fontWeight: 400}}>
-              SILO: <span style={{fontWeight: 'bold'}}>{siloTokenData ? `${priceFormat(Number(siloTokenData.last_price_usd), 3, "$")}` : 'Loading...'}</span>
+              SILO: <span style={{fontWeight: 'bold'}}><a href="https://www.coingecko.com/en/coins/silo-finance" style={{color: 'inherit', textDecoration: 'none'}} target="_blank" rel="noopener noreferrer">{siloTokenData ? `${priceFormat(Number(siloTokenData.last_price_usd), 3, "$")}` : 'Loading...'}</a></span>
             </Typography>
           </StatBlock>
           <StatBlock>
