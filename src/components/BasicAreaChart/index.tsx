@@ -4,6 +4,8 @@ import { animated, useSpring, config } from '@react-spring/web'
 
 import BigNumber from 'bignumber.js';
 
+// import { utcFormat } from 'd3-time-format';
+
 import { Theme } from '@mui/material/styles';
 import createStyles from '@mui/styles/createStyles';
 import makeStyles from '@mui/styles/makeStyles';
@@ -18,7 +20,11 @@ import LogoDarkMode from '../../assets/png/logo.png'
 import BasicAreaChartInner from './BasicAreaChartInner'
 import BrushChart from '../BrushChart';
 
+import DatePicker from '../DatePicker';
+
 import { priceFormat } from '../../utils';
+
+// import { useLazyEffect } from '../../hooks';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
@@ -99,10 +105,41 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
 
     const [filteredChartData, setFilteredChartData] = useState(chartData);
     const [scaleType, setScaleType] = useState('linear');
+    const [lastMatchedDatapointStartDate, setLastMatchedDatapointStartDate] = useState(chartData?.[0]?.date);
+    const [lastMatchedDatapointEndDate, setLastMatchedDatapointEndDate] = useState(chartData?.[chartData.length - 1]?.date);
+    const [startDate, setStartDate] = useState(chartData?.[0]?.date);
+    const [endDate, setEndDate] = useState(chartData?.[chartData.length - 1]?.date);
+    const [lastSearchedStartDate, setLastSearchedStartDate] = useState(chartData?.[0]?.date);
+    const [lastSearchedEndDate, setLastSearchedEndDate] = useState(chartData?.[chartData.length - 1]?.date);
 
     useEffect(() => {
       setFilteredChartData(chartData);
+      setStartDate(chartData?.[0]?.date);
+      setEndDate(chartData?.[chartData.length - 1]?.date);
     }, [chartData])
+
+    useEffect(() => {
+      console.log({startDate, endDate, chartData, filteredChartData});
+      if(startDate && endDate && filteredChartData) {
+        if(
+          ((filteredChartData[0].date !== lastMatchedDatapointStartDate) || (filteredChartData[filteredChartData.length - 1].date !== lastMatchedDatapointEndDate)) || 
+          (startDate !== lastSearchedStartDate) || (endDate !== lastSearchedEndDate)
+        ) {
+          const newFilteredData: Array<{date: string, value: number}> = [];
+          for (const data of chartData) {
+            const { date } = data;
+            if (date >= startDate && date <= endDate) {
+              newFilteredData.push(data);
+            }
+          }
+          setLastMatchedDatapointStartDate(filteredChartData[0].date);
+          setLastMatchedDatapointEndDate(filteredChartData[filteredChartData.length - 1].date);
+          setLastSearchedStartDate(startDate);
+          setLastSearchedEndDate(endDate);
+          setFilteredChartData(newFilteredData);
+        }
+      }
+    }, [startDate, endDate, chartData, lastSearchedStartDate, lastSearchedEndDate, lastMatchedDatapointEndDate, lastMatchedDatapointStartDate, filteredChartData]);
 
     const loadingSpring = useSpring({
       from: {
@@ -230,9 +267,16 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
             )
           }}
         </ParentSize>
-        <div style={{marginRight: 16, marginLeft: 16, marginTop: 2, marginBottom: 8, textAlign: 'right'}}>
-          <Button onClick={() => setScaleType('log')} style={{paddingTop:0,paddingBottom:0,marginRight:4}} size="small" className={scaleType === 'linear' ? 'transparent-border' : ''} variant={'outlined'}>Log</Button>
-          <Button onClick={() => setScaleType('linear')} style={{paddingTop:0,paddingBottom:0}} size="small" className={scaleType === 'log' ? 'transparent-border' : ''} variant={'outlined'}>Linear</Button>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+          <div style={{marginRight: 16, marginLeft: 16, marginTop: 2, marginBottom: 8, textAlign: 'left', display: 'flex', alignItems: 'center'}}>
+            <DatePicker label="Start Date" value={startDate} minDate={chartData?.[0]?.date} maxDate={filteredChartData?.[filteredChartData.length - 1]?.date} onChange={(newDate: string) => setStartDate(newDate)} />
+            <Typography variant="subtitle2" style={{marginLeft: 6, marginRight: 6}}>to</Typography>
+            <DatePicker label="End Date" value={endDate} minDate={filteredChartData?.[0]?.date} maxDate={chartData?.[chartData.length - 1]?.date} onChange={(newDate: string) => setEndDate(newDate)} />
+          </div>
+          <div style={{marginRight: 16, marginLeft: 16, marginTop: 2, marginBottom: 8, textAlign: 'right'}}>
+            <Button onClick={() => setScaleType('log')} style={{paddingTop:0,paddingBottom:0,marginRight:4}} size="small" className={scaleType === 'linear' ? 'transparent-border' : ''} variant={'outlined'}>Log</Button>
+            <Button onClick={() => setScaleType('linear')} style={{paddingTop:0,paddingBottom:0}} size="small" className={scaleType === 'log' ? 'transparent-border' : ''} variant={'outlined'}>Linear</Button>
+          </div>
         </div>
         {!isConsideredMobile &&
           <div style={{padding: 10, paddingTop: 0}}>
@@ -244,6 +288,8 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
                         timeseries={(chartData && chartData.length > 0) ? chartData : placeholderData}
                         isLoadingPlaceholder={(chartData && chartData.length > 0) ? false : true}
                         setFilteredChartData={setFilteredChartData}
+                        setStartDate={setStartDate}
+                        setEndDate={setEndDate}
                         height={100}
                         width={w}
                         scaleType={scaleType}

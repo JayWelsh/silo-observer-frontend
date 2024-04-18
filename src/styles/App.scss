@@ -139,3 +139,7 @@ body {
 .transparent-border {
   border: 1px solid transparent;
 }
+
+.MuiPickersToolbar-content button {
+  display: none;
+}
