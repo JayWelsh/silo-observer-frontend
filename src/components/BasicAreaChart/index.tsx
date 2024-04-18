@@ -267,7 +267,7 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
             )
           }}
         </ParentSize>
-        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div style={{ marginTop: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: isConsideredMobile ? "column" : "row"}}>
           <div style={{marginRight: 16, marginLeft: 16, marginTop: 2, marginBottom: 8, textAlign: 'left', display: 'flex', alignItems: 'center'}}>
             <DatePicker label="Start Date" value={startDate} minDate={chartData?.[0]?.date} maxDate={filteredChartData?.[filteredChartData.length - 1]?.date} onChange={(newDate: string) => setStartDate(newDate)} />
             <Typography variant="subtitle2" style={{marginLeft: 6, marginRight: 6}}>to</Typography>
