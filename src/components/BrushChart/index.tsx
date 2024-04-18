@@ -50,6 +50,8 @@ export type BrushProps = {
   setFilteredChartData?: (arg0: ITimeseries[]) => void
   isLoadingPlaceholder?: boolean
   scaleType?: string
+  setStartDate?: (arg0: string) => void
+  setEndDate?: (arg0: string) => void
 };
 
 function BrushChart({
@@ -66,6 +68,8 @@ function BrushChart({
   },
   isLoadingPlaceholder,
   scaleType = 'linear',
+  setStartDate,
+  setEndDate,
 }: BrushProps) {
   const brushRef = useRef<BaseBrush | null>(null);
 
@@ -79,6 +83,12 @@ function BrushChart({
     });
     if(setFilteredChartData && (stockCopy.length >= 1)) {
       setFilteredChartData(stockCopy);
+      if(setStartDate) {
+        setStartDate(stockCopy[0].date)
+      }
+      if(setEndDate) {
+        setEndDate(stockCopy[stockCopy.length - 1].date);
+      }
     }
   };
 
