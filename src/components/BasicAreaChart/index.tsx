@@ -268,10 +268,10 @@ const BasicAreaChart = (props: IBasicAreaChartProps) => {
           }}
         </ParentSize>
         <div style={{ marginTop: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: isConsideredMobile ? "column" : "row"}}>
-          <div style={{marginRight: 16, marginLeft: 16, marginTop: 2, marginBottom: 8, textAlign: 'left', display: 'flex', alignItems: 'center'}}>
-            <DatePicker label="Start Date" value={startDate} minDate={chartData?.[0]?.date} maxDate={filteredChartData?.[filteredChartData.length - 1]?.date} onChange={(newDate: string) => setStartDate(newDate)} />
+          <div style={{marginRight: 16, marginLeft: 16, marginTop: 2, marginBottom: 8, textAlign: 'left', display: 'flex', alignItems: 'center', pointerEvents: (!startDate && !endDate) ? "none" : "auto"}}>
+            <DatePicker mode="start" label="Start Date (UTC)" value={startDate} minDate={chartData?.[0]?.date} maxDate={filteredChartData?.[filteredChartData.length - 1]?.date} onChange={(newDate: string) => setStartDate(newDate)} />
             <Typography variant="subtitle2" style={{marginLeft: 6, marginRight: 6}}>to</Typography>
-            <DatePicker label="End Date" value={endDate} minDate={filteredChartData?.[0]?.date} maxDate={chartData?.[chartData.length - 1]?.date} onChange={(newDate: string) => setEndDate(newDate)} />
+            <DatePicker mode="end" label="End Date (UTC)" value={endDate} minDate={filteredChartData?.[0]?.date} maxDate={chartData?.[chartData.length - 1]?.date} onChange={(newDate: string) => setEndDate(newDate)} />
           </div>
           <div style={{marginRight: 16, marginLeft: 16, marginTop: 2, marginBottom: 8, textAlign: 'right'}}>
             <Button onClick={() => setScaleType('log')} style={{paddingTop:0,paddingBottom:0,marginRight:4}} size="small" className={scaleType === 'linear' ? 'transparent-border' : ''} variant={'outlined'}>Log</Button>
