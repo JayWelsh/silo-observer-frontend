@@ -100,9 +100,9 @@ const NavigationTopBar = (props: PropsFromRedux & INavigationTopBarProps) => {
 
   return (
     <div className={classes.root}>
-      <div style={{position: 'fixed', width: '100%', zIndex: 9}}>
+      <div style={{position: 'fixed', width: '100%', zIndex: 9, height: 30}}>
         <SiloTokenBarContainer />
-        <AppBar style={{background: 'linear-gradient(-90deg, #000000, #000000)', top: 30}}>
+        <AppBar style={{background: 'linear-gradient(-90deg, #000000, #000000)', top: isConsideredMobile ? 29 : 30}}>
           <Toolbar>
             {/* <IconButton
               onClick={() => props.setShowLeftMenu(!localShowLeftMenu)}
