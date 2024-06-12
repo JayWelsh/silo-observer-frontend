@@ -47,7 +47,7 @@ export default function LiquidationLogTable(props: PropsFromRedux & IEventLogTab
   const [totalRecords, setTotalRecords] = useState(0);
   const [clientPage, setClientPage] = useState(0);
   const [serverPage, setServerPage] = useState(0);
-  const [serverPerPage] = useState(500);
+  const [serverPerPage] = useState(150);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isLoading, setIsLoading] = useState(false);
 

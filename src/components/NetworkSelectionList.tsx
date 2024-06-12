@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import Box from '@mui/material/Box';
@@ -68,6 +68,8 @@ export default function NetworkSelectionList(props: PropsFromRedux) {
   let {
     selectedNetworkIDs,
     setSelectedNetworkIDs,
+    knownNetworkIDs,
+    setKnownNetworkIDs,
   } = props;
 
   const [localSelectionState, setLocalSelectionState] = useState<string[]>(selectedNetworkIDs);
@@ -97,6 +99,18 @@ export default function NetworkSelectionList(props: PropsFromRedux) {
       setSelectedNetworkIDs(arrayValue);
     }
   }
+
+  useEffect(() => {
+    if(selectedNetworkIDs && knownNetworkIDs) {
+      let unknownNetworks = networkSelectionItems.filter((networkSelectionItem) => (knownNetworkIDs.indexOf(networkSelectionItem.id) === -1)).map((networkSelectionItem) => networkSelectionItem.id);
+      if(unknownNetworks?.length > 0) {
+        let newSelection = [...new Set([...selectedNetworkIDs, ...unknownNetworks])];
+        setSelectedNetworkIDs(newSelection);
+        setLocalSelectionState(newSelection)
+        setKnownNetworkIDs(networkSelectionItems.map((networkSelectionItem) => networkSelectionItem.id));
+      }
+    }
+  }, [knownNetworkIDs, selectedNetworkIDs, setSelectedNetworkIDs, setKnownNetworkIDs])
 
   return (
     <div>
