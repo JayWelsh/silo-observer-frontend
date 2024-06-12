@@ -5,6 +5,7 @@ import darkMode from './darkMode'
 import isConsideredMobile from './isConsideredMobile';
 import siloOverviews from './siloOverviews';
 import selectedNetworkIDs from './selectedNetworkIDs';
+import knownNetworkIDs from './knownNetworkIDs';
 
 const rootReducer = combineReducers({
     showLeftMenu,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
     isConsideredMobile,
     siloOverviews,
     selectedNetworkIDs,
+    knownNetworkIDs,
 });
 
 export default rootReducer;

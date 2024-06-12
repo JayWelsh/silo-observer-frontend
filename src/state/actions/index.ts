@@ -31,3 +31,8 @@ export const setSelectedNetworkIDs = (selectedNetworkIDs: string[]) => ({
     type: "SET_SELECTED_NETWORK_IDS",
     selectedNetworkIDs
 })
+
+export const setKnownNetworkIDs = (knownNetworkIDs: string[]) => ({
+    type: "SET_KNOWN_NETWORK_IDS",
+    knownNetworkIDs
+})
