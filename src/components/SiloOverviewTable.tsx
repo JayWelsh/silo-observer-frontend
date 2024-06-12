@@ -12,9 +12,11 @@ import SortableTable from './SortableTable';
 
 import { PropsFromRedux } from '../containers/SiloOverviewTableContainer';
 
-import { priceFormat } from "../utils";
-
-import LlamaLogo from "../assets/png/llama.png";
+import { 
+  priceFormat,
+  networkImageGetter,
+  deploymentImageGetter,
+} from "../utils";
 
 interface ISiloSearchProps {
   siloOverviews: ISilo[]
@@ -33,26 +35,6 @@ interface ISiloOverviewData {
 }
 
 const imageGetter = ((symbol: string) => `https://app.silo.finance/images/logos/${symbol}.png`)
-
-const networkImageGetter = ((network: string) => {
-  switch(network) {
-    case "ethereum":
-      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/ethereum-logo.png";
-    case "arbitrum":
-      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/arbitrum-logo.svg";
-    default:
-      return "";
-  }
-})
-
-const deploymentImageGetter = ((deploymentID: string) => {
-  switch(deploymentID) {
-    case "ethereum-llama":
-      return LlamaLogo;
-    default:
-      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/silo-circle.png";
-  }
-})
 
 const internalLinkGetter = ((symbol: string, row: any) => `/silo/${row.deploymentID}/${symbol}/tvl`)
 
@@ -130,6 +112,8 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
           sortableDeploymentID = 'b-ethereum-original';
         } else if (deployment_id === 'arbitrum-original') {
           sortableDeploymentID = 'c-arbitrum-original';
+        } else if (deployment_id === 'optimism-original') {
+          sortableDeploymentID = 'd-optimism-original';
         }
         
         siloOverviewDataBuild.push({
@@ -153,6 +137,8 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
     }
     setSiloOverviewData(siloOverviewDataBuild)
   }, [siloOverviews, selectedNetworkIDs])
+
+  const standardDeployments = ['ethereum-original', 'arbitrum-original', 'optimism-original'];
 
   return (
     <>
@@ -250,7 +236,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             valueKey: 'xaiBorrowRate',
             numeric: true,
             disablePadding: false,
-            valueFormatter: (value, row) => (['ethereum-original', 'arbitrum-original'].indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
+            valueFormatter: (value, row) => (standardDeployments.indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
           },
           {
             id: 'silo-overview-table-xai-lend-apy-col',
@@ -258,7 +244,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             valueKey: 'xaiLendRate',
             numeric: true,
             disablePadding: false,
-            valueFormatter: (value, row) => (['ethereum-original', 'arbitrum-original'].indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
+            valueFormatter: (value, row) => (standardDeployments.indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
           },
           {
             id: 'silo-overview-table-weth-borrow-apy-col',
@@ -266,7 +252,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             valueKey: 'wethBorrowRate',
             numeric: true,
             disablePadding: false,
-            valueFormatter: (value, row) => (['ethereum-original', 'arbitrum-original'].indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
+            valueFormatter: (value, row) => (standardDeployments.indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
           },
           {
             id: 'silo-overview-table-weth-lend-apy-col',
@@ -274,7 +260,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
             valueKey: 'wethLendRate',
             numeric: true,
             disablePadding: false,
-            valueFormatter: (value, row) => (['ethereum-original', 'arbitrum-original'].indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
+            valueFormatter: (value, row) => (standardDeployments.indexOf(row.deploymentID) > -1) ? priceFormat(value, 2, '%', false) : 'N/A',
           },
         ]}
         tableData={siloOverviewData}

@@ -51,7 +51,7 @@ export default function LoadingIcon(props: ILoadingIconProps) {
   })
 
   return (
-    <LoadingIconContainer style={{height: height, position: relative ? 'relative' : 'absolute', width: '100%', ...(selfCenter && { top: '50%', transform: 'translateY(-50%)' })}}>
+    <LoadingIconContainer style={{height: height, position: relative ? 'relative' : 'absolute', display: 'flex', justifyContent: 'center', width: '100%', ...(selfCenter && { top: '50%', transform: 'translateY(-50%)' })}}>
       <animated.img style={loadingSpring} src={LogoDarkMode} alt="loading icon" />
     </LoadingIconContainer>
   );

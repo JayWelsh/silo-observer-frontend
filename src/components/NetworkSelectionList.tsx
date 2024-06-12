@@ -11,6 +11,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 
 import EthereumLogo from '../assets/png/ethereum-logo.png';
 import ArbitrumLogo from '../assets/png/arbitrum-logo.png';
+import OptimismLogo from '../assets/png/optimism-logo.png';
 import { PropsFromRedux } from '../containers/NetworkSelectionListContainer';
 
 import { compareArrays } from '../utils';
@@ -41,6 +42,7 @@ let networkIconSize = 25;
 let networkIdToImage : {[key: string]: string} = {
   "ethereum": EthereumLogo,
   "arbitrum": ArbitrumLogo,
+  "optimism": OptimismLogo,
 }
 
 const networkSelectionItems = [
@@ -53,6 +55,11 @@ const networkSelectionItems = [
     id: "arbitrum",
     name: "Arbitrum",
     icon: <img src={networkIdToImage["arbitrum"]} style={{width: networkIconSize, height: networkIconSize, marginRight: 8}} alt="Arbitrum" />,
+  },
+  {
+    id: "optimism",
+    name: "Optimism",
+    icon: <img src={networkIdToImage["optimism"]} style={{width: networkIconSize, height: networkIconSize, marginRight: 8}} alt="Optimism" />,
   }
 ]
 
@@ -93,7 +100,7 @@ export default function NetworkSelectionList(props: PropsFromRedux) {
 
   return (
     <div>
-      <FormControl sx={{ m: 1, width: 120 }} size="small">
+      <FormControl sx={{ m: 1, width: 110 }} size="small">
         <InputLabel id="demo-multiple-checkbox-label">Chains</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
@@ -109,8 +116,7 @@ export default function NetworkSelectionList(props: PropsFromRedux) {
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, paddingTop: "4px", paddingBottom: "2px" }}>
               {selected.map((value, index) => (
                 <Fragment key={`network-selection-entry-${index}`}>
-                  {(index > 0) && "+"}
-                  <img src={networkIdToImage[value]} style={{width: networkIconSize, height: networkIconSize}} alt={`${value}`} />
+                  <img src={networkIdToImage[value]} style={{width: networkIconSize, height: networkIconSize, marginLeft: (index > 0) ? "-10px" : 0}} alt={`${value}`} />
                 </Fragment>
               ))}
             </Box>

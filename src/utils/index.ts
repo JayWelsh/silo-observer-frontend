@@ -2,6 +2,8 @@ import numeral from "numeral";
 import BigNumber from 'bignumber.js';
 import { utils } from 'ethers';
 
+import LlamaLogo from "../assets/png/llama.png";
+
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
 export const centerShortenLongString = (string: string, maxLength: number) => {
@@ -190,7 +192,8 @@ const ETHERSCAN_PREFIXES_NETWORK_NAME: { [key: string]: string } = {
 	'rinkeby': 'rinkeby.etherscan.io',
 	'goerli': 'goerli.etherscan.io',
 	'arbitrum': 'arbiscan.io',
-	'sepolia': 'sepolia.etherscan.io'
+	'sepolia': 'sepolia.etherscan.io',
+	'optimism': 'optimistic.etherscan.io',
 }
   
 export function getEtherscanLink(
@@ -309,6 +312,32 @@ export const arraysAreEqual = <T>(set1: Set<T>, set2: Set<T>): boolean => {
 
 	return true;
 }
+
+export const networkImageGetter = ((network: string) => {
+  switch(network) {
+    case "ethereum":
+      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/ethereum-logo.png";
+    case "arbitrum":
+      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/arbitrum-logo.svg";
+    case "optimism":
+      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/optimism-logo.svg";
+    default:
+      return "";
+  }
+})
+
+export const tokenImageGetter = ((amount: string, row: any) => `https://app.silo.finance/images/logos/${tokenImageName(row.asset.symbol)}.png`)
+
+export const siloImageGetter = ((amount: string, row: any) => `https://app.silo.finance/images/logos/${tokenImageName(row.silo.name)}.png`)
+
+export const deploymentImageGetter = ((deploymentID: string) => {
+  switch(deploymentID) {
+    case "ethereum-llama":
+      return LlamaLogo;
+    default:
+      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/silo-circle.png";
+  }
+})
 
 // export const parsePostgresDate = () => {
 // 	const parseDate = timeParse('%Y-%m-%dT%H:%M:%S.%LZ');

@@ -197,7 +197,7 @@ export default function SortableTable(props: ISortableTableProps) {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2, border: '1px solid #ffffff3b' }}>
+      <Paper sx={{ width: '100%', mb: 2, border: '1px solid #ffffff3b', position: 'relative' }}>
         <EnhancedTableToolbar tableHeading={tableHeading} />
         <TableContainer>
           <Table
@@ -304,10 +304,9 @@ export default function SortableTable(props: ISortableTableProps) {
                     height: 58 * rowsPerPage,
                   }}
                 >
-                  <TableCell colSpan={columnConfig.length} />
+                  <TableCell colSpan={columnConfig.length}/>
                 </TableRow>
               )}
-              {isLoading && <LoadingIcon height={100} selfCenter />}
             </TableBody>
           </Table>
         </TableContainer>
@@ -320,6 +319,7 @@ export default function SortableTable(props: ISortableTableProps) {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
+        {isLoading && <LoadingIcon height={100} selfCenter />}
       </Paper>
     </Box>
   );

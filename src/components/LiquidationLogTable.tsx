@@ -19,13 +19,14 @@ import {
   capitalizeFirstLetter,
   priceFormat,
   formatTokenAmount,
-  tokenImageName,
   centerShortenLongString,
   getEtherscanLink,
   formatTimeAgo,
+  networkImageGetter,
+  tokenImageGetter,
+  siloImageGetter,
+  deploymentImageGetter,
 } from "../utils";
-
-import LlamaLogo from "../assets/png/llama.png";
 
 const formatDate = utcFormat("%b-%d-%Y %I:%M %p (UTC)");
 
@@ -38,30 +39,6 @@ const iconGetter = (eventType: string, row: any) => {
   let marginRight = 8;
   return <LiquidationIcon style={{fontSize, marginRight}}/>
 }
-
-const tokenImageGetter = ((amount: string, row: any) => `https://app.silo.finance/images/logos/${tokenImageName(row.asset.symbol)}.png`)
-
-const siloImageGetter = ((amount: string, row: any) => `https://app.silo.finance/images/logos/${tokenImageName(row.silo.name)}.png`)
-
-const networkImageGetter = ((network: string) => {
-  switch(network) {
-    case "ethereum":
-      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/ethereum-logo.png";
-    case "arbitrum":
-      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/arbitrum-logo.svg";
-    default:
-      return "";
-  }
-})
-
-const deploymentImageGetter = ((deploymentID: string) => {
-  switch(deploymentID) {
-    case "ethereum-llama":
-      return LlamaLogo;
-    default:
-      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/silo-circle.png";
-  }
-})
 
 const internalLinkGetter = ((symbol: string, row: any) => `/silo/${row.deployment_id}/${row.silo.name}/tvl`)
 

@@ -1,3 +1,4 @@
+// DatePicker.tsx
 import React from 'react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -7,6 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 
 dayjs.extend(utc);
+
 interface IDatePickerProps {
   label: string;
   value?: string;
@@ -17,15 +19,7 @@ interface IDatePickerProps {
 }
 
 export default function BasicDatePicker(props: IDatePickerProps) {
-
-  let {
-    label,
-    value,
-    minDate,
-    maxDate,
-    onChange,
-    mode,
-  } = props;
+  let { label, value, minDate, maxDate, onChange, mode } = props;
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -36,9 +30,6 @@ export default function BasicDatePicker(props: IDatePickerProps) {
         minDate={dayjs(minDate)}
         maxDate={dayjs(maxDate)}
         onChange={(newValue) => {
-          // if(newValue) {
-          //   onChange(newValue.toISOString());
-          // }
           if (newValue) {
             if (mode === 'start' && newValue.isSame(dayjs(minDate), 'day')) {
               onChange(dayjs(minDate).toISOString());
@@ -50,7 +41,7 @@ export default function BasicDatePicker(props: IDatePickerProps) {
             }
           }
         }}
-        renderInput={(params) => <TextField size="small" disabled={true} style={{width: 150}} {...params} />}
+        renderInput={(params) => <TextField size="small" disabled={true} style={{ width: 150 }} {...params} />}
       />
     </LocalizationProvider>
   );

@@ -15,10 +15,11 @@ import { PropsFromRedux } from '../containers/SiloOverviewTableContainer';
 import { 
   priceFormat,
   formatTokenAmount,
-  tokenImageName,
   centerShortenLongString,
   getEtherscanLink,
   formatTimeAgo,
+  networkImageGetter,
+  tokenImageGetter,
 } from "../utils";
 
 const formatDate = utcFormat("%b-%d-%Y %I:%M %p (UTC)");
@@ -32,19 +33,6 @@ const iconGetter = (eventType: string, row: any) => {
   let marginRight = 8;
   return <RewardIcon style={{fontSize, marginRight}}/>
 }
-
-const tokenImageGetter = ((amount: string, row: any) => `https://app.silo.finance/images/logos/${tokenImageName(row.asset.symbol)}.png`)
-
-const networkImageGetter = ((network: string) => {
-  switch(network) {
-    case "ethereum":
-      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/ethereum-logo.png";
-    case "arbitrum":
-      return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/arbitrum-logo.svg";
-    default:
-      return "";
-  }
-})
 
 export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable) {
   const [eventTableData, setEventTableData] = useState<IContractEvent[]>([]);
