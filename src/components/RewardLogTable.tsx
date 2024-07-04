@@ -80,7 +80,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
     <>
       {
       <SortableTable
-        tableHeading={`Latest ARB Reward Claims`}
+        tableHeading={`Latest SiloIncentiveController Reward Claims`}
         defaultSortValueKey="block_timestamp_unix"
         tableData={eventTableData}
         totalRecords={totalRecords}
