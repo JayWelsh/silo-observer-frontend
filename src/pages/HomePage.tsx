@@ -16,10 +16,6 @@ import { PropsFromRedux } from '../containers/HomePageContainer';
 
 const HomePage = (props: PropsFromRedux) => {
 
-    let {
-        selectedNetworkIDs,
-    } = props;
-
     const [selectedChartZone, setSelectedChartZone] = useState('tvl+borrowed');
 
     return (
@@ -53,12 +49,8 @@ const HomePage = (props: PropsFromRedux) => {
             <SiloTotalAssetCompositionContainer/>
             <div style={{marginTop: 24}}/>
             <SiloOverviewTableContainer/>
-            {selectedNetworkIDs && (selectedNetworkIDs.indexOf("arbitrum") > -1) &&
-                <>
-                    <div style={{marginTop: 24}}/>
-                    <RewardLogTableContainer />
-                </>
-            }
+            <div style={{marginTop: 24}}/>
+            <RewardLogTableContainer />
             <div style={{marginBottom: 50}}/>
         </Container>
     )
