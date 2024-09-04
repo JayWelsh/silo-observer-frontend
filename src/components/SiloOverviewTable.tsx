@@ -108,12 +108,14 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
         let sortableDeploymentID = "";
         if(deployment_id === 'ethereum-llama') {
           sortableDeploymentID = 'a-ethereum-llama';
-        } else if (deployment_id === 'ethereum-original') {
-          sortableDeploymentID = 'b-ethereum-original';
+        } else if (deployment_id === 'ethereum-main') {
+          sortableDeploymentID = 'b-ethereum-main';
         } else if (deployment_id === 'arbitrum-original') {
           sortableDeploymentID = 'c-arbitrum-original';
         } else if (deployment_id === 'optimism-original') {
           sortableDeploymentID = 'd-optimism-original';
+        } else if (deployment_id === 'ethereum-original') {
+          sortableDeploymentID = 'e-ethereum-legacy';
         }
         
         siloOverviewDataBuild.push({
