@@ -10,16 +10,16 @@ export const CRVUSD_ADDRESS_ETH_MAINNET = "0xf939E0A03FB07F59A73314E73794Be0E57a
 export const DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} = {
   "ethereum-llama": "LLAMA",
   "ethereum-original": "Legacy",
-  "arbitrum-original": "Original",
-  "optimism-original": "Original",
+  "arbitrum-original": "Main",
+  "optimism-original": "Main",
   "ethereum-main": "Main",
 }
 
 export const SORTABLE_DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} = {
   "a-ethereum-llama": "LLAMA",
   "b-ethereum-main": "Main",
-  "c-arbitrum-original": "Original",
-  "d-optimism-original": "Original",
+  "c-arbitrum-original": "Main",
+  "d-optimism-original": "Main",
   "e-ethereum-original": "Legacy",
 }
 
