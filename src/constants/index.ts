@@ -16,11 +16,11 @@ export const DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} = {
 }
 
 export const SORTABLE_DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} = {
-  "a-ethereum-llama": "LLAMA",
-  "b-ethereum-main": "Main",
-  "c-arbitrum-original": "Main",
-  "d-optimism-original": "Main",
-  "e-ethereum-original": "Legacy",
+  "a-ethereum-original": "Legacy",
+  "b-ethereum-llama": "LLAMA",
+  "c-ethereum-main": "Main",
+  "d-arbitrum-original": "Main",
+  "e-optimism-original": "Main",
 }
 
 export const NETWORK_TO_HUMAN_READABLE : {[key: string]: string} = {
