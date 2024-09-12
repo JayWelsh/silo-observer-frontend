@@ -13,6 +13,7 @@ export const DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} = {
   "arbitrum-original": "Main",
   "optimism-original": "Main",
   "ethereum-main": "Main",
+  "base-original": "Main",
 }
 
 export const SORTABLE_DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} = {
@@ -20,7 +21,8 @@ export const SORTABLE_DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} 
   "b-ethereum-llama": "LLAMA",
   "c-ethereum-main": "Main",
   "d-arbitrum-original": "Main",
-  "e-optimism-original": "Main",
+  "e-base-original": "Main",
+  "f-optimism-original": "Main",
 }
 
 export const NETWORK_TO_HUMAN_READABLE : {[key: string]: string} = {
@@ -35,12 +37,23 @@ export const TIMESTAMP_TO_DEPLOYMENT_BREAKPOINTS = {
   1690438799: ["ethereum-original", "arbitrum-original", "ethereum-llama"],
   1718211000: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original"],
   1721722823: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main"],
+  1726155000: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main", "base-original"],
 }
 
-export const CHAIN_COUNT = 3;
+export const CHAIN_COUNT = 4;
 
 export const CHAIN_ID_TO_DEPLOYMENT_COUNT : {[key: string]: number} = {
   "ethereum": 3,
   "arbitrum": 1,
   "optimism": 1,
+  "base": 1,
+}
+
+export type CHAIN_ID = "ethereum" | "arbitrum" | "optimism" | "base";
+
+export const CHAIN_ID_TO_DEPLOYMENT_IDS = {
+  ethereum: ['ethereum-original', 'ethereum-llama', 'ethereum-main'],
+  arbitrum: ['arbitrum-original'],
+  optimism: ['optimism-original'],
+  base: ['base-original'],
 }

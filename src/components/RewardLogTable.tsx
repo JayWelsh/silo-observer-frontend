@@ -78,81 +78,81 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
 
   return (
     <>
-      {
-      <SortableTable
-        tableHeading={`Latest SiloIncentiveController Reward Claims`}
-        defaultSortValueKey="block_timestamp_unix"
-        tableData={eventTableData}
-        totalRecords={totalRecords}
-        setParentPage={setClientPage}
-        setParentPerPage={setRowsPerPage}
-        parentRowsPerPage={rowsPerPage}
-        serverSidePagination={true}
-        isLoading={isLoading}
-        disableSorting={true}
-        columnConfig={[
-          {
-            id: 'event-log-table-event-name-col',
-            label: 'Event Type',
-            valueKey: 'event_name',
-            numeric: false,
-            disablePadding: false,
-            iconGetter: iconGetter,
-            valueFormatter: (str: string) => `Reward Claimed`,
-          },
-          {
-            id: 'event-log-table-event-amount-col',
-            label: 'Token Amount',
-            valueKey: 'amount',
-            numeric: true,
-            disablePadding: false,
-            imageGetter: tokenImageGetter,
-            valueFormatter: (str: string, row: any) => (priceFormat(formatTokenAmount(str, row.asset.decimals), 2, row.asset.symbol, false)),
-          },
-          {
-            id: 'event-log-table-event-usd-amount-col',
-            label: 'USD Amount',
-            valueKey: 'usd_value_at_event_time',
-            numeric: true,
-            disablePadding: false,
-            valueFormatter: (str: string) => (priceFormat(str, 2)),
-          },
-          {
-            id: 'event-log-table-event-network-col',
-            label: 'Network',
-            valueKey: 'network',
-            numeric: true,
-            disablePadding: false,
-            imageGetter: networkImageGetter,
-            valueFormatter: (str: string) => str ? `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}` : ``
-          },
-          {
-            id: 'event-log-table-event-relative-time-col',
-            label: 'Relative Time',
-            valueKey: 'block_timestamp',
-            numeric: false,
-            disablePadding: false,
-            valueFormatter: (str: Date, row: any) => (`${formatTimeAgo(row.block_timestamp_unix)}`),
-          },
-          {
-            id: 'event-log-table-event-time-col',
-            label: 'Event Time',
-            valueKey: 'block_timestamp_unix',
-            numeric: true,
-            disablePadding: false,
-            valueFormatter: (unixTimestamp: number) => (`${formatDate(new Date(unixTimestamp * 1000))}`),
-          },
-          {
-            id: 'event-log-table-event-tx-hash-col',
-            label: 'Transaction Hash',
-            valueKey: 'tx_hash',
-            numeric: false,
-            disablePadding: false,
-            valueFormatter: (str: string) => (centerShortenLongString(str, 16)),
-            externalLinkGetter: (str: string, row: any) => (getEtherscanLink(row.network, str, "transaction")),
-          },
-        ]}
-      />
+      {eventTableData?.length > 0 &&
+        <SortableTable
+          tableHeading={`Latest SiloIncentiveController Reward Claims`}
+          defaultSortValueKey="block_timestamp_unix"
+          tableData={eventTableData}
+          totalRecords={totalRecords}
+          setParentPage={setClientPage}
+          setParentPerPage={setRowsPerPage}
+          parentRowsPerPage={rowsPerPage}
+          serverSidePagination={true}
+          isLoading={isLoading}
+          disableSorting={true}
+          columnConfig={[
+            {
+              id: 'event-log-table-event-name-col',
+              label: 'Event Type',
+              valueKey: 'event_name',
+              numeric: false,
+              disablePadding: false,
+              iconGetter: iconGetter,
+              valueFormatter: (str: string) => `Reward Claimed`,
+            },
+            {
+              id: 'event-log-table-event-amount-col',
+              label: 'Token Amount',
+              valueKey: 'amount',
+              numeric: true,
+              disablePadding: false,
+              imageGetter: tokenImageGetter,
+              valueFormatter: (str: string, row: any) => (priceFormat(formatTokenAmount(str, row.asset.decimals), 2, row.asset.symbol, false)),
+            },
+            {
+              id: 'event-log-table-event-usd-amount-col',
+              label: 'USD Amount',
+              valueKey: 'usd_value_at_event_time',
+              numeric: true,
+              disablePadding: false,
+              valueFormatter: (str: string) => (priceFormat(str, 2)),
+            },
+            {
+              id: 'event-log-table-event-network-col',
+              label: 'Network',
+              valueKey: 'network',
+              numeric: true,
+              disablePadding: false,
+              imageGetter: networkImageGetter,
+              valueFormatter: (str: string) => str ? `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}` : ``
+            },
+            {
+              id: 'event-log-table-event-relative-time-col',
+              label: 'Relative Time',
+              valueKey: 'block_timestamp',
+              numeric: false,
+              disablePadding: false,
+              valueFormatter: (str: Date, row: any) => (`${formatTimeAgo(row.block_timestamp_unix)}`),
+            },
+            {
+              id: 'event-log-table-event-time-col',
+              label: 'Event Time',
+              valueKey: 'block_timestamp_unix',
+              numeric: true,
+              disablePadding: false,
+              valueFormatter: (unixTimestamp: number) => (`${formatDate(new Date(unixTimestamp * 1000))}`),
+            },
+            {
+              id: 'event-log-table-event-tx-hash-col',
+              label: 'Transaction Hash',
+              valueKey: 'tx_hash',
+              numeric: false,
+              disablePadding: false,
+              valueFormatter: (str: string) => (centerShortenLongString(str, 16)),
+              externalLinkGetter: (str: string, row: any) => (getEtherscanLink(row.network, str, "transaction")),
+            },
+          ]}
+        />
       }
     </>
   );
