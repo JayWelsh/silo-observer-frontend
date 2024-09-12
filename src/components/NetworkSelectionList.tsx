@@ -121,7 +121,7 @@ export default function NetworkSelectionList(props: PropsFromRedux) {
 
   return (
     <div>
-      <FormControl sx={{ m: 1, width: 110 }} size="small">
+      <FormControl sx={{ m: 1, width: 130 }} size="small">
         <InputLabel id="demo-multiple-checkbox-label">Chains</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
