@@ -194,6 +194,7 @@ const ETHERSCAN_PREFIXES_NETWORK_NAME: { [key: string]: string } = {
 	'arbitrum': 'arbiscan.io',
 	'sepolia': 'sepolia.etherscan.io',
 	'optimism': 'optimistic.etherscan.io',
+	'base': 'basescan.io',
 }
   
 export function getEtherscanLink(
@@ -321,6 +322,8 @@ export const networkImageGetter = ((network: string) => {
       return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/arbitrum-logo.svg";
     case "optimism":
       return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/optimism-logo.svg";
+		case "base":
+				return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/base-logo.png";
     default:
       return "";
   }

@@ -12,6 +12,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import EthereumLogo from '../assets/png/ethereum-logo.png';
 import ArbitrumLogo from '../assets/png/arbitrum-logo.png';
 import OptimismLogo from '../assets/png/optimism-logo.png';
+import BaseLogo from '../assets/png/base-logo.png';
 import { PropsFromRedux } from '../containers/NetworkSelectionListContainer';
 
 import { compareArrays } from '../utils';
@@ -43,6 +44,7 @@ let networkIdToImage : {[key: string]: string} = {
   "ethereum": EthereumLogo,
   "arbitrum": ArbitrumLogo,
   "optimism": OptimismLogo,
+  "base": BaseLogo,
 }
 
 const networkSelectionItems = [
@@ -60,6 +62,11 @@ const networkSelectionItems = [
     id: "optimism",
     name: "Optimism",
     icon: <img src={networkIdToImage["optimism"]} style={{width: networkIconSize, height: networkIconSize, marginRight: 8}} alt="Optimism" />,
+  },
+  {
+    id: "base",
+    name: "Base",
+    icon: <img src={networkIdToImage["base"]} style={{width: networkIconSize, height: networkIconSize, marginRight: 8}} alt="Base" />,
   }
 ]
 
