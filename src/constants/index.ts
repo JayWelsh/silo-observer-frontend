@@ -29,6 +29,7 @@ export const NETWORK_TO_HUMAN_READABLE : {[key: string]: string} = {
   "ethereum": "Ethereum",
   "arbitrum": "Arbitrum",
   "optimism": "Optimism",
+  "base": "Base",
 }
 
 export const TIMESTAMP_TO_DEPLOYMENT_BREAKPOINTS = {
