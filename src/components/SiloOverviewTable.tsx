@@ -116,8 +116,10 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
           sortableDeploymentID = 'd-optimism-original';
         } else if (deployment_id === 'base-original') {
           sortableDeploymentID = 'e-base-original';
+        } else if (deployment_id === 'base-btcfi') {
+          sortableDeploymentID = 'f-base-btcfi';
         } else if (deployment_id === 'ethereum-original') {
-          sortableDeploymentID = 'f-ethereum-legacy';
+          sortableDeploymentID = 'g-ethereum-legacy';
         }
         
         siloOverviewDataBuild.push({
