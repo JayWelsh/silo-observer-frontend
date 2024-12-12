@@ -300,7 +300,7 @@ export default function DailyStats(props: PropsFromRedux) {
                     </Typography>
                     {subtitle && <Typography variant="subtitle1"  style={{marginBottom: 8}}>{subtitle}</Typography>}
                     <Typography variant="h6" style={{fontWeight: 'bold'}}>{formatter ? formatter(value) : value}</Typography>
-                    <div>
+                    <div onClick={(e) => {e.preventDefault();e.stopPropagation()}}>
                       <PieChartContainer 
                         paddingBottom={0}
                         paddingTop={16}
