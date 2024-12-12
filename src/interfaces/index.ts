@@ -76,3 +76,7 @@ export interface IContractEvent {
     network: string;
     block_day_timestamp: string;
 }
+
+export interface INetworkGroupedNumber {
+    [network: string]: number;
+}

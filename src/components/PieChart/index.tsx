@@ -112,6 +112,11 @@ interface IProps {
   data: IPieData[]
   loading?: boolean
   title?: string
+  desktopHeight?: number
+  mobileHeight?: number
+  paddingTop?: number
+  paddingBottom?: number
+  labelFontSize?: string
 }
 
 const PieChartInternal = (props: IProps & PropsFromRedux) => {
@@ -121,6 +126,11 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
     loading,
     title,
     isConsideredMobile,
+    desktopHeight,
+    mobileHeight,
+    paddingTop = 0,
+    paddingBottom = 32,
+    labelFontSize = '1rem',
   } = props;
 
   const [showLabels, setShowLabels] = useState(true);
@@ -140,8 +150,10 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
   const colorGaps = Number((1 / data.length).toFixed(4));
 
   const dataWithFills = data.map((entry, index) => {
-    let colorSector = colorGaps * (index + 1);
-    entry.fill = color(colorSector);
+    if(!entry.fill) {
+      let colorSector = colorGaps * (index + 1);
+      entry.fill = color(colorSector);
+    }
     return entry;
   })
 
@@ -180,21 +192,27 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
     );
   };
 
+  const defaultMobileHeight = 550;
+  const defaultDesktopHeight = 650;
+
+  const internalDesktopHeight = desktopHeight ? desktopHeight : defaultDesktopHeight;
+  const internalMobileHeight = mobileHeight ? mobileHeight : defaultMobileHeight;
+
   return (
     <>
       {loading &&
-        <LoadingIcon height={isConsideredMobile ? 550 : 650} />
+        <LoadingIcon height={isConsideredMobile ? internalMobileHeight : internalDesktopHeight} />
       }
       {title && 
         <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10}}>
           {title || 'Loading...'}
         </Typography>
       }
-      <div style={{height: isConsideredMobile ? 550 : 650, position: 'relative', paddingLeft: 16, paddingRight: 16, paddingBottom: 32 }}>
+      <div style={{height: isConsideredMobile ? internalMobileHeight : internalDesktopHeight, fontSize: labelFontSize, position: 'relative', paddingLeft: 16, paddingRight: 16, paddingBottom, paddingTop }}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart 
-            width={550}
-            height={550} 
+            width={internalMobileHeight}
+            height={internalMobileHeight} 
             onMouseMove={(next, e) => {
               let toolTipWrapper = document.getElementsByClassName("recharts-tooltip-wrapper")[0] as HTMLElement;
               // toolTipWrapper.style.transition = 'transform 0ms ease 0s';

@@ -4,6 +4,10 @@ import { utils } from 'ethers';
 
 import LlamaLogo from "../assets/png/llama.png";
 
+import { IPieData, INetworkGroupedNumber } from '../interfaces';
+
+import { CHAIN_ID_TO_PIE_COLOR } from '../constants';
+
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
 export const centerShortenLongString = (string: string, maxLength: number) => {
@@ -346,3 +350,47 @@ export const deploymentImageGetter = ((deploymentID: string) => {
 // 	const parseDate = timeParse('%Y-%m-%dT%H:%M:%S.%LZ');
 // 	return 
 // }
+
+export const convertNetworkDataToPieData = (
+	networkData: {
+			deposit: INetworkGroupedNumber,
+			withdraw: INetworkGroupedNumber,
+			borrow: INetworkGroupedNumber,
+			repay: INetworkGroupedNumber,
+			liquidated: INetworkGroupedNumber
+	}
+): { [key: string]: IPieData[] } => {
+	const result: { [key: string]: IPieData[] } = {};
+
+	// Helper function to convert single network grouped data to pie data array
+	const convertToPieArray = (data: INetworkGroupedNumber): IPieData[] => {
+			return Object.entries(data).map(([network, value]) => ({
+					name: capitalizeFirstLetter(network),
+					value: value,
+					...(CHAIN_ID_TO_PIE_COLOR[network] && {fill: CHAIN_ID_TO_PIE_COLOR[network]})
+			}));
+	};
+
+	// Convert each type of data
+	result.deposit = convertToPieArray(networkData.deposit);
+	result.withdraw = convertToPieArray(networkData.withdraw);
+	result.borrow = convertToPieArray(networkData.borrow);
+	result.repay = convertToPieArray(networkData.repay);
+	result.liquidated = convertToPieArray(networkData.liquidated);
+
+	return result;
+}
+
+export const convertPieDataToPercentages = (pieData: IPieData[]): IPieData[] => {
+	// Calculate total value
+	const total = pieData.reduce((sum, entry) => sum + entry.value, 0);
+	
+	// If total is 0, return original array to avoid division by zero
+	if (total === 0) return pieData;
+
+	// Convert each value to a percentage of the total
+	return pieData.map(entry => ({
+			...entry,
+			value: Number(((entry.value / total) * 100).toFixed(2))
+	}));
+}

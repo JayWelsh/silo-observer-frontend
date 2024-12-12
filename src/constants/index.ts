@@ -61,3 +61,10 @@ export const CHAIN_ID_TO_DEPLOYMENT_IDS = {
   optimism: ['optimism-original'],
   base: ['base-original', 'base-btcfi'],
 }
+
+export const CHAIN_ID_TO_PIE_COLOR : {[key: string]: string} = {
+  "ethereum": "#32ff00",
+  "optimism": "#ff0421",
+  "arbitrum": "#93bad8",
+  "base": "#1a54f4",
+}
