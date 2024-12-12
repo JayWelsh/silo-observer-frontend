@@ -12,16 +12,19 @@ import BorrowIcon from '@mui/icons-material/AccountBalance';
 import RepaidIcon from '@mui/icons-material/CreditScore';
 import LiquidateIcon from '@mui/icons-material/WaterDrop';
 
+import { IPieData, INetworkGroupedNumber } from '../interfaces';
+
 import { API_ENDPOINT } from '../constants';
 
-import LoadingIconPlain from './LoadingIconPlain';
-
 import { PropsFromRedux } from '../containers/DailyStatsContainer';
+import PieChartContainer from '../containers/PieChartContainer';
 
 import LinkWrapper from './LinkWrapper';
 
 import {
-  priceFormat
+  priceFormat,
+  convertNetworkDataToPieData,
+  convertPieDataToPercentages,
 } from '../utils';
 
 const Container = styled(Card)(({ theme }) => ({
@@ -57,6 +60,7 @@ interface IStatEntry {
   icon?: JSX.Element
   route?: string
   formatter?: (arg: string) => string
+  pieData?: IPieData[]
 }
 
 export default function DailyStats(props: PropsFromRedux) {
@@ -65,19 +69,25 @@ export default function DailyStats(props: PropsFromRedux) {
     selectedNetworkIDs,
   } = props;
 
-  const placeholderCollection = Array.from({length: 5}).map(() => { return { title: "Loading", value: "Loading", icon: <LoadingIconPlain relative={true} iconHeight={48} height={54} /> } });
+  const placeholderCollection = Array.from([
+    <DepositIcon style={{fontSize: '3rem'}}/>,
+    <WithdrawIcon style={{fontSize: '3rem'}}/>,
+    <BorrowIcon style={{fontSize: '3rem'}}/>,
+    <RepaidIcon style={{fontSize: '3rem'}}/>,
+    <LiquidateIcon style={{fontSize: '3rem'}}/>
+  ]).map((icon) => { return { title: "Loading", value: "Loading", icon} });
 
   const [statCollection, setStatCollection] = useState<IStatEntry[]>(placeholderCollection);
-  // const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // setIsLoading(true);
+    setIsLoading(true);
     Promise.all([
-      fetch(`${API_ENDPOINT}/volume/deposit?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/withdraw?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/borrow?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/repay?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/liquidation?period=today&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/deposit?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/withdraw?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/borrow?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/repay?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/liquidation?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
     ]).then((data) => {
     
       let [
@@ -88,20 +98,130 @@ export default function DailyStats(props: PropsFromRedux) {
         dailyLiquidateUSDResponse,
       ] = data;
 
-      let dailyDepositUSDRecord = dailyDepositUSDResponse.data[0];
-      let dailyWithdrawUSDRecord = dailyWithdrawUSDResponse.data[0];
-      let dailyBorrowUSDRecord = dailyBorrowUSDResponse.data[0];
-      let dailyRepayUSDRecord = dailyRepayUSDResponse.data[0];
-      let dailyLiquidatedUSDRecord = dailyLiquidateUSDResponse.data[0];
+      let dailyDepositUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
+      let dailyWithdrawUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
+      let dailyBorrowUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
+      let dailyRepayUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
+      let dailyLiquidatedUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
+
+      let dailyDepositUSDRecord = { usd: 0 };
+      let dailyWithdrawUSDRecord = { usd: 0 };
+      let dailyBorrowUSDRecord = { usd: 0 };
+      let dailyRepayUSDRecord = { usd: 0 };
+      let dailyLiquidatedUSDRecord = { usd: 0 };
+
+      for (let entry of dailyDepositUSDResponse.data) {
+        const usd = Number(entry.usd);
+        const network = entry.network;
+        if(!isNaN(usd) && (usd > 0)) {
+          dailyDepositUSDRecord.usd = dailyDepositUSDRecord.usd + usd;
+        }
+        if (network && !isNaN(usd) && (usd > 0)) {
+            if (dailyDepositUSDRecordGroupedByNetwork[network] === undefined) {
+                dailyDepositUSDRecordGroupedByNetwork[network] = usd;
+            } else {
+                dailyDepositUSDRecordGroupedByNetwork[network] += usd;
+            }
+        }
+      }
+
+      // Deposits
+      for (let entry of dailyDepositUSDResponse.data) {
+          const usd = Number(entry.usd);
+          const network = entry.network;
+          if(!isNaN(usd) && (usd > 0)) {
+              dailyDepositUSDRecord.usd = dailyDepositUSDRecord.usd + usd;
+          }
+          if (network && !isNaN(usd) && (usd > 0)) {
+              if (dailyDepositUSDRecordGroupedByNetwork[network] === undefined) {
+                  dailyDepositUSDRecordGroupedByNetwork[network] = usd;
+              } else {
+                  dailyDepositUSDRecordGroupedByNetwork[network] += usd;
+              }
+          }
+      }
+
+      // Withdrawals
+      for (let entry of dailyWithdrawUSDResponse.data) {
+          const usd = Number(entry.usd);
+          const network = entry.network;
+          if(!isNaN(usd) && (usd > 0)) {
+              dailyWithdrawUSDRecord.usd = dailyWithdrawUSDRecord.usd + usd;
+          }
+          if (network && !isNaN(usd) && (usd > 0)) {
+              if (dailyWithdrawUSDRecordGroupedByNetwork[network] === undefined) {
+                  dailyWithdrawUSDRecordGroupedByNetwork[network] = usd;
+              } else {
+                  dailyWithdrawUSDRecordGroupedByNetwork[network] += usd;
+              }
+          }
+      }
+
+      // Borrows
+      for (let entry of dailyBorrowUSDResponse.data) {
+          const usd = Number(entry.usd);
+          const network = entry.network;
+          if(!isNaN(usd) && (usd > 0)) {
+              dailyBorrowUSDRecord.usd = dailyBorrowUSDRecord.usd + usd;
+          }
+          if (network && !isNaN(usd) && (usd > 0)) {
+              if (dailyBorrowUSDRecordGroupedByNetwork[network] === undefined) {
+                  dailyBorrowUSDRecordGroupedByNetwork[network] = usd;
+              } else {
+                  dailyBorrowUSDRecordGroupedByNetwork[network] += usd;
+              }
+          }
+      }
+
+      // Repays
+      for (let entry of dailyRepayUSDResponse.data) {
+          const usd = Number(entry.usd);
+          const network = entry.network;
+          if(!isNaN(usd) && (usd > 0)) {
+              dailyRepayUSDRecord.usd = dailyRepayUSDRecord.usd + usd;
+          }
+          if (network && !isNaN(usd) && (usd > 0)) {
+              if (dailyRepayUSDRecordGroupedByNetwork[network] === undefined) {
+                  dailyRepayUSDRecordGroupedByNetwork[network] = usd;
+              } else {
+                  dailyRepayUSDRecordGroupedByNetwork[network] += usd;
+              }
+          }
+      }
+
+      // Liquidations
+      for (let entry of dailyLiquidateUSDResponse.data) {
+          const usd = Number(entry.usd);
+          const network = entry.network;
+          if(!isNaN(usd) && (usd > 0)) {
+              dailyLiquidatedUSDRecord.usd = dailyLiquidatedUSDRecord.usd + usd;
+          }
+          if (network && !isNaN(usd) && (usd > 0)) {
+              if (dailyLiquidatedUSDRecordGroupedByNetwork[network] === undefined) {
+                  dailyLiquidatedUSDRecordGroupedByNetwork[network] = usd;
+              } else {
+                  dailyLiquidatedUSDRecordGroupedByNetwork[network] += usd;
+              }
+          }
+      }
+
+      const pieDataCollections = convertNetworkDataToPieData({
+          deposit: dailyDepositUSDRecordGroupedByNetwork,
+          withdraw: dailyWithdrawUSDRecordGroupedByNetwork,
+          borrow: dailyBorrowUSDRecordGroupedByNetwork,
+          repay: dailyRepayUSDRecordGroupedByNetwork,
+          liquidated: dailyLiquidatedUSDRecordGroupedByNetwork
+      });
 
       let newStatCollection : IStatEntry[] = [];
 
       let depositEntry = {
         title: "Deposited",
         icon: <DepositIcon style={{fontSize: '3rem'}}/>,
-        value: dailyDepositUSDRecord?.usd ? dailyDepositUSDRecord.usd : 0,
+        value: dailyDepositUSDRecord?.usd ? dailyDepositUSDRecord.usd.toString() : "0",
         formatter: (value: string) => { return priceFormat(value, 2, "$", true) },
         route: "/volume/deposit",
+        pieData: convertPieDataToPercentages(pieDataCollections.deposit),
       }
 
       newStatCollection.push(depositEntry);
@@ -109,9 +229,10 @@ export default function DailyStats(props: PropsFromRedux) {
       let withdrawEntry = {
         title: "Withdrawn",
         icon: <WithdrawIcon style={{fontSize: '3rem'}}/>,
-        value: dailyWithdrawUSDRecord?.usd ? dailyWithdrawUSDRecord.usd : 0,
+        value: dailyWithdrawUSDRecord?.usd ? dailyWithdrawUSDRecord.usd.toString() : "0",
         formatter: (value: string) => { return priceFormat(value, 2, "$", true) },
         route: "/volume/withdraw",
+        pieData: convertPieDataToPercentages(pieDataCollections.withdraw),
       }
 
       newStatCollection.push(withdrawEntry);
@@ -119,9 +240,10 @@ export default function DailyStats(props: PropsFromRedux) {
       let borrowEntry = {
         title: "Borrowed",
         icon: <BorrowIcon style={{fontSize: '3rem'}}/>,
-        value: dailyBorrowUSDRecord?.usd ? dailyBorrowUSDRecord.usd : 0,
+        value: dailyBorrowUSDRecord?.usd ? dailyBorrowUSDRecord.usd.toString() : "0",
         formatter: (value: string) => { return priceFormat(value, 2, "$", true) },
         route: "/volume/borrow",
+        pieData: convertPieDataToPercentages(pieDataCollections.borrow),
       }
 
       newStatCollection.push(borrowEntry);
@@ -129,9 +251,10 @@ export default function DailyStats(props: PropsFromRedux) {
       let repayEntry = {
         title: "Repaid",
         icon: <RepaidIcon style={{fontSize: '3rem'}}/>,
-        value: dailyRepayUSDRecord?.usd ? dailyRepayUSDRecord.usd : 0,
+        value: dailyRepayUSDRecord?.usd ? dailyRepayUSDRecord.usd.toString() : "0",
         formatter: (value: string) => { return priceFormat(value, 2, "$", true) },
         route: "/volume/repay",
+        pieData: convertPieDataToPercentages(pieDataCollections.repay),
       }
 
       newStatCollection.push(repayEntry);
@@ -139,18 +262,19 @@ export default function DailyStats(props: PropsFromRedux) {
       let liquidationEntry = {
         title: "Liquidated",
         icon: <LiquidateIcon style={{fontSize: '3rem'}}/>,
-        value: dailyLiquidatedUSDRecord?.usd ? dailyLiquidatedUSDRecord.usd : 0,
+        value: dailyLiquidatedUSDRecord?.usd ? dailyLiquidatedUSDRecord.usd.toString() : "0",
         formatter: (value: string) => {
           console.log({value})
            return priceFormat(value, 2, "$", true) },
         route: "/volume/liquidation",
+        pieData: pieDataCollections.liquidated?.length > 0 ? convertPieDataToPercentages(pieDataCollections.liquidated) : [],
       }
 
       newStatCollection.push(liquidationEntry);
 
       setStatCollection(newStatCollection);
       
-      // setIsLoading(false);
+      setIsLoading(false);
     })
   }, [selectedNetworkIDs])
 
@@ -162,7 +286,7 @@ export default function DailyStats(props: PropsFromRedux) {
       <Typography className="secondary-text" variant="subtitle1" style={{marginBottom: 24, fontWeight: 300}}>UTC Timezone</Typography>
       <StatContainer>
         <StatGrid container spacing={2}>
-            {statCollection.map(({title, subtitle, value, formatter, icon, route}, statIndex) => 
+            {statCollection.map(({title, subtitle, value, formatter, icon, route, pieData}, statIndex) => 
               <Grid key={`stat-collection-entry-${statIndex}`} item xs={12} md={((statCollection.length % 2 === 1) && (statIndex === (statCollection.length - 1))) ? 12 : 6}>
                 <LinkWrapper link={route}>
                   <StatEntryContainer className="secondary-card">
@@ -176,6 +300,17 @@ export default function DailyStats(props: PropsFromRedux) {
                     </Typography>
                     {subtitle && <Typography variant="subtitle1"  style={{marginBottom: 8}}>{subtitle}</Typography>}
                     <Typography variant="h6" style={{fontWeight: 'bold'}}>{formatter ? formatter(value) : value}</Typography>
+                    <div>
+                      <PieChartContainer 
+                        paddingBottom={0}
+                        paddingTop={16}
+                        desktopHeight={250}
+                        mobileHeight={250}
+                        data={pieData && pieData?.length > 0 ? pieData : isLoading ? [] : [{name: "N/A", value: 100, fill: "#4d4d4d"}]}
+                        loading={isLoading}
+                        labelFontSize={"0.8rem"}
+                      />
+                    </div>
                   </StatEntryContainer>
                 </LinkWrapper>
               </Grid>
