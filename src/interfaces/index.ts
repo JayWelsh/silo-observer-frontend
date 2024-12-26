@@ -49,14 +49,21 @@ export interface ISiloTokenDataResponseData {
 interface IPieGroupedData {
     name: string;
     value: number;
+    labelFormatFn?: (arg0: any) => string;
+    tooltipFormatFn?: (arg0: any) => string;
 }
 
 export interface IPieData {
     name: string;
+    tooltipText?: string;
     value: number;
     fill?: string;
+    labelFormatFn?: (arg0: any) => string;
+    tooltipFormatFn?: (arg0: any) => string;
     markForRemoval?: boolean;
     groupedData?: IPieGroupedData[];
+    groupedDataTooltipTitle?: string;
+    groupedTooltipFontSize?: string;
 }
 export interface IVolumeResponseEntry {
     usd: string;

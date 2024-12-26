@@ -62,10 +62,18 @@ interface ICustomTooltip {
   isConsideredMobile: boolean;
 }
 
+const getTooltipEntryFontSize = (isConsideredMobile: boolean, override: string | undefined) => {
+  if(override) {
+    return override;
+  }
+  return isConsideredMobile ? "11px" : "14px";
+};
+
 const CustomTooltip = (props: TooltipProps<ValueType, NameType> & ICustomTooltip) => {
   let { active, payload, isConsideredMobile } = props;
   if (active && payload && payload.length) {
     let groupedData = payload[0].payload?.groupedData;
+    let groupedDataTooltipTitle = payload[0].payload?.groupedDataTooltipTitle;
     let maxColumnLength = 18;
     let columnCount = 1;
     let groupedDataInColumns = [groupedData];
@@ -83,14 +91,14 @@ const CustomTooltip = (props: TooltipProps<ValueType, NameType> & ICustomTooltip
       <StyledTooltip maxHeight={isConsideredMobile ? "550px" : "650px"}>
         {groupedData && 
           <>
-            <StyledTooltipTextStacked fontSize={isConsideredMobile ? "11px" : "14px"} first={true} style={{textDecoration: 'underline'}}>{`${payload[0].name}`}</StyledTooltipTextStacked>
+            <StyledTooltipTextStacked fontSize={isConsideredMobile ? "11px" : "14px"} first={true} style={{textDecoration: 'underline'}}>{`${groupedDataTooltipTitle ? groupedDataTooltipTitle : payload[0].name}`}</StyledTooltipTextStacked>
             <div style={{display: 'flex'}}>
               {
                 groupedDataInColumns.map((columnData, index) => 
                   <div key={`grouped-tooltip-column-${index}`} style={(index > 0) ? { marginLeft: 32 } : {}}>
                     {
                       columnData.map((entry: IPieData, dataIndex: number) => 
-                        <StyledTooltipTextStacked fontSize={isConsideredMobile ? "11px" : "14px"} key={`grouped-tooltip-column-data-${index}-${dataIndex}`} last={dataIndex === (columnData.length - 1)}>{`${centerShortenLongString(entry.name, 12)}: ${entry.value} %`}</StyledTooltipTextStacked>
+                        <StyledTooltipTextStacked fontSize={getTooltipEntryFontSize(isConsideredMobile, payload ? payload[0].payload?.groupedTooltipFontSize : undefined)} key={`grouped-tooltip-column-data-${index}-${dataIndex}`} last={dataIndex === (columnData.length - 1)}>{entry.tooltipFormatFn ? entry.tooltipFormatFn(entry) : `${centerShortenLongString(entry.name, 12)}: ${entry.value} %`}</StyledTooltipTextStacked>
                       )
                     }
                   </div>
@@ -100,7 +108,7 @@ const CustomTooltip = (props: TooltipProps<ValueType, NameType> & ICustomTooltip
           </>
         }
         {!groupedData && 
-          <StyledTooltipText>{`${payload[0].name}: ${payload[0].value} %`}</StyledTooltipText>
+          <StyledTooltipText>{payload[0].payload.tooltipFormatFn ? payload[0].payload.tooltipFormatFn(payload[0].payload) : `${centerShortenLongString(payload[0].payload.name, 12)}: ${payload[0].payload.value} %`}</StyledTooltipText>
         }
       </StyledTooltip>
     );
@@ -212,7 +220,7 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart 
             width={internalMobileHeight}
-            height={internalMobileHeight} 
+            height={internalMobileHeight}
             onMouseMove={(next, e) => {
               let toolTipWrapper = document.getElementsByClassName("recharts-tooltip-wrapper")[0] as HTMLElement;
               // toolTipWrapper.style.transition = 'transform 0ms ease 0s';
@@ -234,6 +242,9 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
                 showLabels
                 ? 
                   function(entry: IPieData) {
+                    if(entry.labelFormatFn) {
+                      return entry.labelFormatFn(entry);
+                    }
                     return `${entry.name} (${entry.value.toFixed(2)} %)`;
                   }
                 : 
