@@ -70,13 +70,18 @@ const networkSelectionItems = [
   }
 ]
 
-export default function NetworkSelectionList(props: PropsFromRedux) {
+interface INetworkSelectionList {
+  networkViewListOnly?: boolean
+}
+
+export default function NetworkSelectionList(props: PropsFromRedux & INetworkSelectionList) {
 
   let {
     selectedNetworkIDs,
     setSelectedNetworkIDs,
     knownNetworkIDs,
     setKnownNetworkIDs,
+    networkViewListOnly,
   } = props;
 
   const [localSelectionState, setLocalSelectionState] = useState<string[]>(selectedNetworkIDs);
@@ -121,37 +126,48 @@ export default function NetworkSelectionList(props: PropsFromRedux) {
 
   return (
     <div>
-      <FormControl sx={{ m: 1, width: 130 }} size="small">
-        <InputLabel id="demo-multiple-checkbox-label">Chains</InputLabel>
-        <Select
-          labelId="demo-multiple-checkbox-label"
-          id="demo-multiple-checkbox"
-          multiple
-          value={localSelectionState}
-          onChange={handleChange}
-          input={<OutlinedInput label="Chains" />}
-          color="primary"
-          // renderValue={(selected) => selected.join(', ')}
-          MenuProps={MenuProps}
-          renderValue={(selected) => (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, paddingTop: "4px", paddingBottom: "2px" }}>
-              {selected.map((value, index) => (
-                <Fragment key={`network-selection-entry-${index}`}>
-                  <img src={networkIdToImage[value]} style={{width: networkIconSize, height: networkIconSize, marginLeft: (index > 0) ? "-10px" : 0}} alt={`${value}`} />
-                </Fragment>
-              ))}
-            </Box>
-          )}
-        >
-          {networkSelectionItems.map(({name, icon, id}) => (
-            <MenuItem key={id} value={id}>
-              <Checkbox checked={localSelectionState.indexOf(id) > -1} disabled={localSelectionState.length === 1} />
-              <ListItemIcon>{icon}</ListItemIcon>
-              <ListItemText primary={name} />
-            </MenuItem>
+      {!networkViewListOnly &&
+        <FormControl sx={{ m: 1, width: 130 }} size="small">
+          <InputLabel id="demo-multiple-checkbox-label">Chains</InputLabel>
+          <Select
+            labelId="demo-multiple-checkbox-label"
+            id="demo-multiple-checkbox"
+            multiple
+            value={localSelectionState}
+            onChange={handleChange}
+            input={<OutlinedInput label="Chains" />}
+            color="primary"
+            // renderValue={(selected) => selected.join(', ')}
+            MenuProps={MenuProps}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, paddingTop: "4px", paddingBottom: "2px" }}>
+                {selected.map((value, index) => (
+                  <Fragment key={`network-selection-entry-${index}`}>
+                    <img src={networkIdToImage[value]} style={{width: networkIconSize, height: networkIconSize, marginLeft: (index > 0) ? "-10px" : 0}} alt={`${value}`} />
+                  </Fragment>
+                ))}
+              </Box>
+            )}
+          >
+            {networkSelectionItems.map(({name, icon, id}) => (
+              <MenuItem key={id} value={id}>
+                <Checkbox checked={localSelectionState.indexOf(id) > -1} disabled={localSelectionState.length === 1} />
+                <ListItemIcon>{icon}</ListItemIcon>
+                <ListItemText primary={name} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      }
+      {networkViewListOnly &&
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, paddingTop: "4px", paddingBottom: "2px" }}>
+          {selectedNetworkIDs.map((value, index) => (
+            <Fragment key={`network-selection-entry-${index}`}>
+              <img src={networkIdToImage[value]} style={{width: networkIconSize, height: networkIconSize, marginLeft: (index > 0) ? "-10px" : 0}} alt={`${value}`} />
+            </Fragment>
           ))}
-        </Select>
-      </FormControl>
+        </Box>
+      }
     </div>
   );
 }
