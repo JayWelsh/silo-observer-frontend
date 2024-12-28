@@ -10,7 +10,7 @@ import { PropsFromRedux } from '../containers/HomePageContainer';
 
 const RevenuePage = (props: PropsFromRedux) => {
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="xl">
       <div style={{marginTop: 12}}/>
       <ReturnHomeLink/>
       <div style={{marginTop: 12}}/>
