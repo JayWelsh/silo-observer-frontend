@@ -88,6 +88,12 @@ export interface INetworkGroupedNumber {
     [network: string]: number;
 }
 
+export interface ISiloRevenueUnclaimedFessDailyDeltaByNetworkResponse {
+    network: string;
+    pending_usd_delta: string;
+    harvested_usd_delta: string;
+}
+
 export interface IStackedTimeseries {
     date: string;
     [key: string]: number | string;

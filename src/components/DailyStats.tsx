@@ -11,6 +11,7 @@ import WithdrawIcon from '@mui/icons-material/Outbox';
 import BorrowIcon from '@mui/icons-material/AccountBalance';
 import RepaidIcon from '@mui/icons-material/CreditScore';
 import LiquidateIcon from '@mui/icons-material/WaterDrop';
+import UnclaimedFeesDeltaIcon from '@mui/icons-material/Savings';
 
 import { IPieData, INetworkGroupedNumber } from '../interfaces';
 
@@ -25,6 +26,7 @@ import {
   priceFormat,
   convertNetworkDataToPieData,
   convertPieDataToPercentages,
+  addFormattingFunctionsToPieData,
 } from '../utils';
 
 const Container = styled(Card)(({ theme }) => ({
@@ -63,6 +65,14 @@ interface IStatEntry {
   pieData?: IPieData[]
 }
 
+const pieChartTooltipValueFormatDollars = (pieChartRecord: IPieData) => {
+  return `${pieChartRecord.name}: ${priceFormat(pieChartRecord.value, 2, "$")}`
+}
+
+const pieChartLabelValueFormatDollars = (pieChartRecord: IPieData) => {
+  return `${pieChartRecord.name} (${priceFormat(pieChartRecord.value, 2, "$")})`
+}
+
 export default function DailyStats(props: PropsFromRedux) {
 
   let {
@@ -74,7 +84,8 @@ export default function DailyStats(props: PropsFromRedux) {
     <WithdrawIcon style={{fontSize: '3rem'}}/>,
     <BorrowIcon style={{fontSize: '3rem'}}/>,
     <RepaidIcon style={{fontSize: '3rem'}}/>,
-    <LiquidateIcon style={{fontSize: '3rem'}}/>
+    <LiquidateIcon style={{fontSize: '3rem'}}/>,
+    <UnclaimedFeesDeltaIcon style={{fontSize: '3rem'}}/>
   ]).map((icon) => { return { title: "Loading", value: "Loading", icon} });
 
   const [statCollection, setStatCollection] = useState<IStatEntry[]>(placeholderCollection);
@@ -88,6 +99,7 @@ export default function DailyStats(props: PropsFromRedux) {
       fetch(`${API_ENDPOINT}/volume/borrow?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
       fetch(`${API_ENDPOINT}/volume/repay?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
       fetch(`${API_ENDPOINT}/volume/liquidation?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/daily-unclaimed-fee-delta?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
     ]).then((data) => {
     
       let [
@@ -96,6 +108,7 @@ export default function DailyStats(props: PropsFromRedux) {
         dailyBorrowUSDResponse,
         dailyRepayUSDResponse,
         dailyLiquidateUSDResponse,
+        dailyUnclaimedFeeDeltaUSDResponse,
       ] = data;
 
       let dailyDepositUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
@@ -103,12 +116,14 @@ export default function DailyStats(props: PropsFromRedux) {
       let dailyBorrowUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
       let dailyRepayUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
       let dailyLiquidatedUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
+      let dailyUncliamedFeeDeltaUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
 
       let dailyDepositUSDRecord = { usd: 0 };
       let dailyWithdrawUSDRecord = { usd: 0 };
       let dailyBorrowUSDRecord = { usd: 0 };
       let dailyRepayUSDRecord = { usd: 0 };
       let dailyLiquidatedUSDRecord = { usd: 0 };
+      let dailyUnclaimedFeeDeltaUSDRecord = { usd: 0 };
 
       for (let entry of dailyDepositUSDResponse.data) {
         const usd = Number(entry.usd);
@@ -205,12 +220,29 @@ export default function DailyStats(props: PropsFromRedux) {
           }
       }
 
+      // Unclaimed Fees Delta USD
+      for (let entry of dailyUnclaimedFeeDeltaUSDResponse.data) {
+        const usd = Number(Number(entry.pending_usd_delta).toFixed(2));
+        const network = entry.network;
+        if(!isNaN(usd) && (usd > 0)) {
+          dailyUnclaimedFeeDeltaUSDRecord.usd = Number(Number(dailyUnclaimedFeeDeltaUSDRecord.usd + usd).toFixed(2));
+        }
+        if (network && !isNaN(usd) && (usd > 0)) {
+            if (dailyUncliamedFeeDeltaUSDRecordGroupedByNetwork[network] === undefined) {
+              dailyUncliamedFeeDeltaUSDRecordGroupedByNetwork[network] = usd;
+            } else {
+              dailyUncliamedFeeDeltaUSDRecordGroupedByNetwork[network] += usd;
+            }
+        }
+      }
+
       const pieDataCollections = convertNetworkDataToPieData({
           deposit: dailyDepositUSDRecordGroupedByNetwork,
           withdraw: dailyWithdrawUSDRecordGroupedByNetwork,
           borrow: dailyBorrowUSDRecordGroupedByNetwork,
           repay: dailyRepayUSDRecordGroupedByNetwork,
-          liquidated: dailyLiquidatedUSDRecordGroupedByNetwork
+          liquidated: dailyLiquidatedUSDRecordGroupedByNetwork,
+          unclaimedFeeDelta: dailyUncliamedFeeDeltaUSDRecordGroupedByNetwork,
       });
 
       let newStatCollection : IStatEntry[] = [];
@@ -271,6 +303,19 @@ export default function DailyStats(props: PropsFromRedux) {
       }
 
       newStatCollection.push(liquidationEntry);
+
+      let unclaimedFeeDeltaUSDEntry = {
+        title: "Unclaimed Fees Delta",
+        icon: <UnclaimedFeesDeltaIcon style={{fontSize: '3rem'}}/>,
+        value: dailyUnclaimedFeeDeltaUSDRecord?.usd ? dailyUnclaimedFeeDeltaUSDRecord.usd.toString() : "0",
+        formatter: (value: string) => {
+          console.log({value})
+           return priceFormat(value, 2, "$", true) },
+        route: "/revenue",
+        pieData: pieDataCollections.unclaimedFeeDelta?.length > 0 ? addFormattingFunctionsToPieData(pieDataCollections.unclaimedFeeDelta, pieChartLabelValueFormatDollars, pieChartTooltipValueFormatDollars) : [],
+      }
+
+      newStatCollection.push(unclaimedFeeDeltaUSDEntry);
 
       setStatCollection(newStatCollection);
       
