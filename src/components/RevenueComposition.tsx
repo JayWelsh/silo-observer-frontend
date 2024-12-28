@@ -16,15 +16,25 @@ import {
   CHAIN_ID_TO_PIE_COLOR,
 } from '../constants';
 
-import { IPieData } from '../interfaces';
+import { 
+  IPieData,
+  // IStackedTimeseries,
+} from '../interfaces';
 
 import { PropsFromRedux } from '../containers/SiloTotalAssetCompositionContainer';
 import PieChartContainer from '../containers/PieChartContainer';
 import NetworkSelectionListContainer from '../containers/NetworkSelectionListContainer';
+import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
+// import StackedAreaChartContainer from '../containers/StackedAreaChartContainer';
 
 import { priceFormat } from '../utils';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
+
+interface ITimeseries {
+  date: string;
+  value: number;
+}
 
 interface IDataResponse {
   amount_pending: string;
@@ -72,6 +82,8 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
   } = props;
 
   const [pieData, setPieData] = useState<IPieData[]>([]);
+  const [timeseriesDataDistinctTimestamps, setTimeseriesDataDistinctTimestamps] = useState<ITimeseries[]>([]);
+  // const [timeseriesDataStackedNetworksDistinctTimestamps, setTimeseriesDataStackedNetworksDistinctTimestamps] = useState<IStackedTimeseries[]>([]);
   const [networkOverviewGroupedData, setNetworkOverviewGroupedData] = useState<IPieData[]>([]);
   const [networkGroupedData, setNetworkGroupedData] = useState<INetworkGroupedData>({});
   const [totalAmountPendingUSD, setTotalAmountPendingUSD] = useState<string | undefined>();
@@ -90,10 +102,54 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
   useEffect(() => {
     setIsLoading(true);
     Promise.all([
-      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/latest?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/latest?networks=${selectedNetworkIDs.join(',')}&perPage=1000`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-timestamps?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json()),
+      // fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-networks?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json()),
     ]).then((data) => {
 
       let pieDataResponse : IDataResponse[] = data[0].data;
+      let timeseriesDataResponseDistinctTimestamps = data[1].data;
+      // let timeseriesDataResponseDistinctNetworks = data[2].data;
+
+      console.log({
+        timeseriesDataResponseDistinctTimestamps,
+        // timeseriesDataResponseDistinctNetworks
+      })
+
+      const revenueTimeseriesData : ITimeseries[] = [];
+
+      for(let timeseriesEntry of timeseriesDataResponseDistinctTimestamps) {
+        revenueTimeseriesData.push({
+          date: timeseriesEntry.timestamp,
+          value: timeseriesEntry.amount_pending_usd,
+        })
+      }
+
+      // const timestampToNetworkTimeseriesData : {[key: string]: {[key: string]: number}} = {};
+      // const networkTimeseriesStackedData : IStackedTimeseries[] = [];
+
+      // for(let timeseriesNetworkEntry of timeseriesDataResponseDistinctNetworks) {
+      //   if(timestampToNetworkTimeseriesData[timeseriesNetworkEntry.timestamp]) {
+      //     if(!timestampToNetworkTimeseriesData[timeseriesNetworkEntry.timestamp][timeseriesNetworkEntry.network]) {
+      //       timestampToNetworkTimeseriesData[timeseriesNetworkEntry.timestamp][timeseriesNetworkEntry.network] = Number(Number(timeseriesNetworkEntry.amount_pending_usd).toFixed(2));
+      //     }
+      //   } else {
+      //     timestampToNetworkTimeseriesData[timeseriesNetworkEntry.timestamp] = {};
+      //     if(!timestampToNetworkTimeseriesData[timeseriesNetworkEntry.timestamp][timeseriesNetworkEntry.network]) {
+      //       timestampToNetworkTimeseriesData[timeseriesNetworkEntry.timestamp][timeseriesNetworkEntry.network] = Number(Number(timeseriesNetworkEntry.amount_pending_usd).toFixed(2));
+      //     }
+      //   }
+      // }
+
+      // console.log({timestampToNetworkTimeseriesData})
+
+      // for(let [timestamp, networkValues] of Object.entries(timestampToNetworkTimeseriesData)) {
+      //   console.log({timestamp, networkValues});
+      //   networkTimeseriesStackedData.push({
+      //     date: timestamp,
+      //     ...networkValues
+      //   })
+      // }
 
       const groupedByNetwork: INetworkGroupedData = {};
 
@@ -219,6 +275,10 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
 
       setTotalAmountPendingUSD(localTotalAmountPendingUSD);
 
+      setTimeseriesDataDistinctTimestamps(revenueTimeseriesData.reverse());
+
+      // setTimeseriesDataStackedNetworksDistinctTimestamps(networkTimeseriesStackedData.reverse());
+
     })
   }, [selectedNetworkIDs, excludeTokenSymbols])
 
@@ -235,8 +295,38 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
         <NetworkSelectionListContainer networkViewListOnly={true} />
       </Card>
       <Grid container spacing={3}>
+        {/* <Grid item xs={12} md={12}>
+          <StackedAreaChartContainer
+            chartData={timeseriesDataStackedNetworksDistinctTimestamps}
+            seriesKeys={Object.keys(CHAIN_ID_TO_PIE_COLOR)}
+            loading={isLoading}
+            colors={CHAIN_ID_TO_PIE_COLOR}
+            height={500}
+            rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
+            formatValueFn={(value: any) => priceFormat(value, 2, "$")}
+            leftTextTitle={`All Silos`}
+            leftTextSubtitle={`Stacked Unclaimed Fee Tokens (Approx. USD)`}
+            showChange={true}
+            changeType="up-good"
+          />
+        </Grid> */}
         <Grid item xs={12} md={12}>
-          <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>
+          {timeseriesDataDistinctTimestamps &&
+            <BasicAreaChartContainer
+              chartData={timeseriesDataDistinctTimestamps}
+              loading={isLoading}
+              leftTextTitle={`All Silos`}
+              leftTextSubtitle={`Unclaimed Fee Tokens (Approx. USD)`}
+              rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
+              showChange={true}
+              changeType={"up-good"}
+              height={400}
+              formatValueFn={(value: any) => priceFormat(value, 2, "$")}
+            />
+          }
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible'}}>
             <PieChartContainer 
               data={pieData}
               labelFontSize={"0.8rem"}
@@ -248,7 +338,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
           </Card>
         </Grid>
         <Grid item xs={12} md={12}>
-          <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>
+          <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible'}}>
             <PieChartContainer 
               data={networkOverviewGroupedData}
               labelFontSize={"0.8rem"}
@@ -261,7 +351,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
         </Grid>
         {Object.entries(networkGroupedData).sort(([networkA, dataA], [networkB, dataB]) => Number(dataB.totalAmountPendingUSD) - Number(dataA.totalAmountPendingUSD)).map(([network, data]) => (
           <Grid item xs={12} md={12}  key={`network-breakdown-${network}`}>
-            <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>
+            <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible'}}>
               <PieChartContainer 
                 data={data.pieData}
                 labelFontSize={"0.8rem"}

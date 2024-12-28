@@ -87,3 +87,8 @@ export interface IContractEvent {
 export interface INetworkGroupedNumber {
     [network: string]: number;
 }
+
+export interface IStackedTimeseries {
+    date: string;
+    [key: string]: number | string;
+}
