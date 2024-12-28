@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import Grid from '@mui/material/Grid';
 
 import BigNumber from 'bignumber.js';
 
@@ -12,6 +13,7 @@ import {
   API_ENDPOINT,
   DEPLOYMENT_ID_TO_HUMAN_READABLE,
   NETWORK_TO_HUMAN_READABLE,
+  CHAIN_ID_TO_PIE_COLOR,
 } from '../constants';
 
 import { IPieData } from '../interfaces';
@@ -39,6 +41,14 @@ interface IDataResponse {
   markForRemoval?: boolean;
 }
 
+interface INetworkGroupedData {
+  [key: string]: {
+    pieData: IPieData[];
+    otherRecord: IPieData;
+    totalAmountPendingUSD: string;
+  }
+}
+
 const revenueValueFormat = (pieChartRecord: IPieData) => {
   return `${pieChartRecord.name}`
 } 
@@ -62,6 +72,8 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
   } = props;
 
   const [pieData, setPieData] = useState<IPieData[]>([]);
+  const [networkOverviewGroupedData, setNetworkOverviewGroupedData] = useState<IPieData[]>([]);
+  const [networkGroupedData, setNetworkGroupedData] = useState<INetworkGroupedData>({});
   const [totalAmountPendingUSD, setTotalAmountPendingUSD] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [excludeTokenSymbols, setExcludeTokenSymbols] = useState<string[]>(["XAI"]);
@@ -82,6 +94,24 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
     ]).then((data) => {
 
       let pieDataResponse : IDataResponse[] = data[0].data;
+
+      const groupedByNetwork: INetworkGroupedData = {};
+
+      for(let network of selectedNetworkIDs) {
+        groupedByNetwork[network] = {
+          pieData: [],
+          otherRecord: {
+            name: "Other Assets",
+            groupedDataTooltipTitle: "Other Assets",
+            value: 0,
+            labelFormatFn: revenueValueFormat,
+            tooltipFormatFn: tooltipValueFormat,
+            groupedTooltipFontSize: '11px',
+            groupedData: [],
+          },
+          totalAmountPendingUSD: new BigNumber("0").toString(),
+        };
+      };
 
       let localTotalAmountPendingUSD = pieDataResponse.reduce((acc: string, entry: IDataResponse) => {
         if(entry.asset_symbol && excludeTokenSymbols.indexOf(entry.asset_symbol.toUpperCase()) > -1) {
@@ -114,25 +144,45 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
             otherRecord.groupedDataTooltipTitle = `Other Assets (${priceFormat(otherRecord.value, 2, "$")} total)`
             if(otherRecord.groupedData) {
               if(amountPendingUSD > 50) {
-                otherRecord.groupedData.push({
+                let groupedDataEntry = {
                   name: `${entry.silo_name}-${entry.asset_symbol}`,
                   value: amountPendingUSD,
                   labelFormatFn: revenueValueFormat,
                   tooltipFormatFn: tooltipValueFormatGrouped,
-                })
+                };
+                otherRecord.groupedData.push(groupedDataEntry)
+                if(entry.network && groupedByNetwork[entry.network] && groupedByNetwork[entry.network].otherRecord && groupedByNetwork[entry.network].otherRecord.groupedData) {
+                  //@ts-ignore
+                  groupedByNetwork[entry.network].otherRecord.groupedData.push(groupedDataEntry);
+                  groupedByNetwork[entry.network].otherRecord.value = Number(new BigNumber(groupedByNetwork[entry.network].otherRecord.value).plus(new BigNumber(amountPendingUSD)).toNumber().toFixed(2));
+                  groupedByNetwork[entry.network].otherRecord.groupedDataTooltipTitle = `Other Assets (${priceFormat(groupedByNetwork[entry.network].otherRecord.value, 2, "$")} total)`
+                } else {
+                  groupedByNetwork[entry.network].otherRecord.value = Number(new BigNumber(amountPendingUSD).toNumber().toFixed(2));
+                  groupedByNetwork[entry.network].otherRecord.groupedData = [groupedDataEntry];
+                  groupedByNetwork[entry.network].otherRecord.groupedDataTooltipTitle = `Other Assets (${priceFormat(groupedByNetwork[entry.network].otherRecord.value, 2, "$")} total)`
+                }
               }
             }
           }
           markForRemoval = true;
         }
-        return {
+        let pieDataEntry = {
           name: `${entry.silo_name}-${entry.asset_symbol} (${priceFormat(entry.amount_pending_usd, 2, "$")})`,
           tooltipText: `${priceFormat(entry.amount_pending_usd, 2, "$")} of ${entry.asset_symbol} unclaimed on ${entry.silo_name} silo (${NETWORK_TO_HUMAN_READABLE[entry.network]} ${DEPLOYMENT_ID_TO_HUMAN_READABLE[entry.deployment_id]})`,
           value: amountPendingUSD,
           markForRemoval,
           labelFormatFn: revenueValueFormat,
           tooltipFormatFn: tooltipValueFormat,
+        };
+        if(entry.network) {
+          if(entry.asset_symbol && (excludeTokenSymbols.indexOf(entry.asset_symbol.toUpperCase()) === -1)) {
+            groupedByNetwork[entry.network].totalAmountPendingUSD = new BigNumber(groupedByNetwork[entry.network].totalAmountPendingUSD).plus(new BigNumber(entry.amount_pending_usd)).toString();
+            if(!markForRemoval) {
+              groupedByNetwork[entry.network].pieData.push(pieDataEntry);
+            }
+          }
         }
+        return pieDataEntry;
       }).filter((entry) => !entry.markForRemoval);
 
       if(otherRecord.value > 0) {
@@ -140,6 +190,28 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
       }
 
       console.log({formattedPieData})
+
+      console.log({groupedByNetwork});
+
+      let tempNetworkOverviewGroupedData : IPieData[] = [];
+      for(let network of selectedNetworkIDs) {
+        if(groupedByNetwork[network].otherRecord.value > 0) {
+          groupedByNetwork[network].pieData.push(groupedByNetwork[network].otherRecord);
+        }
+        let networkPieDataEntry = {
+          name: `${NETWORK_TO_HUMAN_READABLE[network]} (${priceFormat(groupedByNetwork[network].totalAmountPendingUSD, 2, "$")})`,
+          tooltipText: `${priceFormat(groupedByNetwork[network].totalAmountPendingUSD, 2, "$")} of combined fee tokens unclaimed on ${NETWORK_TO_HUMAN_READABLE[network]}`,
+          value: Number(groupedByNetwork[network].totalAmountPendingUSD),
+          labelFormatFn: revenueValueFormat,
+          tooltipFormatFn: tooltipValueFormat,
+          fill: CHAIN_ID_TO_PIE_COLOR[network],
+        };
+        tempNetworkOverviewGroupedData.push(networkPieDataEntry);
+      };
+
+      setNetworkOverviewGroupedData(tempNetworkOverviewGroupedData);
+
+      setNetworkGroupedData(groupedByNetwork);
 
       setIsLoading(false);
 
@@ -162,16 +234,46 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
         <Typography className="secondary-text" variant="subtitle1" style={{fontWeight: 300, marginBottom: 8}}>Estimated Unclaimed Fees Across All Silos</Typography>
         <NetworkSelectionListContainer networkViewListOnly={true} />
       </Card>
-      <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>
-        <PieChartContainer 
-          data={pieData}
-          labelFontSize={"0.8rem"}
-          loading={isLoading}
-          title={"Current Total Unclaimed Silo Fees"}
-          desktopHeight={800}
-          mobileHeight={800}
-        />
-      </Card>
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={12}>
+          <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>
+            <PieChartContainer 
+              data={pieData}
+              labelFontSize={"0.8rem"}
+              loading={isLoading}
+              title={"Current Total Unclaimed Silo Fees"}
+              desktopHeight={800}
+              mobileHeight={800}
+            />
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={12}>
+          <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>
+            <PieChartContainer 
+              data={networkOverviewGroupedData}
+              labelFontSize={"0.8rem"}
+              loading={isLoading}
+              title={"Current Total Unclaimed Silo Fees By Network"}
+              desktopHeight={400}
+              mobileHeight={400}
+            />
+          </Card>
+        </Grid>
+        {Object.entries(networkGroupedData).sort(([networkA, dataA], [networkB, dataB]) => Number(dataB.totalAmountPendingUSD) - Number(dataA.totalAmountPendingUSD)).map(([network, data]) => (
+          <Grid item xs={12} md={12}  key={`network-breakdown-${network}`}>
+            <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>
+              <PieChartContainer 
+                data={data.pieData}
+                labelFontSize={"0.8rem"}
+                loading={isLoading}
+                title={`${NETWORK_TO_HUMAN_READABLE[network]} Network Current Total Unclaimed Silo Fees`}
+                desktopHeight={400}
+                mobileHeight={400}
+              />
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
     </>
   );
 }
