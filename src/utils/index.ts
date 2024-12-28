@@ -357,7 +357,8 @@ export const convertNetworkDataToPieData = (
 			withdraw: INetworkGroupedNumber,
 			borrow: INetworkGroupedNumber,
 			repay: INetworkGroupedNumber,
-			liquidated: INetworkGroupedNumber
+			liquidated: INetworkGroupedNumber,
+			unclaimedFeeDelta: INetworkGroupedNumber
 	}
 ): { [key: string]: IPieData[] } => {
 	const result: { [key: string]: IPieData[] } = {};
@@ -377,6 +378,7 @@ export const convertNetworkDataToPieData = (
 	result.borrow = convertToPieArray(networkData.borrow);
 	result.repay = convertToPieArray(networkData.repay);
 	result.liquidated = convertToPieArray(networkData.liquidated);
+	result.unclaimedFeeDelta = convertToPieArray(networkData.unclaimedFeeDelta);
 
 	return result;
 }
@@ -392,5 +394,17 @@ export const convertPieDataToPercentages = (pieData: IPieData[]): IPieData[] => 
 	return pieData.map(entry => ({
 			...entry,
 			value: Number(((entry.value / total) * 100).toFixed(2))
+	}));
+}
+
+export const addFormattingFunctionsToPieData = (
+	pieData: IPieData[],
+	labelFormatFn?: (arg0: any) => string,
+	tooltipFormatFn?: (arg0: any) => string,
+): IPieData[] => {
+	return pieData.map(entry => ({
+			...entry,
+			...(tooltipFormatFn && { tooltipFormatFn }),
+			...(labelFormatFn && { labelFormatFn }),
 	}));
 }

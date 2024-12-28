@@ -1,5 +1,5 @@
-import React from 'react';
-import {Routes, Route} from 'react-router-dom';
+import React, { useEffect } from 'react';
+import {Routes, Route, useLocation} from 'react-router-dom';
 
 import { Theme } from '@mui/material/styles';
 
@@ -25,6 +25,11 @@ const useStyles = makeStyles((theme: Theme) =>
 const PageContainer = () => {
 
     const classes = useStyles();
+    const location = useLocation();
+
+    useEffect(() => {
+      window.scrollTo(0, 0);
+    }, [location]);
 
     return (
         <Navigation>
