@@ -212,7 +212,7 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
         <LoadingIcon height={isConsideredMobile ? internalMobileHeight : internalDesktopHeight} />
       }
       {title && 
-        <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10}}>
+        <Typography variant="h6" style={{lineHeight: 1, marginBottom: 10, textAlign: isConsideredMobile ? 'center' : 'left'}}>
           {title || 'Loading...'}
         </Typography>
       }
