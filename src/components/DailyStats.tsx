@@ -305,7 +305,7 @@ export default function DailyStats(props: PropsFromRedux) {
       newStatCollection.push(liquidationEntry);
 
       let unclaimedFeeDeltaUSDEntry = {
-        title: "Unclaimed Fees Delta",
+        title: "Unclaimed Fees Value Change",
         icon: <UnclaimedFeesDeltaIcon style={{fontSize: '3rem'}}/>,
         value: dailyUnclaimedFeeDeltaUSDRecord?.usd ? dailyUnclaimedFeeDeltaUSDRecord.usd.toString() : "0",
         formatter: (value: string) => {
