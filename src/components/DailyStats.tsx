@@ -30,7 +30,7 @@ import {
 } from '../utils';
 
 const Container = styled(Card)(({ theme }) => ({
-  padding: theme.spacing(4),
+  padding: theme.spacing(3),
   display: 'flex',
   justifyContent: 'center',
   textAlign: 'center',
@@ -50,9 +50,10 @@ const StatContainer = styled("div")(({ theme }) => ({
 }));
 
 const StatEntryContainer = styled(Card)(({ theme }) => ({
-  padding: theme.spacing(4),
+  padding: theme.spacing(3),
   textAlign: 'center',
   position: 'relative',
+  height: '100%',
 }));
 
 interface IStatEntry {
@@ -84,8 +85,8 @@ export default function DailyStats(props: PropsFromRedux) {
     <WithdrawIcon style={{fontSize: '3rem'}}/>,
     <BorrowIcon style={{fontSize: '3rem'}}/>,
     <RepaidIcon style={{fontSize: '3rem'}}/>,
+    <UnclaimedFeesDeltaIcon style={{fontSize: '3rem'}}/>,
     <LiquidateIcon style={{fontSize: '3rem'}}/>,
-    <UnclaimedFeesDeltaIcon style={{fontSize: '3rem'}}/>
   ]).map((icon) => { return { title: "Loading", value: "Loading", icon} });
 
   const [statCollection, setStatCollection] = useState<IStatEntry[]>(placeholderCollection);
@@ -291,19 +292,6 @@ export default function DailyStats(props: PropsFromRedux) {
 
       newStatCollection.push(repayEntry);
 
-      let liquidationEntry = {
-        title: "Liquidated",
-        icon: <LiquidateIcon style={{fontSize: '3rem'}}/>,
-        value: dailyLiquidatedUSDRecord?.usd ? dailyLiquidatedUSDRecord.usd.toString() : "0",
-        formatter: (value: string) => {
-          console.log({value})
-           return priceFormat(value, 2, "$", true) },
-        route: "/volume/liquidation",
-        pieData: pieDataCollections.liquidated?.length > 0 ? convertPieDataToPercentages(pieDataCollections.liquidated) : [],
-      }
-
-      newStatCollection.push(liquidationEntry);
-
       let unclaimedFeeDeltaUSDEntry = {
         title: "Unclaimed Fees Value Change",
         icon: <UnclaimedFeesDeltaIcon style={{fontSize: '3rem'}}/>,
@@ -316,6 +304,19 @@ export default function DailyStats(props: PropsFromRedux) {
       }
 
       newStatCollection.push(unclaimedFeeDeltaUSDEntry);
+
+      let liquidationEntry = {
+        title: "Liquidated",
+        icon: <LiquidateIcon style={{fontSize: '3rem'}}/>,
+        value: dailyLiquidatedUSDRecord?.usd ? dailyLiquidatedUSDRecord.usd.toString() : "0",
+        formatter: (value: string) => {
+          console.log({value})
+           return priceFormat(value, 2, "$", true) },
+        route: "/volume/liquidation",
+        pieData: pieDataCollections.liquidated?.length > 0 ? convertPieDataToPercentages(pieDataCollections.liquidated) : [],
+      }
+
+      newStatCollection.push(liquidationEntry);
 
       setStatCollection(newStatCollection);
       
@@ -332,7 +333,7 @@ export default function DailyStats(props: PropsFromRedux) {
       <StatContainer>
         <StatGrid container spacing={2}>
             {statCollection.map(({title, subtitle, value, formatter, icon, route, pieData}, statIndex) => 
-              <Grid key={`stat-collection-entry-${statIndex}`} item xs={12} md={((statCollection.length % 2 === 1) && (statIndex === (statCollection.length - 1))) ? 12 : 6}>
+              <Grid key={`stat-collection-entry-${statIndex}`} item xs={12} lg={((statCollection.length % 2 === 1) && (statIndex === (statCollection.length - 1))) ? 12 : 4} md={((statCollection.length % 2 === 1) && (statIndex === (statCollection.length - 1))) ? 12 : 6}>
                 <LinkWrapper link={route}>
                   <StatEntryContainer className="secondary-card">
                     {icon &&
@@ -340,15 +341,16 @@ export default function DailyStats(props: PropsFromRedux) {
                         {icon}
                       </div>
                     }
-                    <Typography variant="h4" style={{marginBottom: subtitle ? 0 : 16, fontSize: '1.8rem'}}>
+                    <Typography variant="h4" style={{marginBottom: subtitle ? 0 : 16, fontSize: '1.4rem'}}>
                       {title}
                     </Typography>
-                    {subtitle && <Typography variant="subtitle1"  style={{marginBottom: 8}}>{subtitle}</Typography>}
+                    {subtitle && <Typography variant="subtitle1"  style={{marginBottom: 4, fontSize: '1rem'}}>{subtitle}</Typography>}
                     <Typography variant="h6" style={{fontWeight: 'bold'}}>{formatter ? formatter(value) : value}</Typography>
                     <div onClick={(e) => {e.preventDefault();e.stopPropagation()}}>
                       <PieChartContainer 
+                        disableLabels={true}
                         paddingBottom={0}
-                        paddingTop={16}
+                        paddingTop={8}
                         desktopHeight={250}
                         mobileHeight={250}
                         data={pieData && pieData?.length > 0 ? pieData : isLoading ? [] : [{name: "N/A", value: 100, fill: "#4d4d4d"}]}

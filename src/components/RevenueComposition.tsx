@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
@@ -99,6 +99,13 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
     }
   }
 
+  const sortedNetworkData = useMemo(() => {
+    return Object.entries(networkGroupedData)
+      .sort(([networkA, dataA], [networkB, dataB]) => 
+        Number(dataB.totalAmountPendingUSD) - Number(dataA.totalAmountPendingUSD)
+      );
+  }, [networkGroupedData]);
+
   useEffect(() => {
     setIsLoading(true);
     Promise.all([
@@ -110,11 +117,6 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
       let pieDataResponse : IDataResponse[] = data[0].data;
       let timeseriesDataResponseDistinctTimestamps = data[1].data;
       // let timeseriesDataResponseDistinctNetworks = data[2].data;
-
-      console.log({
-        timeseriesDataResponseDistinctTimestamps,
-        // timeseriesDataResponseDistinctNetworks
-      })
 
       const revenueTimeseriesData : ITimeseries[] = [];
 
@@ -140,8 +142,6 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
       //     }
       //   }
       // }
-
-      // console.log({timestampToNetworkTimeseriesData})
 
       // for(let [timestamp, networkValues] of Object.entries(timestampToNetworkTimeseriesData)) {
       //   console.log({timestamp, networkValues});
@@ -245,10 +245,6 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
         formattedPieData.push(otherRecord);
       }
 
-      console.log({formattedPieData})
-
-      console.log({groupedByNetwork});
-
       let tempNetworkOverviewGroupedData : IPieData[] = [];
       for(let network of selectedNetworkIDs) {
         if(groupedByNetwork[network].otherRecord.value > 0) {
@@ -344,21 +340,22 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
               labelFontSize={"0.8rem"}
               loading={isLoading}
               title={"Current Total Unclaimed Silo Fees By Network"}
-              desktopHeight={400}
-              mobileHeight={400}
+              desktopHeight={500}
+              mobileHeight={500}
             />
           </Card>
         </Grid>
-        {Object.entries(networkGroupedData).sort(([networkA, dataA], [networkB, dataB]) => Number(dataB.totalAmountPendingUSD) - Number(dataA.totalAmountPendingUSD)).map(([network, data]) => (
-          <Grid item xs={12} md={12}  key={`network-breakdown-${network}`}>
-            <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible'}}>
+        {sortedNetworkData.map(([network, data], index) => (
+          <Grid item xs={12} md={12} lg={((sortedNetworkData.length % 2 === 1) && (index === (sortedNetworkData.length - 1))) ? 12 : 6} key={`network-breakdown-${network}`}>
+            <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible', height: '100%'}}>
               <PieChartContainer 
+                disableLabels={true}
                 data={data.pieData}
                 labelFontSize={"0.8rem"}
                 loading={isLoading}
                 title={`${NETWORK_TO_HUMAN_READABLE[network]} Network Current Total Unclaimed Silo Fees`}
-                desktopHeight={400}
-                mobileHeight={400}
+                desktopHeight={500}
+                mobileHeight={500}
               />
             </Card>
           </Grid>

@@ -125,6 +125,7 @@ interface IProps {
   paddingTop?: number
   paddingBottom?: number
   labelFontSize?: string
+  disableLabels?: boolean
 }
 
 const PieChartInternal = (props: IProps & PropsFromRedux) => {
@@ -139,6 +140,7 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
     paddingTop = 0,
     paddingBottom = 32,
     labelFontSize = '1rem',
+    disableLabels,
   } = props;
 
   const [showLabels, setShowLabels] = useState(true);
@@ -148,12 +150,12 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
 
   useLayoutEffect(() => {
     let sizeHideLabels = 900;
-    if (windowSize.width && (windowSize.width <= sizeHideLabels)) {
+    if (disableLabels || (windowSize.width && (windowSize.width <= sizeHideLabels))) {
       setShowLabels(false);
     }else{
       setShowLabels(true);
     }
-  }, [windowSize.width, windowSize.height])
+  }, [windowSize.width, windowSize.height, disableLabels])
 
   const colorGaps = Number((1 / data.length).toFixed(4));
 
