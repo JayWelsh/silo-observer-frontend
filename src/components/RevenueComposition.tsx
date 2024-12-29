@@ -115,14 +115,13 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux & IProps
 
   useEffect(() => {
     setIsLoading(true);
-    let promises = [
-      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/latest?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
-    ];
-    if(!abridged) {
-      promises.push(fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-timestamps?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json()));
-      // promises.push(fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-networks?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json()));
-    }
-    Promise.all(promises).then((data) => {
+    Promise.all([
+      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/latest?networks=${selectedNetworkIDs.join(',')}&perPage=1000`).then(resp => resp.json()),
+      ...(!abridged ? [
+        fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-timestamps?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json())
+      ] : [])
+      // fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-networks?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json()),
+    ]).then((data) => {
       
       // let timeseriesDataResponseDistinctNetworks = data[2].data;
 
