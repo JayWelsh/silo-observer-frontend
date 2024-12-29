@@ -13,7 +13,7 @@ import RepaidIcon from '@mui/icons-material/CreditScore';
 import LiquidateIcon from '@mui/icons-material/WaterDrop';
 import UnclaimedFeesDeltaIcon from '@mui/icons-material/Savings';
 
-import { IPieData, INetworkGroupedNumber } from '../interfaces';
+import { IPieData, INetworkGroupedNumber, IGainAndLossGroupedNumber } from '../interfaces';
 
 import { API_ENDPOINT } from '../constants';
 
@@ -117,7 +117,8 @@ export default function DailyStats(props: PropsFromRedux) {
       let dailyBorrowUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
       let dailyRepayUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
       let dailyLiquidatedUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
-      let dailyUncliamedFeeDeltaUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
+      let dailyUnclaimedFeeDeltaUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
+      let dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss : IGainAndLossGroupedNumber = {};
 
       let dailyDepositUSDRecord = { usd: 0 };
       let dailyWithdrawUSDRecord = { usd: 0 };
@@ -225,15 +226,23 @@ export default function DailyStats(props: PropsFromRedux) {
       for (let entry of dailyUnclaimedFeeDeltaUSDResponse.data) {
         const usd = Number(Number(entry.pending_usd_delta).toFixed(2));
         const network = entry.network;
-        if(!isNaN(usd) && (usd > 0)) {
+        if(!isNaN(usd)) {
           dailyUnclaimedFeeDeltaUSDRecord.usd = Number(Number(dailyUnclaimedFeeDeltaUSDRecord.usd + usd).toFixed(2));
         }
-        if (network && !isNaN(usd) && (usd > 0)) {
-            if (dailyUncliamedFeeDeltaUSDRecordGroupedByNetwork[network] === undefined) {
-              dailyUncliamedFeeDeltaUSDRecordGroupedByNetwork[network] = usd;
-            } else {
-              dailyUncliamedFeeDeltaUSDRecordGroupedByNetwork[network] += usd;
+        if (network && !isNaN(usd)) {
+          if(Math.abs(usd) > 0) {
+            if(!dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss[usd < 0 ? "loss" : "gain"]) {
+              dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss[usd < 0 ? "loss" : "gain"] = 0;
             }
+            dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss[usd < 0 ? "loss" : "gain"] = Number(Number(dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss[usd < 0 ? "loss" : "gain"] + Math.abs(usd)).toFixed(2));
+          }
+          if(usd > 0) {
+            if (dailyUnclaimedFeeDeltaUSDRecordGroupedByNetwork[network] === undefined) {
+              dailyUnclaimedFeeDeltaUSDRecordGroupedByNetwork[network] = usd;
+            } else {
+              dailyUnclaimedFeeDeltaUSDRecordGroupedByNetwork[network] += usd;
+            }
+          }
         }
       }
 
@@ -243,7 +252,7 @@ export default function DailyStats(props: PropsFromRedux) {
           borrow: dailyBorrowUSDRecordGroupedByNetwork,
           repay: dailyRepayUSDRecordGroupedByNetwork,
           liquidated: dailyLiquidatedUSDRecordGroupedByNetwork,
-          unclaimedFeeDelta: dailyUncliamedFeeDeltaUSDRecordGroupedByNetwork,
+          unclaimedFeeDelta: dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss,
       });
 
       let newStatCollection : IStatEntry[] = [];

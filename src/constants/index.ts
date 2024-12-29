@@ -68,3 +68,8 @@ export const CHAIN_ID_TO_PIE_COLOR : {[key: string]: string} = {
   "arbitrum": "#93bad8",
   "base": "#1a54f4",
 }
+
+export const GAIN_OR_LOSS_TO_PIE_COLOR : {[key: string]: string} = {
+  "gain": "#25d800",
+  "loss": "#d10000",
+}

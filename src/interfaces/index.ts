@@ -88,6 +88,10 @@ export interface INetworkGroupedNumber {
     [network: string]: number;
 }
 
+export interface IGainAndLossGroupedNumber {
+    [gainOrLoss: string]: number;
+}
+
 export interface ISiloRevenueUnclaimedFessDailyDeltaByNetworkResponse {
     network: string;
     pending_usd_delta: string;
