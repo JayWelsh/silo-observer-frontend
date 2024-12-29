@@ -404,7 +404,6 @@ export const addFormattingFunctionsToPieData = (
 	tooltipFormatFn?: (arg0: any) => string,
 	fills?: {[key: string]: string},
 ): IPieData[] => {
-	console.log({pieData})
 	return pieData.map((entry, index) => ({
 			...entry,
 			...(tooltipFormatFn && { tooltipFormatFn }),
