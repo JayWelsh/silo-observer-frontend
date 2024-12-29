@@ -46,7 +46,7 @@ export interface ISiloTokenDataResponseData {
     coingecko_id: string
 }
 
-interface IPieGroupedData {
+export interface IPieGroupedData {
     name: string;
     value: number;
     labelFormatFn?: (arg0: any) => string;

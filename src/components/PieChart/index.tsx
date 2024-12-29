@@ -90,7 +90,7 @@ const CustomTooltip = (props: TooltipProps<ValueType, NameType> & ICustomTooltip
     return (
       <StyledTooltip maxHeight={isConsideredMobile ? "550px" : "650px"}>
         {groupedData && 
-          <>
+          <div style={{textAlign: 'left'}}>
             <StyledTooltipTextStacked fontSize={isConsideredMobile ? "11px" : "14px"} first={true} style={{textDecoration: 'underline'}}>{`${groupedDataTooltipTitle ? groupedDataTooltipTitle : payload[0].name}`}</StyledTooltipTextStacked>
             <div style={{display: 'flex'}}>
               {
@@ -105,7 +105,7 @@ const CustomTooltip = (props: TooltipProps<ValueType, NameType> & ICustomTooltip
                 )
               }
             </div>
-          </>
+          </div>
         }
         {!groupedData && 
           <StyledTooltipText>{payload[0].payload.tooltipFormatFn ? payload[0].payload.tooltipFormatFn(payload[0].payload) : `${centerShortenLongString(payload[0].payload.name, 12)}: ${payload[0].payload.value} %`}</StyledTooltipText>
