@@ -27,6 +27,8 @@ import NetworkSelectionListContainer from '../containers/NetworkSelectionListCon
 import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
 // import StackedAreaChartContainer from '../containers/StackedAreaChartContainer';
 
+import LinkWrapper from './LinkWrapper';
+
 import { priceFormat } from '../utils';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
@@ -74,11 +76,16 @@ const tooltipValueFormatGrouped = (pieChartRecord: IPieData) => {
   return `${pieChartRecord.name}: ${priceFormat(pieChartRecord.value, 2, "$")}`
 }
 
-export default function SiloTotalAssetComposition(props: PropsFromRedux) {
+interface IProps {
+  abridged?: boolean;
+}
+
+export default function SiloTotalAssetComposition(props: PropsFromRedux & IProps) {
 
   let {
     selectedNetworkIDs,
     isConsideredMobile,
+    abridged,
   } = props;
 
   const [pieData, setPieData] = useState<IPieData[]>([]);
@@ -108,24 +115,16 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
 
   useEffect(() => {
     setIsLoading(true);
-    Promise.all([
-      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/latest?networks=${selectedNetworkIDs.join(',')}&perPage=1000`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-timestamps?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json()),
-      // fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-networks?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json()),
-    ]).then((data) => {
-
-      let pieDataResponse : IDataResponse[] = data[0].data;
-      let timeseriesDataResponseDistinctTimestamps = data[1].data;
+    let promises = [
+      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/latest?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+    ];
+    if(!abridged) {
+      promises.push(fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-timestamps?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json()));
+      // promises.push(fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-networks?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json()));
+    }
+    Promise.all(promises).then((data) => {
+      
       // let timeseriesDataResponseDistinctNetworks = data[2].data;
-
-      const revenueTimeseriesData : ITimeseries[] = [];
-
-      for(let timeseriesEntry of timeseriesDataResponseDistinctTimestamps) {
-        revenueTimeseriesData.push({
-          date: timeseriesEntry.timestamp,
-          value: timeseriesEntry.amount_pending_usd,
-        })
-      }
 
       // const timestampToNetworkTimeseriesData : {[key: string]: {[key: string]: number}} = {};
       // const networkTimeseriesStackedData : IStackedTimeseries[] = [];
@@ -150,6 +149,8 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
       //     ...networkValues
       //   })
       // }
+
+      let pieDataResponse : IDataResponse[] = data[0].data;
 
       const groupedByNetwork: INetworkGroupedData = {};
 
@@ -271,96 +272,115 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
 
       setTotalAmountPendingUSD(localTotalAmountPendingUSD);
 
-      setTimeseriesDataDistinctTimestamps(revenueTimeseriesData.reverse());
+      if(!abridged) {
+        let timeseriesDataResponseDistinctTimestamps = data[1].data;
+
+        const revenueTimeseriesData : ITimeseries[] = [];
+
+        for(let timeseriesEntry of timeseriesDataResponseDistinctTimestamps) {
+          revenueTimeseriesData.push({
+            date: timeseriesEntry.timestamp,
+            value: timeseriesEntry.amount_pending_usd,
+          })
+        }
+
+        setTimeseriesDataDistinctTimestamps(revenueTimeseriesData.reverse());
+      }
 
       // setTimeseriesDataStackedNetworksDistinctTimestamps(networkTimeseriesStackedData.reverse());
 
     })
-  }, [selectedNetworkIDs, excludeTokenSymbols])
+  }, [selectedNetworkIDs, excludeTokenSymbols, abridged])
 
   return (
     <>
-      <FormGroup style={{marginBottom: 16}}>
-        <FormControlLabel control={<Switch color="secondary" defaultChecked checked={excludeTokenSymbols.indexOf("XAI") > -1} onChange={() => toggleExcludedSymbol("XAI")} />} label="Exclude XAI fees" />
-      </FormGroup>
-      <Card style={{paddingLeft: 24, paddingRight: 24, paddingTop: 24, paddingBottom: 24, marginBottom: 24, display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center'}}>
-        <Typography variant={isConsideredMobile ? "h4" : "h3"} style={{marginBottom: 8, marginTop: 0}}>
-          {totalAmountPendingUSD ? priceFormat(totalAmountPendingUSD, 2, "$") : "Loading..."}
-        </Typography>
-        <Typography className="secondary-text" variant="subtitle1" style={{fontWeight: 300, marginBottom: 8}}>Estimated Unclaimed Fees Across All Silos</Typography>
-        <NetworkSelectionListContainer networkViewListOnly={true} />
-      </Card>
-      <Grid container spacing={3}>
-        {/* <Grid item xs={12} md={12}>
-          <StackedAreaChartContainer
-            chartData={timeseriesDataStackedNetworksDistinctTimestamps}
-            seriesKeys={Object.keys(CHAIN_ID_TO_PIE_COLOR)}
-            loading={isLoading}
-            colors={CHAIN_ID_TO_PIE_COLOR}
-            height={500}
-            rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
-            formatValueFn={(value: any) => priceFormat(value, 2, "$")}
-            leftTextTitle={`All Silos`}
-            leftTextSubtitle={`Stacked Unclaimed Fee Tokens (Approx. USD)`}
-            showChange={true}
-            changeType="up-good"
-          />
-        </Grid> */}
-        <Grid item xs={12} md={12}>
-          {timeseriesDataDistinctTimestamps &&
-            <BasicAreaChartContainer
-              chartData={timeseriesDataDistinctTimestamps}
+      {!abridged &&
+        <FormGroup style={{marginBottom: 16}}>
+          <FormControlLabel control={<Switch color="secondary" defaultChecked checked={excludeTokenSymbols.indexOf("XAI") > -1} onChange={() => toggleExcludedSymbol("XAI")} />} label="Exclude XAI fees" />
+        </FormGroup>
+      }
+      <LinkWrapper link={abridged ? '/revenue' : undefined}>
+        <Card style={{paddingLeft: 24, paddingRight: 24, paddingTop: 24, paddingBottom: 24, marginBottom: 24, display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center'}}>
+          <Typography variant={isConsideredMobile ? "h4" : "h3"} style={{marginBottom: 8, marginTop: 0}}>
+            {totalAmountPendingUSD ? priceFormat(totalAmountPendingUSD, 2, "$") : "Loading..."}
+          </Typography>
+          <Typography className="secondary-text" variant="subtitle1" style={{fontWeight: 300, marginBottom: 8}}>Estimated Unclaimed Fees Across All Silos</Typography>
+          <NetworkSelectionListContainer networkViewListOnly={true} />
+        </Card>
+      </LinkWrapper>
+      {!abridged &&
+        <Grid container spacing={3}>
+          {/* <Grid item xs={12} md={12}>
+            <StackedAreaChartContainer
+              chartData={timeseriesDataStackedNetworksDistinctTimestamps}
+              seriesKeys={Object.keys(CHAIN_ID_TO_PIE_COLOR)}
               loading={isLoading}
-              leftTextTitle={`All Silos`}
-              leftTextSubtitle={`Unclaimed Fee Tokens (Approx. USD)`}
+              colors={CHAIN_ID_TO_PIE_COLOR}
+              height={500}
               rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
-              showChange={true}
-              changeType={"up-good"}
-              height={400}
               formatValueFn={(value: any) => priceFormat(value, 2, "$")}
+              leftTextTitle={`All Silos`}
+              leftTextSubtitle={`Stacked Unclaimed Fee Tokens (Approx. USD)`}
+              showChange={true}
+              changeType="up-good"
             />
-          }
-        </Grid>
-        <Grid item xs={12} md={12}>
-          <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible'}}>
-            <PieChartContainer 
-              data={pieData}
-              labelFontSize={"0.8rem"}
-              loading={isLoading}
-              title={"Current Total Unclaimed Silo Fees"}
-              desktopHeight={800}
-              mobileHeight={800}
-            />
-          </Card>
-        </Grid>
-        <Grid item xs={12} md={12}>
-          <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible'}}>
-            <PieChartContainer 
-              data={networkOverviewGroupedData}
-              labelFontSize={"0.8rem"}
-              loading={isLoading}
-              title={"Current Total Unclaimed Silo Fees By Network"}
-              desktopHeight={500}
-              mobileHeight={500}
-            />
-          </Card>
-        </Grid>
-        {sortedNetworkData.map(([network, data], index) => (
-          <Grid item xs={12} md={12} lg={((sortedNetworkData.length % 2 === 1) && (index === (sortedNetworkData.length - 1))) ? 12 : 6} key={`network-breakdown-${network}`}>
-            <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible', height: '100%'}}>
+          </Grid> */}
+          <Grid item xs={12} md={12}>
+            {timeseriesDataDistinctTimestamps &&
+              <BasicAreaChartContainer
+                chartData={timeseriesDataDistinctTimestamps}
+                loading={isLoading}
+                leftTextTitle={`All Silos`}
+                leftTextSubtitle={`Unclaimed Fee Tokens (Approx. USD)`}
+                rightTextFormatValueFn={(value: any) => priceFormat(value, 2, '$')}
+                showChange={true}
+                changeType={"up-good"}
+                height={400}
+                formatValueFn={(value: any) => priceFormat(value, 2, "$")}
+              />
+            }
+          </Grid>
+          <Grid item xs={12} md={12}>
+            <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible'}}>
               <PieChartContainer 
-                disableLabels={true}
-                data={data.pieData}
+                data={pieData}
                 labelFontSize={"0.8rem"}
                 loading={isLoading}
-                title={`${NETWORK_TO_HUMAN_READABLE[network]} Network Current Total Unclaimed Silo Fees`}
+                title={"Current Total Unclaimed Silo Fees"}
+                desktopHeight={800}
+                mobileHeight={800}
+              />
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={12}>
+            <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible'}}>
+              <PieChartContainer 
+                data={networkOverviewGroupedData}
+                labelFontSize={"0.8rem"}
+                loading={isLoading}
+                title={"Current Total Unclaimed Silo Fees By Network"}
                 desktopHeight={500}
                 mobileHeight={500}
               />
             </Card>
           </Grid>
-        ))}
-      </Grid>
+          {sortedNetworkData.map(([network, data], index) => (
+            <Grid item xs={12} md={12} lg={((sortedNetworkData.length % 2 === 1) && (index === (sortedNetworkData.length - 1))) ? 12 : 6} key={`network-breakdown-${network}`}>
+              <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16, overflow: 'visible', height: '100%'}}>
+                <PieChartContainer 
+                  disableLabels={true}
+                  data={data.pieData}
+                  labelFontSize={"0.8rem"}
+                  loading={isLoading}
+                  title={`${NETWORK_TO_HUMAN_READABLE[network]} Network Current Total Unclaimed Silo Fees`}
+                  desktopHeight={500}
+                  mobileHeight={500}
+                />
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      }
     </>
   );
 }
