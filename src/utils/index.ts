@@ -4,7 +4,7 @@ import { utils } from 'ethers';
 
 import LlamaLogo from "../assets/png/llama.png";
 
-import { IPieData, INetworkGroupedNumber } from '../interfaces';
+import { IPieData, INetworkGroupedNumber, IGainAndLossGroupedNumber, IPieGroupedData } from '../interfaces';
 
 import { CHAIN_ID_TO_PIE_COLOR, GAIN_OR_LOSS_TO_PIE_COLOR } from '../constants';
 
@@ -87,17 +87,19 @@ export const priceFormat = (number: number | string, decimals = 2, currency = "$
 			prefix = false;
 	}
 	let format = '0,0.' + decimalString;
-	if(Number(number) < 10) {
-			format = getDynamicFormat(format, number);
+	let absNumber = Math.abs(Number(number));
+	let isNegative = Number(number) < 0;
+	if(Number(absNumber) < 10) {
+			format = getDynamicFormat(format, absNumber);
 	}
-	let result = numeral(number).format(format);
+	let result = numeral(absNumber).format(format);
 	if(result === 'NaN') {
 		result = '0.00';
 	}
 	if (prefix) {
-			return `${currency}${'\u00A0'}`+ result;
+			return `${isNegative ? '- ' : ''}${currency}${'\u00A0'}`+ result;
 	} else {
-			return result + `${'\u00A0'}${currency}`
+			return `${isNegative ? '- ' : ''}` + result + `${'\u00A0'}${currency}`
 	}
 }
 
@@ -351,6 +353,53 @@ export const deploymentImageGetter = ((deploymentID: string) => {
 // 	return 
 // }
 
+const convertToPieArray = (
+	data: INetworkGroupedNumber
+): IPieData[] => {
+		return Object.entries(data).map(([networkOrKey, value]) => ({
+				name: capitalizeFirstLetter(networkOrKey),
+				value: value,
+				...(CHAIN_ID_TO_PIE_COLOR[networkOrKey] && {fill: CHAIN_ID_TO_PIE_COLOR[networkOrKey]}),
+		}));
+};
+
+const convertFeeDeltaToPieArray = (
+	data: INetworkGroupedNumber,
+	gainsData?: INetworkGroupedNumber,
+	lossData?: INetworkGroupedNumber,
+	unclaimedFeePieChartLabelFormat?: (arg0: IPieData) => string,
+	unclaimedFeeTooltipLabelFormat?: (arg0: IPieData) => string,
+): IPieData[] => {
+		return Object.entries(data).map(([gainOrLossKey, value]) => {
+			let groupedData : IPieGroupedData[] = [];
+			if(gainOrLossKey === 'gain' && gainsData) {
+				for(let [network, value] of Object.entries(gainsData)) {
+					groupedData.push({
+						name: capitalizeFirstLetter(network),
+						value: value,
+					})
+				}
+			}
+			if(gainOrLossKey === 'loss' && lossData) {
+				for(let [network, value] of Object.entries(lossData)) {
+					groupedData.push({
+						name: capitalizeFirstLetter(network),
+						value: value,
+					})
+				}
+			}
+			if(groupedData?.length > 0) {
+				groupedData = addFormattingFunctionsToPieData(groupedData, unclaimedFeePieChartLabelFormat, unclaimedFeeTooltipLabelFormat);
+			}
+			return ({
+				name: `${capitalizeFirstLetter(gainOrLossKey)} ($ ${value})`,
+				value: value,
+				...(GAIN_OR_LOSS_TO_PIE_COLOR[gainOrLossKey] && {fill: GAIN_OR_LOSS_TO_PIE_COLOR[gainOrLossKey]}),
+				...(groupedData.length > 0 && { groupedData })
+			})
+		});
+};
+
 export const convertNetworkDataToPieData = (
 	networkData: {
 			deposit: INetworkGroupedNumber,
@@ -358,20 +407,16 @@ export const convertNetworkDataToPieData = (
 			borrow: INetworkGroupedNumber,
 			repay: INetworkGroupedNumber,
 			liquidated: INetworkGroupedNumber,
-			unclaimedFeeDelta: INetworkGroupedNumber
+			unclaimedFeeDelta: IGainAndLossGroupedNumber,
+			unclaimedFeeDeltaNetworkGains: INetworkGroupedNumber,
+			unclaimedFeeDeltaNetworkLosses: INetworkGroupedNumber,
+	},
+	formattingFunctions: {
+		unclaimedFeePieChartLabelFormat?: (arg0: IPieData) => string,
+		unclaimedFeeTooltipLabelFormat?: (arg0: IPieData) => string,
 	}
 ): { [key: string]: IPieData[] } => {
 	const result: { [key: string]: IPieData[] } = {};
-
-	// Helper function to convert single network grouped data to pie data array
-	const convertToPieArray = (data: INetworkGroupedNumber): IPieData[] => {
-			return Object.entries(data).map(([networkOrKey, value]) => ({
-					name: capitalizeFirstLetter(networkOrKey),
-					value: value,
-					...(CHAIN_ID_TO_PIE_COLOR[networkOrKey] && {fill: CHAIN_ID_TO_PIE_COLOR[networkOrKey]}),
-					...(GAIN_OR_LOSS_TO_PIE_COLOR[networkOrKey] && {fill: GAIN_OR_LOSS_TO_PIE_COLOR[networkOrKey]}),
-			}));
-	};
 
 	// Convert each type of data
 	result.deposit = convertToPieArray(networkData.deposit);
@@ -379,7 +424,7 @@ export const convertNetworkDataToPieData = (
 	result.borrow = convertToPieArray(networkData.borrow);
 	result.repay = convertToPieArray(networkData.repay);
 	result.liquidated = convertToPieArray(networkData.liquidated);
-	result.unclaimedFeeDelta = convertToPieArray(networkData.unclaimedFeeDelta);
+	result.unclaimedFeeDelta = convertFeeDeltaToPieArray(networkData.unclaimedFeeDelta, networkData.unclaimedFeeDeltaNetworkGains, networkData.unclaimedFeeDeltaNetworkLosses, formattingFunctions.unclaimedFeePieChartLabelFormat, formattingFunctions.unclaimedFeeTooltipLabelFormat);
 
 	return result;
 }

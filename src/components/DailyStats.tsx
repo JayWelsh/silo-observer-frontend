@@ -117,7 +117,8 @@ export default function DailyStats(props: PropsFromRedux) {
       let dailyBorrowUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
       let dailyRepayUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
       let dailyLiquidatedUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
-      let dailyUnclaimedFeeDeltaUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
+      let dailyUnclaimedFeeDeltaGainUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
+      let dailyUnclaimedFeeDeltaLossUSDRecordGroupedByNetwork : INetworkGroupedNumber = {};
       let dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss : IGainAndLossGroupedNumber = {};
 
       let dailyDepositUSDRecord = { usd: 0 };
@@ -237,10 +238,16 @@ export default function DailyStats(props: PropsFromRedux) {
             dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss[usd < 0 ? "loss" : "gain"] = Number(Number(dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss[usd < 0 ? "loss" : "gain"] + Math.abs(usd)).toFixed(2));
           }
           if(usd > 0) {
-            if (dailyUnclaimedFeeDeltaUSDRecordGroupedByNetwork[network] === undefined) {
-              dailyUnclaimedFeeDeltaUSDRecordGroupedByNetwork[network] = usd;
+            if (dailyUnclaimedFeeDeltaGainUSDRecordGroupedByNetwork[network] === undefined) {
+              dailyUnclaimedFeeDeltaGainUSDRecordGroupedByNetwork[network] = usd;
             } else {
-              dailyUnclaimedFeeDeltaUSDRecordGroupedByNetwork[network] += usd;
+              dailyUnclaimedFeeDeltaGainUSDRecordGroupedByNetwork[network] += usd;
+            }
+          } else if (usd < 0) {
+            if (dailyUnclaimedFeeDeltaLossUSDRecordGroupedByNetwork[network] === undefined) {
+              dailyUnclaimedFeeDeltaLossUSDRecordGroupedByNetwork[network] = Math.abs(usd);
+            } else {
+              dailyUnclaimedFeeDeltaLossUSDRecordGroupedByNetwork[network] += Math.abs(usd);
             }
           }
         }
@@ -253,6 +260,11 @@ export default function DailyStats(props: PropsFromRedux) {
           repay: dailyRepayUSDRecordGroupedByNetwork,
           liquidated: dailyLiquidatedUSDRecordGroupedByNetwork,
           unclaimedFeeDelta: dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss,
+          unclaimedFeeDeltaNetworkGains: dailyUnclaimedFeeDeltaGainUSDRecordGroupedByNetwork,
+          unclaimedFeeDeltaNetworkLosses: dailyUnclaimedFeeDeltaLossUSDRecordGroupedByNetwork,
+      }, {
+        unclaimedFeePieChartLabelFormat: pieChartLabelValueFormatDollars,
+        unclaimedFeeTooltipLabelFormat: pieChartTooltipValueFormatDollars,
       });
 
       let newStatCollection : IStatEntry[] = [];
