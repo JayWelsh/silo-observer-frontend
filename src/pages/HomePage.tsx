@@ -11,6 +11,7 @@ import SiloTotalAssetCompositionContainer from '../containers/SiloTotalAssetComp
 import SiloOverviewTableContainer from '../containers/SiloOverviewTableContainer';
 import EventLogTableContainer from '../containers/EventLogTableContainer';
 import RewardLogTableContainer from '../containers/RewardLogTableContainer';
+import RevenueCompositionContainer from '../containers/RevenueCompositionContainer';
 
 import { PropsFromRedux } from '../containers/HomePageContainer';
 
@@ -41,6 +42,8 @@ const HomePage = (props: PropsFromRedux) => {
                     />
                 }
             </div>
+            <div style={{marginTop: 24}}/>
+            <RevenueCompositionContainer abridged={true} />
             <div style={{marginTop: 24}}/>
             <DailyStatsContainer/>
             <div style={{marginTop: 24}}/>
