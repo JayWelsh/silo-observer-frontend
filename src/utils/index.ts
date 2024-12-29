@@ -6,7 +6,7 @@ import LlamaLogo from "../assets/png/llama.png";
 
 import { IPieData, INetworkGroupedNumber } from '../interfaces';
 
-import { CHAIN_ID_TO_PIE_COLOR } from '../constants';
+import { CHAIN_ID_TO_PIE_COLOR, GAIN_OR_LOSS_TO_PIE_COLOR } from '../constants';
 
 BigNumber.config({ EXPONENTIAL_AT: 1e+9 });
 
@@ -365,10 +365,11 @@ export const convertNetworkDataToPieData = (
 
 	// Helper function to convert single network grouped data to pie data array
 	const convertToPieArray = (data: INetworkGroupedNumber): IPieData[] => {
-			return Object.entries(data).map(([network, value]) => ({
-					name: capitalizeFirstLetter(network),
+			return Object.entries(data).map(([networkOrKey, value]) => ({
+					name: capitalizeFirstLetter(networkOrKey),
 					value: value,
-					...(CHAIN_ID_TO_PIE_COLOR[network] && {fill: CHAIN_ID_TO_PIE_COLOR[network]})
+					...(CHAIN_ID_TO_PIE_COLOR[networkOrKey] && {fill: CHAIN_ID_TO_PIE_COLOR[networkOrKey]}),
+					...(GAIN_OR_LOSS_TO_PIE_COLOR[networkOrKey] && {fill: GAIN_OR_LOSS_TO_PIE_COLOR[networkOrKey]}),
 			}));
 	};
 
@@ -401,8 +402,10 @@ export const addFormattingFunctionsToPieData = (
 	pieData: IPieData[],
 	labelFormatFn?: (arg0: any) => string,
 	tooltipFormatFn?: (arg0: any) => string,
+	fills?: {[key: string]: string},
 ): IPieData[] => {
-	return pieData.map(entry => ({
+	console.log({pieData})
+	return pieData.map((entry, index) => ({
 			...entry,
 			...(tooltipFormatFn && { tooltipFormatFn }),
 			...(labelFormatFn && { labelFormatFn }),
