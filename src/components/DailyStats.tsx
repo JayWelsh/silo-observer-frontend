@@ -224,6 +224,7 @@ export default function DailyStats(props: PropsFromRedux) {
       }
 
       // Unclaimed Fees Delta USD
+      let dailyUnclaimedFeeDeltaHasLossRecord = false;
       for (let entry of dailyUnclaimedFeeDeltaUSDResponse.data) {
         const usd = Number(Number(entry.pending_usd_delta).toFixed(2));
         const network = entry.network;
@@ -231,6 +232,9 @@ export default function DailyStats(props: PropsFromRedux) {
           dailyUnclaimedFeeDeltaUSDRecord.usd = Number(Number(dailyUnclaimedFeeDeltaUSDRecord.usd + usd).toFixed(2));
         }
         if (network && !isNaN(usd)) {
+          if(usd < 0) {
+            dailyUnclaimedFeeDeltaHasLossRecord = true;
+          }
           if(Math.abs(usd) > 0) {
             if(!dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss[usd < 0 ? "loss" : "gain"]) {
               dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss[usd < 0 ? "loss" : "gain"] = 0;
@@ -259,12 +263,14 @@ export default function DailyStats(props: PropsFromRedux) {
           borrow: dailyBorrowUSDRecordGroupedByNetwork,
           repay: dailyRepayUSDRecordGroupedByNetwork,
           liquidated: dailyLiquidatedUSDRecordGroupedByNetwork,
-          unclaimedFeeDelta: dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss,
+          unclaimedFeeDelta: dailyUnclaimedFeeDeltaHasLossRecord ? dailyUnclaimedFeeDeltaUSDRecordGroupedByGainAndLoss : dailyUnclaimedFeeDeltaGainUSDRecordGroupedByNetwork,
           unclaimedFeeDeltaNetworkGains: dailyUnclaimedFeeDeltaGainUSDRecordGroupedByNetwork,
           unclaimedFeeDeltaNetworkLosses: dailyUnclaimedFeeDeltaLossUSDRecordGroupedByNetwork,
       }, {
         unclaimedFeePieChartLabelFormat: pieChartLabelValueFormatDollars,
         unclaimedFeeTooltipLabelFormat: pieChartTooltipValueFormatDollars,
+      }, {
+        unclaimedFeeDeltaUseGainsAndLosses: dailyUnclaimedFeeDeltaHasLossRecord ? true : false,
       });
 
       let newStatCollection : IStatEntry[] = [];

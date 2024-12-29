@@ -414,6 +414,9 @@ export const convertNetworkDataToPieData = (
 	formattingFunctions: {
 		unclaimedFeePieChartLabelFormat?: (arg0: IPieData) => string,
 		unclaimedFeeTooltipLabelFormat?: (arg0: IPieData) => string,
+	},
+	config?: {
+		unclaimedFeeDeltaUseGainsAndLosses?: boolean
 	}
 ): { [key: string]: IPieData[] } => {
 	const result: { [key: string]: IPieData[] } = {};
@@ -424,7 +427,7 @@ export const convertNetworkDataToPieData = (
 	result.borrow = convertToPieArray(networkData.borrow);
 	result.repay = convertToPieArray(networkData.repay);
 	result.liquidated = convertToPieArray(networkData.liquidated);
-	result.unclaimedFeeDelta = convertFeeDeltaToPieArray(networkData.unclaimedFeeDelta, networkData.unclaimedFeeDeltaNetworkGains, networkData.unclaimedFeeDeltaNetworkLosses, formattingFunctions.unclaimedFeePieChartLabelFormat, formattingFunctions.unclaimedFeeTooltipLabelFormat);
+	result.unclaimedFeeDelta = (config && config.unclaimedFeeDeltaUseGainsAndLosses) ? convertFeeDeltaToPieArray(networkData.unclaimedFeeDelta, networkData.unclaimedFeeDeltaNetworkGains, networkData.unclaimedFeeDeltaNetworkLosses, formattingFunctions.unclaimedFeePieChartLabelFormat, formattingFunctions.unclaimedFeeTooltipLabelFormat) : convertToPieArray(networkData.unclaimedFeeDelta);
 
 	return result;
 }
