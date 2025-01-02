@@ -279,7 +279,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux & IProps
         for(let timeseriesEntry of timeseriesDataResponseDistinctTimestamps) {
           revenueTimeseriesData.push({
             date: timeseriesEntry.timestamp,
-            value: timeseriesEntry.amount_pending_usd,
+            value: Number(Number(timeseriesEntry.amount_pending_usd).toFixed(2)),
           })
         }
 
