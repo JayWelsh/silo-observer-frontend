@@ -194,7 +194,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux & IProps
         if(entry.asset_symbol && (excludeTokenSymbols.indexOf(entry.asset_symbol.toUpperCase()) > -1)) {
           markForRemoval = true;
         }
-        if(amountPendingUSD < 1000) {
+        if(amountPendingUSD < (Number(localTotalAmountPendingUSD) * 0.01)) { // anything less than 1% of total gets put into "other" group
           if(entry.asset_symbol && (excludeTokenSymbols.indexOf(entry.asset_symbol.toUpperCase()) === -1)) {
             otherRecord.value += amountPendingUSD;
             otherRecord.groupedDataTooltipTitle = `Other Assets (${priceFormat(otherRecord.value, 2, "$")} total)`
@@ -234,7 +234,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux & IProps
           if(entry.asset_symbol && (excludeTokenSymbols.indexOf(entry.asset_symbol.toUpperCase()) === -1)) {
             groupedByNetwork[entry.network].totalAmountPendingUSD = new BigNumber(groupedByNetwork[entry.network].totalAmountPendingUSD).plus(new BigNumber(entry.amount_pending_usd)).toString();
             if(!markForRemoval) {
-              groupedByNetwork[entry.network].pieData.push(pieDataEntry);
+              groupedByNetwork[entry.network].pieData.push(Object.assign({}, pieDataEntry));
             }
           }
         }
@@ -256,7 +256,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux & IProps
           value: Number(groupedByNetwork[network].totalAmountPendingUSD),
           labelFormatFn: revenueValueFormat,
           tooltipFormatFn: tooltipValueFormat,
-          fill: CHAIN_ID_TO_PIE_COLOR[network],
+          ...(CHAIN_ID_TO_PIE_COLOR[network] && { fill: CHAIN_ID_TO_PIE_COLOR[network] }),
         };
         tempNetworkOverviewGroupedData.push(networkPieDataEntry);
       };
