@@ -159,13 +159,15 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
 
   const colorGaps = Number((1 / data.length).toFixed(4));
 
-  const dataWithFills = data.map((entry, index) => {
-    if(!entry.fill) {
-      let colorSector = colorGaps * (index + 1);
-      entry.fill = color(colorSector);
-    }
-    return entry;
-  })
+  const dataWithFills = (dataToFill: IPieData[]) => { 
+    return [...dataToFill].map((entry, index) => {
+      if(!entry.fill) {
+        let colorSector = colorGaps * (index + 1);
+        entry.fill = color(colorSector);
+      }
+      return entry;
+    })
+  }
 
   const renderActiveShape = (props: PieSectorDataItem) => {
     const { 
@@ -235,7 +237,7 @@ const PieChartInternal = (props: IProps & PropsFromRedux) => {
           >
             <Pie 
               // activeIndex={activeIndex}
-              data={dataWithFills}
+              data={dataWithFills(data)}
               dataKey="value"
               cx="50%"
               cy="50%"
