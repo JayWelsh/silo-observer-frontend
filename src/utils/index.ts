@@ -201,6 +201,7 @@ const ETHERSCAN_PREFIXES_NETWORK_NAME: { [key: string]: string } = {
 	'sepolia': 'sepolia.etherscan.io',
 	'optimism': 'optimistic.etherscan.io',
 	'base': 'basescan.io',
+	'sonic': 'sonicscan.org',
 }
   
 export function getEtherscanLink(
