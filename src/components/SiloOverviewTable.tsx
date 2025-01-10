@@ -106,20 +106,22 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
 
         // for sorting by deployment ids
         let sortableDeploymentID = "";
-        if(deployment_id === 'ethereum-llama') {
-          sortableDeploymentID = 'a-ethereum-llama';
+        if (deployment_id === 'sonic-main-v2') {
+          sortableDeploymentID = 'a-sonic-main-v2';
+        } else if(deployment_id === 'ethereum-llama') {
+          sortableDeploymentID = 'b-ethereum-llama';
         } else if (deployment_id === 'ethereum-main') {
-          sortableDeploymentID = 'b-ethereum-main';
+          sortableDeploymentID = 'c-ethereum-main';
         } else if (deployment_id === 'arbitrum-original') {
-          sortableDeploymentID = 'c-arbitrum-original';
+          sortableDeploymentID = 'd-arbitrum-original';
         } else if (deployment_id === 'optimism-original') {
-          sortableDeploymentID = 'd-optimism-original';
+          sortableDeploymentID = 'e-optimism-original';
         } else if (deployment_id === 'base-original') {
-          sortableDeploymentID = 'e-base-original';
+          sortableDeploymentID = 'f-base-original';
         } else if (deployment_id === 'base-btcfi') {
-          sortableDeploymentID = 'f-base-btcfi';
+          sortableDeploymentID = 'g-base-btcfi';
         } else if (deployment_id === 'ethereum-original') {
-          sortableDeploymentID = 'g-ethereum-legacy';
+          sortableDeploymentID = 'h-ethereum-legacy';
         }
         
         siloOverviewDataBuild.push({

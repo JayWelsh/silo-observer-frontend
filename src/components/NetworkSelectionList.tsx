@@ -13,6 +13,7 @@ import EthereumLogo from '../assets/png/ethereum-logo.png';
 import ArbitrumLogo from '../assets/png/arbitrum-logo.png';
 import OptimismLogo from '../assets/png/optimism-logo.png';
 import BaseLogo from '../assets/png/base-logo.png';
+import SonicLogo from '../assets/png/sonic-logo.png';
 import { PropsFromRedux } from '../containers/NetworkSelectionListContainer';
 
 import { compareArrays } from '../utils';
@@ -26,7 +27,7 @@ const MenuProps = {
   PaperProps: {
     style: {
       marginTop: 4,
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      maxHeight: ITEM_HEIGHT * 6 + ITEM_PADDING_TOP,
       width: 200,
     },
   },
@@ -45,6 +46,7 @@ let networkIdToImage : {[key: string]: string} = {
   "arbitrum": ArbitrumLogo,
   "optimism": OptimismLogo,
   "base": BaseLogo,
+  "sonic": SonicLogo,
 }
 
 const networkSelectionItems = [
@@ -67,6 +69,11 @@ const networkSelectionItems = [
     id: "base",
     name: "Base",
     icon: <img src={networkIdToImage["base"]} style={{width: networkIconSize, height: networkIconSize, marginRight: 8}} alt="Base" />,
+  },
+  {
+    id: "sonic",
+    name: "Sonic",
+    icon: <img src={networkIdToImage["sonic"]} style={{width: networkIconSize, height: networkIconSize, marginRight: 8}} alt="Sonic" />,
   }
 ]
 
@@ -127,7 +134,7 @@ export default function NetworkSelectionList(props: PropsFromRedux & INetworkSel
   return (
     <div>
       {!networkViewListOnly &&
-        <FormControl sx={{ m: 1, width: 130 }} size="small">
+        <FormControl sx={{ m: 1, width: 150 }} size="small">
           <InputLabel id="demo-multiple-checkbox-label">Chains</InputLabel>
           <Select
             labelId="demo-multiple-checkbox-label"

@@ -15,6 +15,7 @@ export const DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} = {
   "ethereum-main": "Main",
   "base-original": "Main",
   "base-btcfi": "BTCfi",
+  "sonic-main-v2": "Main",
 }
 
 export const SORTABLE_DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} = {
@@ -25,6 +26,7 @@ export const SORTABLE_DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} 
   "e-base-original": "Main",
   "f-base-btcfi": "BTCfi",
   "g-optimism-original": "Main",
+  "h-sonic-main-v2": "Main",
 }
 
 export const NETWORK_TO_HUMAN_READABLE : {[key: string]: string} = {
@@ -32,6 +34,7 @@ export const NETWORK_TO_HUMAN_READABLE : {[key: string]: string} = {
   "arbitrum": "Arbitrum",
   "optimism": "Optimism",
   "base": "Base",
+  "sonic": "Sonic",
 }
 
 export const TIMESTAMP_TO_DEPLOYMENT_BREAKPOINTS = {
@@ -42,6 +45,7 @@ export const TIMESTAMP_TO_DEPLOYMENT_BREAKPOINTS = {
   1721722823: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main"],
   1726155000: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main", "base-original"],
   1733428800: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main", "base-original", "base-btcfi"],
+  1736464800: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main", "base-original", "base-btcfi", "sonic-main-v2"],
 }
 
 export const CHAIN_COUNT = 4;
@@ -51,15 +55,17 @@ export const CHAIN_ID_TO_DEPLOYMENT_COUNT : {[key: string]: number} = {
   "arbitrum": 1,
   "optimism": 1,
   "base": 2,
+  "sonic": 1,
 }
 
-export type CHAIN_ID = "ethereum" | "arbitrum" | "optimism" | "base";
+export type CHAIN_ID = "ethereum" | "arbitrum" | "optimism" | "base" | "sonic";
 
 export const CHAIN_ID_TO_DEPLOYMENT_IDS = {
   ethereum: ['ethereum-original', 'ethereum-llama', 'ethereum-main'],
   arbitrum: ['arbitrum-original'],
   optimism: ['optimism-original'],
   base: ['base-original', 'base-btcfi'],
+  sonic: ['sonic-main-v2'],
 }
 
 export const CHAIN_ID_TO_PIE_COLOR : {[key: string]: string} = {
@@ -67,6 +73,7 @@ export const CHAIN_ID_TO_PIE_COLOR : {[key: string]: string} = {
   "optimism": "#ff0421",
   "arbitrum": "#93bad8",
   "base": "#1a54f4",
+  "sonic": "#fe9a4e",
 }
 
 export const GAIN_OR_LOSS_TO_PIE_COLOR : {[key: string]: string} = {
