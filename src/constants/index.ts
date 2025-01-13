@@ -48,7 +48,7 @@ export const TIMESTAMP_TO_DEPLOYMENT_BREAKPOINTS = {
   1736464800: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main", "base-original", "base-btcfi", "sonic-main-v2"],
 }
 
-export const CHAIN_COUNT = 4;
+export const CHAIN_COUNT = 5;
 
 export const CHAIN_ID_TO_DEPLOYMENT_COUNT : {[key: string]: number} = {
   "ethereum": 3,

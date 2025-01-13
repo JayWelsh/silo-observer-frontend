@@ -128,21 +128,6 @@ export default function DailyStats(props: PropsFromRedux) {
       let dailyLiquidatedUSDRecord = { usd: 0 };
       let dailyUnclaimedFeeDeltaUSDRecord = { usd: 0 };
 
-      for (let entry of dailyDepositUSDResponse.data) {
-        const usd = Number(entry.usd);
-        const network = entry.network;
-        if(!isNaN(usd) && (usd > 0)) {
-          dailyDepositUSDRecord.usd = dailyDepositUSDRecord.usd + usd;
-        }
-        if (network && !isNaN(usd) && (usd > 0)) {
-            if (dailyDepositUSDRecordGroupedByNetwork[network] === undefined) {
-                dailyDepositUSDRecordGroupedByNetwork[network] = usd;
-            } else {
-                dailyDepositUSDRecordGroupedByNetwork[network] += usd;
-            }
-        }
-      }
-
       // Deposits
       for (let entry of dailyDepositUSDResponse.data) {
           const usd = Number(entry.usd);
