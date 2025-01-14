@@ -58,6 +58,18 @@ export const CHAIN_ID_TO_DEPLOYMENT_COUNT : {[key: string]: number} = {
   "sonic": 1,
 }
 
+export const PROTOCOL_VERSION_TO_CHAIN_ID_TO_DEPLOYMENT_COUNT : {[key: string]: {[key: string]: number}} = {
+  1: {
+    "ethereum": 3,
+    "arbitrum": 1,
+    "optimism": 1,
+    "base": 2,
+  },
+  2: {
+    "sonic": 1,
+  }
+}
+
 export type CHAIN_ID = "ethereum" | "arbitrum" | "optimism" | "base" | "sonic";
 
 export const CHAIN_ID_TO_DEPLOYMENT_IDS = {

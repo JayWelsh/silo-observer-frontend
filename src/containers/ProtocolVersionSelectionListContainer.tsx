@@ -1,35 +1,33 @@
 import { connect, ConnectedProps } from 'react-redux';
 
-import { 
-  setSelectedNetworkIDs,
-  setKnownNetworkIDs,
+import {
+  setKnownProtocolVersions,
+  setSelectedProtocolVersions,
 } from '../state/actions';
 
-import NetworkSelectionList from '../components/NetworkSelectionList';
+import ProtocolVersionSelectionList from '../components/ProtocolVersionSelectionList';
 
 interface RootState {
   darkMode: boolean
   isConsideredMobile: boolean
-  selectedNetworkIDs: string[]
   selectedProtocolVersions: string[]
-  knownNetworkIDs: string[]
+  knownProtocolVersions: string[]
 }
   
 const mapStateToProps = (state: RootState) => ({
   darkMode: state.darkMode,
   isConsideredMobile: state.isConsideredMobile,
-  selectedNetworkIDs: state.selectedNetworkIDs,
-  knownNetworkIDs: state.knownNetworkIDs,
   selectedProtocolVersions: state.selectedProtocolVersions,
+  knownProtocolVersions: state.knownProtocolVersions,
 })
 
 const mapDispatchToProps = {
-  setSelectedNetworkIDs,
-  setKnownNetworkIDs,
+  setSelectedProtocolVersions,
+  setKnownProtocolVersions,
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
   
 export type PropsFromRedux = ConnectedProps<typeof connector>
 
-export default connector(NetworkSelectionList)
+export default connector(ProtocolVersionSelectionList)

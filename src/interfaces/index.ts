@@ -25,6 +25,7 @@ export interface ISilo {
     tvl: number
     borrowed: number
     latest_rates: IRate[]
+    protocol_version: number
 }
 
 export interface ISiloTokenDataResponse {

@@ -44,13 +44,14 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
   let {
     siloOverviews,
     selectedNetworkIDs,
+    selectedProtocolVersions,
   } = props;
 
   useEffect(() => {
     let siloOverviewDataBuild = [];
     for(let silo of siloOverviews) {
 
-      if(selectedNetworkIDs.indexOf(silo.network) > -1) {
+      if((selectedNetworkIDs.indexOf(silo.network) > -1) && (selectedProtocolVersions.indexOf(silo.protocol_version.toString()) > -1)) {
 
         const {
           name,
@@ -144,7 +145,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
       }
     }
     setSiloOverviewData(siloOverviewDataBuild)
-  }, [siloOverviews, selectedNetworkIDs])
+  }, [siloOverviews, selectedNetworkIDs, selectedProtocolVersions])
 
   const standardDeployments = ['ethereum-original', 'arbitrum-original', 'optimism-original', 'base-original'];
 

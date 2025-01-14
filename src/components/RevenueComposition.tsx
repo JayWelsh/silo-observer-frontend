@@ -84,6 +84,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux & IProps
 
   let {
     selectedNetworkIDs,
+    selectedProtocolVersions,
     isConsideredMobile,
     abridged,
   } = props;
@@ -116,13 +117,12 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux & IProps
   useEffect(() => {
     setIsLoading(true);
     Promise.all([
-      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/latest?networks=${selectedNetworkIDs.join(',')}&perPage=1000`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/latest?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&perPage=1000`).then(resp => resp.json()),
       ...(!abridged ? [
-        fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-timestamps?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json())
+        fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-timestamps?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json())
       ] : [])
-      // fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-networks?networks=${selectedNetworkIDs.join(',')}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json()),
     ]).then((data) => {
-      
+
       // let timeseriesDataResponseDistinctNetworks = data[2].data;
 
       // const timestampToNetworkTimeseriesData : {[key: string]: {[key: string]: number}} = {};
@@ -289,7 +289,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux & IProps
       // setTimeseriesDataStackedNetworksDistinctTimestamps(networkTimeseriesStackedData.reverse());
 
     })
-  }, [selectedNetworkIDs, excludeTokenSymbols, abridged])
+  }, [selectedNetworkIDs, excludeTokenSymbols, abridged, selectedProtocolVersions])
 
   return (
     <>

@@ -78,6 +78,7 @@ export default function DailyStats(props: PropsFromRedux) {
 
   let {
     selectedNetworkIDs,
+    selectedProtocolVersions,
   } = props;
 
   const placeholderCollection = Array.from([
@@ -95,12 +96,12 @@ export default function DailyStats(props: PropsFromRedux) {
   useEffect(() => {
     setIsLoading(true);
     Promise.all([
-      fetch(`${API_ENDPOINT}/volume/deposit?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/withdraw?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/borrow?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/repay?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/volume/liquidation?period=today&networks=${selectedNetworkIDs.join(',')}&groupBy=network`).then(resp => resp.json()),
-      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/daily-unclaimed-fee-delta?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/deposit?period=today&networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&groupBy=network`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/withdraw?period=today&networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&groupBy=network`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/borrow?period=today&networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&groupBy=network`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/repay?period=today&networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&groupBy=network`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/liquidation?period=today&networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&groupBy=network`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/daily-unclaimed-fee-delta?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}`).then(resp => resp.json()),
     ]).then((data) => {
     
       let [
@@ -334,7 +335,7 @@ export default function DailyStats(props: PropsFromRedux) {
       
       setIsLoading(false);
     })
-  }, [selectedNetworkIDs])
+  }, [selectedNetworkIDs, selectedProtocolVersions])
 
   return (
     <Container>
