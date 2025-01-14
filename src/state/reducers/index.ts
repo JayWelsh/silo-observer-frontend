@@ -6,6 +6,8 @@ import isConsideredMobile from './isConsideredMobile';
 import siloOverviews from './siloOverviews';
 import selectedNetworkIDs from './selectedNetworkIDs';
 import knownNetworkIDs from './knownNetworkIDs';
+import knownProtocolVersions from './knownProtocolVersions';
+import selectedProtocolVersions from './selectedProtocolVersions';
 
 const rootReducer = combineReducers({
     showLeftMenu,
@@ -15,6 +17,8 @@ const rootReducer = combineReducers({
     siloOverviews,
     selectedNetworkIDs,
     knownNetworkIDs,
+    knownProtocolVersions,
+    selectedProtocolVersions,
 });
 
 export default rootReducer;

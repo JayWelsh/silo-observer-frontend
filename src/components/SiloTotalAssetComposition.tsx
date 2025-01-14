@@ -19,6 +19,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
 
   let {
     selectedNetworkIDs,
+    selectedProtocolVersions,
   } = props;
 
   const [pieData, setPieData] = useState<IPieData[]>([]);
@@ -27,7 +28,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
   useEffect(() => {
     setIsLoading(true);
     Promise.all([
-      fetch(`${API_ENDPOINT}/tvl-totals/latest/assets/whole-platform?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/tvl-totals/latest/assets/whole-platform?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}`).then(resp => resp.json()),
     ]).then((data) => {
 
       let pieDataResponse : IDataReponse[] = data[0].data;
@@ -124,7 +125,7 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux) {
       setPieData(formattedPieData);
 
     })
-  }, [selectedNetworkIDs])
+  }, [selectedNetworkIDs, selectedProtocolVersions])
 
   return (
     <Card style={{paddingLeft: 16, paddingRight: 16, paddingTop: 16}}>

@@ -10,7 +10,7 @@ import BigNumber from 'bignumber.js';
 
 import { priceFormat } from '../utils';
 
-import { API_ENDPOINT, CHAIN_ID_TO_DEPLOYMENT_COUNT } from '../constants';
+import { API_ENDPOINT, PROTOCOL_VERSION_TO_CHAIN_ID_TO_DEPLOYMENT_COUNT } from '../constants';
 
 import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
 import { PropsFromRedux } from '../containers/TvlChartSelectionContainer';
@@ -67,6 +67,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
     isConsideredMobile,
     overrideHandleSiloZoneChange,
     selectedNetworkIDs,
+    selectedProtocolVersions,
   } = props;
 
   let navigate = useNavigate();
@@ -101,22 +102,26 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
     setTvlTotalsTimeseries([]);
     setCombinedTotalsTimeseries([]);
     Promise.all([
-        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&`}perPage=144&resolution=minutely`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&`}perPage=32000&resolution=hourly`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&`}perPage=144&resolution=minutely`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&`}perPage=32000&resolution=hourly`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&versions=${selectedProtocolVersions.join(",")}&`}perPage=144&resolution=minutely`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/tvl-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&versions=${selectedProtocolVersions.join(",")}&`}perPage=32000&resolution=hourly`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&versions=${selectedProtocolVersions.join(",")}&`}perPage=144&resolution=minutely`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/borrowed-totals/${(tokenSymbol && deploymentID) ? `silo/${deploymentID}/${tokenSymbol}?` : `whole-platform?networks=${selectedNetworkIDs.join(",")}&versions=${selectedProtocolVersions.join(",")}&`}perPage=32000&resolution=hourly`).then(resp => resp.json()),
     ]).then((data) => {
 
       setIsLoading(false);
 
       let deploymentToUnixStartDate : {[key: string]: number} = {};
 
-      let currentNetworkCount = selectedNetworkIDs.reduce((acc, networkId) => {
-        if(CHAIN_ID_TO_DEPLOYMENT_COUNT[networkId]) {
-          return acc + CHAIN_ID_TO_DEPLOYMENT_COUNT[networkId]
+      let currentNetworkCount = 0;
+      for(let selectedProtocolVersion of selectedProtocolVersions) {
+        if(PROTOCOL_VERSION_TO_CHAIN_ID_TO_DEPLOYMENT_COUNT[selectedProtocolVersion]) {
+          for(let selectedNetworkID of selectedNetworkIDs) {
+            if(PROTOCOL_VERSION_TO_CHAIN_ID_TO_DEPLOYMENT_COUNT[selectedProtocolVersion][selectedNetworkID]) {
+              currentNetworkCount += PROTOCOL_VERSION_TO_CHAIN_ID_TO_DEPLOYMENT_COUNT[selectedProtocolVersion][selectedNetworkID];
+            }
+          }
         }
-        return acc;
-      }, 0);
+      }
 
       console.log({currentNetworkCount, selectedNetworkIDs})
 
@@ -349,7 +354,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
       setCombinedTotalsTimeseries(combinedTotalsTimeseriesTemp);
 
     })
-  }, [tokenSymbol, deploymentID, selectedNetworkIDs])
+  }, [tokenSymbol, deploymentID, selectedNetworkIDs, selectedProtocolVersions])
 
   return (
     <>

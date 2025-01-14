@@ -68,6 +68,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
   let {
     selectedNetworkIDs,
     eventType,
+    selectedProtocolVersions,
   } = props;
 
   useEffect(() => {
@@ -82,11 +83,11 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
     let urls : Promise<any>[] = [];
     if(eventType) {
       urls = [
-        fetch(`${API_ENDPOINT}/events/${eventType}?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events/${eventType}?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}`).then(resp => resp.json()),
       ]
     } else {
       urls = [
-        fetch(`${API_ENDPOINT}/events?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}`).then(resp => resp.json()),
       ];
     }
     Promise.all(urls).then((data) => {
@@ -103,7 +104,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
       
       setIsLoading(false);
     })
-  }, [selectedNetworkIDs, eventType, serverPage, serverPerPage])
+  }, [selectedNetworkIDs, eventType, serverPage, serverPerPage, selectedProtocolVersions])
 
   return (
     <>

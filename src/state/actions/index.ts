@@ -36,3 +36,13 @@ export const setKnownNetworkIDs = (knownNetworkIDs: string[]) => ({
     type: "SET_KNOWN_NETWORK_IDS",
     knownNetworkIDs
 })
+
+export const setSelectedProtocolVersions = (selectedProtocolVersions: string[]) => ({
+    type: "SET_SELECTED_PROTOCOL_VERSIONS",
+    selectedProtocolVersions
+})
+
+export const setKnownProtocolVersions = (knownProtocolVersions: string[]) => ({
+    type: "SET_KNOWN_PROTOCOL_VERSIONS",
+    knownProtocolVersions
+})

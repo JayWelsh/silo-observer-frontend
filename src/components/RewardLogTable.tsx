@@ -45,6 +45,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
 
   let {
     selectedNetworkIDs,
+    selectedProtocolVersions,
     eventType,
   } = props;
 
@@ -58,7 +59,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
   useEffect(() => {
     setIsLoading(true);
     let urls : Promise<any>[] = [
-      fetch(`${API_ENDPOINT}/events/reward?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/events/reward?page=${serverPage + 1}&perPage=${serverPerPage}&networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}`).then(resp => resp.json()),
     ];
     Promise.all(urls).then((data) => {
 
@@ -74,7 +75,7 @@ export default function SiloOverviewTable(props: PropsFromRedux & IEventLogTable
       
       setIsLoading(false);
     })
-  }, [selectedNetworkIDs, eventType, serverPage, serverPerPage])
+  }, [selectedNetworkIDs, eventType, serverPage, serverPerPage, selectedProtocolVersions])
 
   return (
     <>

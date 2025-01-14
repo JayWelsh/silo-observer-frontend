@@ -39,6 +39,7 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps &
     isConsideredMobile,
     overrideHandleSiloZoneChange,
     selectedNetworkIDs,
+    selectedProtocolVersions,
   } = props;
 
   let navigate = useNavigate();
@@ -69,10 +70,10 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps &
     setIsLoading(true);
     setDailyActiveUsersTimeseries([]);
     Promise.all([
-        fetch(`${API_ENDPOINT}/events/borrow/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/events/deposit/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/events/repay/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
-        fetch(`${API_ENDPOINT}/events/withdraw/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events/borrow/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events/deposit/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events/repay/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}`).then(resp => resp.json()),
+        fetch(`${API_ENDPOINT}/events/withdraw/distinct-daily-users?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}`).then(resp => resp.json()),
     ]).then((data) => {
 
       setIsLoading(false);
@@ -169,7 +170,7 @@ const DailyActiveUsersChartSelection = (props: IDailyActiveUsersSelectionProps &
       setDailyActiveUsersTimeseries(dailyActiveUsersTimeseries);
 
     })
-  }, [tokenSymbol, selectedNetworkIDs])
+  }, [tokenSymbol, selectedNetworkIDs, selectedProtocolVersions])
 
   return (
     <>

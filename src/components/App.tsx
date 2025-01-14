@@ -56,7 +56,7 @@ const App = (props: PropsFromRedux) => {
             background: {
               default: "#131313",
               paper: "#000000"
-            }
+            },
           })
         },
         components: {
@@ -67,6 +67,35 @@ const App = (props: PropsFromRedux) => {
               }
             }
           },
+          MuiPaper :{
+            styleOverrides: {
+              root:{
+                backgroundColor: "#000000",
+              }
+            }
+          },
+          MuiMenuItem: {
+            styleOverrides: {
+              root: {
+                backgroundColor: '#141215',
+                '&:hover': {
+                  backgroundColor: '#211f22',
+                },
+                '&.Mui-focusVisible': {
+                  backgroundColor: '#211f22',
+                },
+                '&.Mui-selected': {
+                  backgroundColor: '#1a181c',
+                  '&:hover': {
+                    backgroundColor: '#141215',
+                  },
+                  '&.Mui-focusVisible': {
+                    backgroundColor: '#141215',
+                  },
+                }
+              }
+            }
+          }
         }
       }),
     [props.darkMode],

@@ -27,6 +27,7 @@ import { ExternalLink } from '../components/ExternalLink';
 
 import SiloTokenBarContainer from '../containers/SiloTokenBarContainer';
 import NetworkSelectionListContainer from '../containers/NetworkSelectionListContainer';
+import ProtocolVersionSelectionListContainer from '../containers/ProtocolVersionSelectionListContainer';
 
 import GithubRepoNavigatorDialog from './GithubRepoNavigatorDialog';
 
@@ -125,6 +126,7 @@ const NavigationTopBar = (props: PropsFromRedux & INavigationTopBarProps) => {
             <div className={classes.flexer}/>
             <div className={"flex-center-all"}>
               <NetworkSelectionListContainer />
+              <ProtocolVersionSelectionListContainer />
               <ExternalLink className={"hover-opacity-button flex-center-all"} href={"https://discord.gg/txcZWpmrj7"}>
                 <img alt="Discord Server Link" className={classes.socialIcon} style={{width: 40}} src={DiscordLogo} />
               </ExternalLink>

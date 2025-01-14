@@ -37,6 +37,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
     // isConsideredMobile,
     selectedNetworkIDs,
     enableDailyBuffering = false,
+    selectedProtocolVersions,
   } = props;
 
   const [combinedTotalsTimeseries, setCombinedTotalsTimeseries] = useState<ITimeseries[]>([]);
@@ -47,7 +48,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
     setIsLoading(true);
     setCombinedTotalsTimeseries([]);
     Promise.all([
-      fetch(`${API_ENDPOINT}/volume/${volumeType}?networks=${selectedNetworkIDs.join(',')}&page=1&perPage=32000`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/volume/${volumeType}?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&page=1&perPage=32000`).then(resp => resp.json()),
     ]).then((data) => {
 
       setIsLoading(false);
@@ -66,7 +67,7 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
       setCombinedTotalsTimeseries(chartData);
 
     })
-  }, [volumeType, selectedNetworkIDs, enableDailyBuffering])
+  }, [volumeType, selectedNetworkIDs, enableDailyBuffering, selectedProtocolVersions])
 
   return (
     <>
