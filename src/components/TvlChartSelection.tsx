@@ -10,7 +10,7 @@ import BigNumber from 'bignumber.js';
 
 import { priceFormat } from '../utils';
 
-import { API_ENDPOINT, CHAIN_ID_TO_DEPLOYMENT_COUNT } from '../constants';
+import { API_ENDPOINT } from '../constants';
 
 import BasicAreaChartContainer from '../containers/BasicAreaChartContainer';
 import { PropsFromRedux } from '../containers/TvlChartSelectionContainer';
@@ -121,13 +121,6 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
 
         let deploymentToUnixStartDate : {[key: string]: number} = {};
 
-        let currentNetworkCount = selectedNetworkIDs.reduce((acc, networkId) => {
-          if(CHAIN_ID_TO_DEPLOYMENT_COUNT[networkId]) {
-            return acc + CHAIN_ID_TO_DEPLOYMENT_COUNT[networkId]
-          }
-          return acc;
-        }, 0);
-
         let tvlTotalsDataMinutely = data[0].data.reverse();
         let tvlTotalsDataHourly = data[1].data.reverse();
         let borrowTotalsDataMinutely = data[2].data.reverse();
@@ -171,20 +164,17 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
         // console.log({deploymentToUnixStartDate, tvlTotalsDataMinutelyTimeToEntry})
 
         for(let [timestamp, entry] of Object.entries(tvlTotalsDataMinutelyTimeToEntry)) {
-          // console.log({currentNetworkCount})
-          if((entry.duplicateCount === currentNetworkCount) || deploymentID) {
-            tvlTotalsTimeseriesTemp.push({
-                date: timestamp,
-                value: Number(entry.tvl)
-            })
-            if(!dateToTvlTotalValue[entry.timestamp]) {
-              dateToTvlTotalValue[entry.timestamp] = new BigNumber(entry.tvl);
-            }
-            if(!dateToCombinedValue[entry.timestamp]) {
-                dateToCombinedValue[entry.timestamp] = new BigNumber(entry.tvl);
-            } else {
-                dateToCombinedValue[entry.timestamp] = dateToCombinedValue[entry.timestamp].plus(entry.tvl);
-            }
+          tvlTotalsTimeseriesTemp.push({
+              date: timestamp,
+              value: Number(entry.tvl)
+          })
+          if(!dateToTvlTotalValue[entry.timestamp]) {
+            dateToTvlTotalValue[entry.timestamp] = new BigNumber(entry.tvl);
+          }
+          if(!dateToCombinedValue[entry.timestamp]) {
+              dateToCombinedValue[entry.timestamp] = new BigNumber(entry.tvl);
+          } else {
+              dateToCombinedValue[entry.timestamp] = dateToCombinedValue[entry.timestamp].plus(entry.tvl);
           }
         }
 
@@ -243,19 +233,17 @@ const TvlChartSelection = (props: ITvlChartSelectionProps & PropsFromRedux) => {
         }
 
         for(let [timestamp, entry] of Object.entries(borrowTotalsDataMinutelyTimeToEntry)) {
-          if((entry.duplicateCount === currentNetworkCount) || deploymentID) {
-            borrowTotalsTimeseriesTemp.push({
-                date: timestamp,
-                value: Number(entry.borrowed)
-            });
-            if(!dateToBorrowTotalValue[entry.timestamp]) {
-              dateToBorrowTotalValue[entry.timestamp] = new BigNumber(entry.borrowed);
-            }
-            if(!dateToCombinedValue[entry.timestamp]) {
-                dateToCombinedValue[entry.timestamp] = new BigNumber(entry.borrowed);
-            } else {
-                dateToCombinedValue[entry.timestamp] = dateToCombinedValue[entry.timestamp].plus(entry.borrowed);
-            }
+          borrowTotalsTimeseriesTemp.push({
+              date: timestamp,
+              value: Number(entry.borrowed)
+          });
+          if(!dateToBorrowTotalValue[entry.timestamp]) {
+            dateToBorrowTotalValue[entry.timestamp] = new BigNumber(entry.borrowed);
+          }
+          if(!dateToCombinedValue[entry.timestamp]) {
+              dateToCombinedValue[entry.timestamp] = new BigNumber(entry.borrowed);
+          } else {
+              dateToCombinedValue[entry.timestamp] = dateToCombinedValue[entry.timestamp].plus(entry.borrowed);
           }
         }
 
