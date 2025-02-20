@@ -117,9 +117,9 @@ export default function SiloTotalAssetComposition(props: PropsFromRedux & IProps
   useEffect(() => {
     setIsLoading(true);
     Promise.all([
-      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/latest?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&perPage=1000`).then(resp => resp.json()),
+      fetch(`${API_ENDPOINT}/silo-revenue-snapshots/latest?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&perPage=32000`).then(resp => resp.json()),
       ...(!abridged ? [
-        fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-timestamps?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&perPage=1000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json())
+        fetch(`${API_ENDPOINT}/silo-revenue-snapshots/timeseries-distinct-timestamps?networks=${selectedNetworkIDs.join(',')}&versions=${selectedProtocolVersions.join(",")}&perPage=32000&excludeXAI=${excludeTokenSymbols.indexOf("XAI") > -1 ? "true" : "false"}`).then(resp => resp.json())
       ] : [])
     ]).then((data) => {
 
