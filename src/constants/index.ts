@@ -11,8 +11,10 @@ export const DEPLOYMENT_ID_TO_HUMAN_READABLE : {[key: string]: string} = {
   "ethereum-llama": "LLAMA",
   "ethereum-original": "Legacy",
   "arbitrum-original": "Main",
+  "arbitrum-main-v2": "Main",
   "optimism-original": "Main",
   "ethereum-main": "Main",
+  "ethereum-main-v2": "Main",
   "base-original": "Main",
   "base-btcfi": "BTCfi",
   "sonic-main-v2": "Main",
@@ -46,13 +48,15 @@ export const TIMESTAMP_TO_DEPLOYMENT_BREAKPOINTS = {
   1726155000: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main", "base-original"],
   1733428800: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main", "base-original", "base-btcfi"],
   1736464800: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main", "base-original", "base-btcfi", "sonic-main-v2"],
+  1749704400: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main", "base-original", "base-btcfi", "sonic-main-v2", "arbitrum-main-v2"],
+  1750528800: ["ethereum-original", "arbitrum-original", "ethereum-llama", "optimism-original", "ethereum-main", "base-original", "base-btcfi", "sonic-main-v2", "arbitrum-main-v2", "ethereum-main-v2"],
 }
 
 export const CHAIN_COUNT = 5;
 
 export const CHAIN_ID_TO_DEPLOYMENT_COUNT : {[key: string]: number} = {
-  "ethereum": 3,
-  "arbitrum": 1,
+  "ethereum": 4,
+  "arbitrum": 2,
   "optimism": 1,
   "base": 2,
   "sonic": 1,
@@ -67,14 +71,16 @@ export const PROTOCOL_VERSION_TO_CHAIN_ID_TO_DEPLOYMENT_COUNT : {[key: string]: 
   },
   2: {
     "sonic": 1,
+    "arbitrum": 1,
+    "ethereum": 1,
   }
 }
 
 export type CHAIN_ID = "ethereum" | "arbitrum" | "optimism" | "base" | "sonic";
 
 export const CHAIN_ID_TO_DEPLOYMENT_IDS = {
-  ethereum: ['ethereum-original', 'ethereum-llama', 'ethereum-main'],
-  arbitrum: ['arbitrum-original'],
+  ethereum: ['ethereum-original', 'ethereum-llama', 'ethereum-main', 'ethereum-main-v2'],
+  arbitrum: ['arbitrum-original', 'arbitrum-main-v2'],
   optimism: ['optimism-original'],
   base: ['base-original', 'base-btcfi'],
   sonic: ['sonic-main-v2'],
