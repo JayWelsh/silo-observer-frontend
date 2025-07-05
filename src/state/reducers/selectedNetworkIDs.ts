@@ -3,7 +3,7 @@ interface ISelectedNetworkIDsReducer {
   selectedNetworkIDs: string[];
 }
 
-const selectedNetworkIDs = (state = ["ethereum", "arbitrum", "optimism", "base", "sonic"], action: ISelectedNetworkIDsReducer) => {
+const selectedNetworkIDs = (state = ["ethereum", "arbitrum", "optimism", "base", "sonic", "avalanche"], action: ISelectedNetworkIDsReducer) => {
   switch (action.type) {
     case 'SET_SELECTED_NETWORK_IDS':
       return action.selectedNetworkIDs

@@ -14,6 +14,7 @@ import ArbitrumLogo from '../assets/png/arbitrum-logo.png';
 import OptimismLogo from '../assets/png/optimism-logo.png';
 import BaseLogo from '../assets/png/base-logo.png';
 import SonicLogo from '../assets/png/sonic-logo.png';
+import AvalancheLogo from '../assets/png/avalanche-logo.png';
 import { PropsFromRedux } from '../containers/NetworkSelectionListContainer';
 
 import { compareArrays } from '../utils';
@@ -47,6 +48,7 @@ let networkIdToImage : {[key: string]: string} = {
   "optimism": OptimismLogo,
   "base": BaseLogo,
   "sonic": SonicLogo,
+  "avalanche": AvalancheLogo,
 }
 
 const networkSelectionItems = [
@@ -74,6 +76,11 @@ const networkSelectionItems = [
     id: "sonic",
     name: "Sonic",
     icon: <img src={networkIdToImage["sonic"]} style={{width: networkIconSize, height: networkIconSize, marginRight: 8}} alt="Sonic" />,
+  },
+  {
+    id: "avalanche",
+    name: "Avalanche",
+    icon: <img src={networkIdToImage["avalanche"]} style={{width: networkIconSize, height: networkIconSize, marginRight: 8}} alt="Avalanche" />,
   }
 ]
 
@@ -134,7 +141,7 @@ export default function NetworkSelectionList(props: PropsFromRedux & INetworkSel
   return (
     <div>
       {!networkViewListOnly &&
-        <FormControl sx={{ m: 1, width: 150 }} size="small">
+        <FormControl sx={{ m: 1, width: 168 }} size="small">
           <InputLabel id="demo-multiple-checkbox-label">Chains</InputLabel>
           <Select
             labelId="demo-multiple-checkbox-label"

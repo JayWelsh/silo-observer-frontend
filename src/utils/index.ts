@@ -202,6 +202,7 @@ const ETHERSCAN_PREFIXES_NETWORK_NAME: { [key: string]: string } = {
 	'optimism': 'optimistic.etherscan.io',
 	'base': 'basescan.io',
 	'sonic': 'sonicscan.org',
+	'avalanche': 'snowtrace.io'
 }
   
 export function getEtherscanLink(
@@ -333,6 +334,8 @@ export const networkImageGetter = ((network: string) => {
 				return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/base-logo.png";
 		case "sonic":
 				return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/sonic-logo.png";
+		case "avalanche":
+				return "https://vagabond-public-storage.s3.eu-west-2.amazonaws.com/avalanche-logo.png";
     default:
       return "";
   }
