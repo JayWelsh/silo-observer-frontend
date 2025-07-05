@@ -123,6 +123,8 @@ export default function SiloOverviewTable(props: PropsFromRedux & ISiloSearchPro
           sortableDeploymentID = 'g-base-btcfi';
         } else if (deployment_id === 'ethereum-original') {
           sortableDeploymentID = 'h-ethereum-legacy';
+        } else if (deployment_id === 'avalanche-main-v2') {
+          sortableDeploymentID = 'i-avalanche-main-v2';
         }
         
         siloOverviewDataBuild.push({
