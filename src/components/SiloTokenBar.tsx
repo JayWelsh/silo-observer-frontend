@@ -48,7 +48,7 @@ const SiloTokenBar = (props: PropsFromRedux) => {
     const refreshSiloTokenBar = async () => {
       setIsLoading(true);
       await Promise.all([
-        fetch(`https://api.cryptocape.com/asset/ethereum/0x6f80310CA7F2C654691D1383149Fa1A57d8AB1f8`).then(resp => resp.json()),
+        fetch(`https://api.cryptocape.com/asset/ethereum/0xF0B2dd79324A66d2108C961d680F7616E1486bB0`).then(resp => resp.json()),
       ]).then(async (data: any) => {
         const [siloDataResponse] = data;
         const { data: siloData } : ISiloTokenDataResponse = siloDataResponse;
